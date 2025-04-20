@@ -1,0 +1,36 @@
+protocol: PBFT
+phases:
+  idle:
+    quorum: 1
+    verify:
+      - "none"
+    actions:
+      - incrementSequence
+    nextState:
+      - preprepare
+  preprepare:
+    quorum: 2f
+    verify:
+      - "view_match"
+      - "valid_signature"
+      - "unique_digest"
+    actions:
+      - addLog
+    nextState:
+      - prepare
+  prepare:
+    quorum: 2f
+    verify:
+      - "preprepare_exists"
+    actions:
+      - updateLog
+    nextState:
+      - commit
+  commit:
+    quorum: 2f+1
+    verify:
+      - "prepare_exists"
+    actions:
+      - sendtoClient
+    nextState:
+      - idle

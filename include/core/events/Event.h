@@ -1,9 +1,8 @@
 #pragma once
-
-#include "EventHandler.h"
+#include "../state/EntityState.h"
 
 class Event {
 public:
-    template <typename T>
-    void accept(const EventHandler<T> *handler, T *context);
+    virtual ~Event() = default;
+    virtual void execute(EntityState& state) = 0;
 };

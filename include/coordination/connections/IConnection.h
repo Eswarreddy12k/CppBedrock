@@ -2,13 +2,10 @@
 
 #include <string>
 
-using namespace std;
-
 class IConnection {
 public:
     virtual ~IConnection() = default;
 
-    virtual void send(const string& message) = 0;
-
-    virtual string 
-}
+    virtual void send(const std::string& message) = 0;
+    virtual std::string receive() = 0;
+};
