@@ -21,6 +21,7 @@ class Event;
 class Message;
 
 class Entity : public EventHandler<EntityState> {
+    friend class Event; // <-- Add this line
 public:
     Entity(const std::string& role, int id, const std::vector<int>& peers);
     void start();
@@ -68,11 +69,26 @@ public:
     
     void markOperationProcessed(const std::string& operation);
 
+    std::vector<int> peerPorts;
+    std::map<int, EntityState> sequenceStates;
+    std::unordered_map<int, std::set<int>> prePrepareMessages;
+    std::unordered_map<int, std::set<int>> prepareMessages;
+    std::unordered_map<int, std::set<int>> commitMessages;
+    std::unordered_map<int, std::string> prePrepareOperations;
+    std::unordered_map<int, std::string> prepareOperations;
+    std::unordered_map<int, std::string> commitOperations;
+    std::unordered_map<int, std::set<int>> viewChangeMessages;
+    bool inViewChange = false;
+    std::unique_ptr<TimeKeeper> timeKeeper;
+    std::mutex timerMtx;
+
+    // Track received messages: [sequence][type][sender]
+    std::unordered_map<int, std::unordered_map<std::string, std::set<int>>> receivedMessages;
+
 private:
     int nodeId;
     int f;
     EntityState _entityState;
-    std::vector<int> peerPorts;
     TcpConnection connection;
     std::thread processingThread;
 
@@ -81,22 +97,10 @@ private:
 
     DataSet dataset;
 
-    std::unordered_map<int, std::set<int>> prepareMessages; // sequence -> node IDs
-    std::unordered_map<int, std::set<int>> commitMessages;  // sequence -> node IDs
-    std::map<int, EntityState> sequenceStates; // key: sequence number
-    std::unordered_map<int, std::set<int>> prePrepareMessages;
-    // Add these to your Entity class:
-    std::unordered_map<int, std::string> prePrepareOperations;
-    std::unordered_map<int, std::string> prepareOperations;
-    std::unordered_map<int, std::string> commitOperations;
     int nextSequenceNumber = 0;
 
     std::set<std::string> processedOperations;  // Track completed operations
 
-    std::unique_ptr<TimeKeeper> timeKeeper;
     void onTimeout();
-    mutable std::mutex timerMtx;
-    bool inViewChange = false;
-    std::unordered_map<int, std::set<int>> viewChangeMessages; // newView -> set of nodeIds
 };
 

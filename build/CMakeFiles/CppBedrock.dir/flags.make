@@ -6,7 +6,7 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/opt/homebrew/Cellar/yaml-cpp/0.8.0/include -I/Users/eswar/Downloads/CppBedrock/include -isystem /opt/homebrew/include
 
-CXX_FLAGSarm64 = -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk
+CXX_FLAGSarm64 = -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk -mmacosx-version-min=15.3
 
-CXX_FLAGS = -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk
+CXX_FLAGS = -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk -mmacosx-version-min=15.3
 

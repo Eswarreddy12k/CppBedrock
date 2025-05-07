@@ -4,7 +4,7 @@
 
 class EntityState {
 public:
-    // Constructor
+    EntityState() : _role(""), _state("PBFTRequest"), _view(0), _sequence(0) {} // <-- Add this line
     EntityState(const std::string& role, const std::string& state, int view, int sequence);
 
     // Getters

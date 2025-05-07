@@ -8,7 +8,7 @@ class Message : public Event {
 public:
     explicit Message(const std::string& content) : _content(content) {}
     std::string getContent() const { return _content; }
-    void execute(EntityState& state) override {
+    void execute(EntityState& state) {
         // For now, this can be an empty implementation or a simple action
         std::cout << "[Message] Executing action for content: " << _content << "\n";
     }

@@ -1,36 +1,40 @@
 protocol: PBFT
 phases:
-  idle:
+  PBFTRequest:
     quorum: 1
-    verify:
-      - "none"
+    next_state: PrePrepare
     actions:
-      - incrementSequence
-    nextState:
-      - preprepare
-  preprepare:
-    quorum: 2f
-    verify:
-      - "view_match"
-      - "valid_signature"
-      - "unique_digest"
+      - "storeMessage"
+  PrePrepare:
+    quorum: 1
+    next_state: prepare
     actions:
-      - addLog
-    nextState:
-      - prepare
+      - "storeMessage"
+      - "manageTimer"
+      - "broadcast"
   prepare:
     quorum: 2f
-    verify:
-      - "preprepare_exists"
+    next_state: commit
     actions:
-      - updateLog
-    nextState:
-      - commit
+      - "storeMessage"
+      - "checkQuorum"
+      - "manageTimer"
+      - "broadcast"
   commit:
     quorum: 2f+1
-    verify:
-      - "prepare_exists"
+    next_state: PBFTRequest
     actions:
-      - sendtoClient
-    nextState:
-      - idle
+      - "storeMessage"
+      - "checkQuorum"
+      - "manageTimer"
+      - "complete"
+  ViewChange:
+    quorum: 2f+1
+    next_state: PBFTRequest
+    actions:
+      - "handleViewChange"
+  NewView:
+    quorum: 1
+    next_state: PBFTRequest
+    actions:
+      - "handleNewView"

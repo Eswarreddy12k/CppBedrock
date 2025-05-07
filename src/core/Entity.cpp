@@ -21,117 +21,10 @@ int computeQuorum(const std::string& quorumStr, int f) {
     try { return std::stoi(quorumStr); } catch (...) { return 1; }
 }
 
-// ===================== Protocol-Agnostic Handler =====================
-class ProtocolHandler : public MessageHandler {
-public:
-    void handle(Entity* entity, const Message* message, EntityState* context) {
-        json j = json::parse(message->getContent());
-        std::string currentState = context->getState();
-        YAML::Node phaseConfig = entity->getPhaseConfig(currentState);
-        std::string operation = j.contains("operation") ? j["operation"].get<std::string>() : "";
-        int seq = context->getSequenceNumber();
-        int senderId = j["sender"].get<int>();
-        std::string messageType = j["type"].get<std::string>();
-
-        // Skip if already processed (except for leader's initial request)
-        if (!operation.empty() && messageType != "PBFTRequest" && entity->hasProcessedOperation(operation)) {
-            return;
-        }
-
-        // Handle message based on type and state
-        int quorum = computeQuorum(phaseConfig["quorum"].as<std::string>(), entity->getF());
-        bool quorumMet = false;
-
-        if (messageType == "PrePrepare") {
-            // Only leader can send PrePrepare
-            if (senderId != 1) return;
-            
-            entity->storePrePrepareMessage(senderId, seq, operation);
-            quorumMet = true;  // PrePrepare always transitions
-            
-            // Move to prepare phase
-            context->setState("prepare");
-            
-            // Send prepare message
-            json prepareMsg;
-            prepareMsg["type"] = "Prepare";
-            prepareMsg["view"] = context->getViewNumber();
-            prepareMsg["sequence"] = seq;
-            prepareMsg["operation"] = operation;
-            prepareMsg["sender"] = entity->getNodeId();
-            
-            Message protocolMsg(prepareMsg.dump());
-            entity->sendToAll(protocolMsg);
-        }
-        else if (messageType == "Prepare") {
-            entity->storePrepareMessage(senderId, seq, operation);
-            quorumMet = entity->getPrepareCount(seq) >= quorum;
-            
-            if (quorumMet) {
-                // Move to commit phase
-                context->setState("commit");
-                
-                // Send commit message
-                json commitMsg;
-                commitMsg["type"] = "Commit";
-                commitMsg["view"] = context->getViewNumber();
-                commitMsg["sequence"] = seq;
-                commitMsg["operation"] = operation;
-                commitMsg["sender"] = entity->getNodeId();
-                
-                Message protocolMsg(commitMsg.dump());
-                entity->sendToAll(protocolMsg);
-            }
-        }
-        else if (messageType == "Commit") {
-            entity->storeCommitMessage(senderId, seq, operation);
-            if (entity->getCommitCount(seq) >= quorum) {
-                std::cout << "[Node " << entity->getNodeId() << "] Consensus reached for seq " << seq << "\n";
-                entity->markOperationProcessed(operation);
-                entity->removeSequenceState(seq);
-                context->setState("idle");
-                return;
-            }
-        }
-    }
-};
-
-// ===================== Null Handler =====================
-class NullMessageHandler : public MessageHandler {
-public:
-    void handle(Entity*, const Message*, EntityState*) override {
-        std::cout << "[Entity] No handler registered for this message type\n";
-    }
-};
-
-// ===================== Message Handler Factory =====================
-class MessageHandlerFactory {
-private:
-    MessageHandlerFactory() { registerHandlers(); }
-    using HandlerCreator = std::function<std::unique_ptr<MessageHandler>()>;
-    std::unordered_map<std::string, HandlerCreator> _registry;
-    void registerHandlers() {
-        _registry["PBFTRequest"] = []() { return std::make_unique<ProtocolHandler>(); };
-        _registry["PrePrepare"] = []() { return std::make_unique<ProtocolHandler>(); };
-        _registry["Prepare"] = []() { return std::make_unique<ProtocolHandler>(); };
-        _registry["Commit"] = []() { return std::make_unique<ProtocolHandler>(); };
-        _registry["Reply"] = []() { return std::make_unique<ProtocolHandler>(); };
-    }
-public:
-    static MessageHandlerFactory& getInstance() {
-        static MessageHandlerFactory instance;
-        return instance;
-    }
-    std::unique_ptr<MessageHandler> createHandler(const std::string& messageType) {
-        auto it = _registry.find(messageType);
-        if (it != _registry.end()) return it->second();
-        return std::make_unique<NullMessageHandler>();
-    }
-};
 
 // ===================== Entity Methods =====================
 Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
-    : _entityState(role, "idle", 0, 0), nodeId(id), peerPorts(peers), connection(5000+id,true), processingThread(), f(2), prePrepareBroadcasted() {
+    : _entityState(role, "PBFTRequest", 0, 0), nodeId(id), peerPorts(peers), connection(5000+id,true), processingThread(), f(2), prePrepareBroadcasted() {
     EventFactory::getInstance().initialize();
     loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1200, [this] {
@@ -139,49 +32,6 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
         this->onTimeout();
     });
     
-}
-
-void Entity::storePrePrepareMessage(int nodeId, int sequence, const std::string& operation) {
-    prePrepareMessages[sequence].insert(nodeId);
-    if (!operation.empty()) prePrepareOperations[sequence] = operation;
-    if (timeKeeper) {
-        std::cout << "[Node " << getNodeId() << "] Starting timer for seq " << sequence << " after PrePrepare\n";
-        timeKeeper->start(); // Start timer on PrePrepare
-    }
-}
-void Entity::storePrepareMessage(int nodeId, int sequence, const std::string& operation) {
-    prepareMessages[sequence].insert(nodeId);
-    if (!operation.empty()) prepareOperations[sequence] = operation;
-    if (timeKeeper) timeKeeper->reset(); // Reset timer on 
-    //std::this_thread::sleep_for(std::chrono::milliseconds(1500)); // Simulate processing delay
-}
-void Entity::storeCommitMessage(int nodeId, int sequence, const std::string& operation) {
-    commitMessages[sequence].insert(nodeId);
-    if (!operation.empty()) commitOperations[sequence] = operation;
-
-    std::lock_guard<std::mutex> lock(timerMtx);
-    if (timeKeeper) {
-        if (prePrepareMessages.size() == commitMessages.size()) {
-            timeKeeper->stop();
-            timeKeeper.reset();
-            std::cout << "[Node  " << getNodeId() << "] All operations processed. Timer stopped.\n";
-        } else {
-            timeKeeper->reset();
-        }
-    }
-}
-
-
-int Entity::getPrepareCount(int seq) const {
-    auto it = prepareMessages.find(seq);
-    if (it != prepareMessages.end()) return static_cast<int>(it->second.size());
-    return 0;
-}
-
-int Entity::getCommitCount(int seq) const {
-    auto it = commitMessages.find(seq);
-    if (it != commitMessages.end()) return static_cast<int>(it->second.size());
-    return 0;
 }
 
 void Entity::onTimeout() {
@@ -255,101 +105,67 @@ void Entity::loadProtocolConfig(const std::string& configFile) {
         std::cerr << "Failed to load configuration: " << e.what() << std::endl;
     }
 }
-void Entity::handleEvent(const Event* event, EntityState*) {
+void Entity::handleEvent(const Event* event, EntityState* context) {
     if (const Message* message = dynamic_cast<const Message*>(event)) {
         try {
             json j = json::parse(message->getContent());
             std::string messageType = j["type"].get<std::string>();
 
-            // Ignore all except ViewChange and NewView if in view change mode
+            int seq = j.contains("sequence") ? j["sequence"].get<int>() : -1;
+            int sender = j.contains("sender") ? j["sender"].get<int>() : -1;
+
+            
+            
+            
+            //std::cout << "  Current State: " << context->getState() << std::endl;
+
             if (inViewChange && messageType != "ViewChange" && messageType != "NewView") {
-                std::cout << "[Node " << getNodeId() << "] In view change, ignoring message type: " << messageType << "\n";
+                std::cout << "  [IGNORED] Node in view change\n";
                 return;
             }
 
-            // --- ViewChange logic ---
-            if (messageType == "ViewChange") {
-                int newView = j["new_view"].get<int>();
-                int senderId = j["sender"].get<int>();
-                viewChangeMessages[newView].insert(senderId);
+            std::string phase = messageType;
+            
 
-                int quorum = computeQuorum("2f+1", getF());
-                if ((int)viewChangeMessages[newView].size() >= quorum) {
-                    std::cout << "[Node " << getNodeId() << "] View change quorum reached for view " << newView << "\n";
-                    getState().setViewNumber(newView);
-                    inViewChange = false; // Exit view change mode
-
-                    int leaderId = newView % (peerPorts.size() + 1);
-                    if (getNodeId() == leaderId) {
-                        nlohmann::json newViewMsg;
-                        newViewMsg["type"] = "NewView";
-                        newViewMsg["new_view"] = newView;
-                        newViewMsg["sender"] = getNodeId();
-                        Message msg(newViewMsg.dump());
-                        sendToAll(msg);
-                        std::cout << "[Node " << getNodeId() << "] Sent NewView message as new leader.\n";
-                        inViewChange = false;
-                        std::lock_guard<std::mutex> lock(timerMtx);
-                        if (timeKeeper) {
-                            timeKeeper->stop();
-                            timeKeeper.reset();
+            YAML::Node phaseConfig = getPhaseConfig(phase);
+            if (phaseConfig && phaseConfig["actions"] && phaseConfig["actions"].IsSequence()) {
+                //std::cout << "  Phase Configuration found for: " << phase << std::endl;
+                //std::cout << "  Executing actions:" << std::endl;
+                bool actionsSucceeded = true;
+                // Execute all actions
+                bool quorumMet = false;
+                for (const auto& actionNode : phaseConfig["actions"]) {
+                    std::string actionName = actionNode.as<std::string>();
+                    auto it = actions.find(actionName);
+                    if (it != actions.end()) {
+                        // Now pass 'context' to all event actions
+                        bool shouldContinue = it->second->execute(this, message, &sequenceStates[seq]);
+                        
+                        if (!shouldContinue) {
+                            actionsSucceeded = false; // <-- Add this line
+                            break; // Stop further actions if any action returns false
                         }
-
-                        // ---- Re-propose all uncommitted sequences ----
-                        for (const auto& [seq, state] : sequenceStates) {
-                            // Only re-propose if not committed
-                            if (commitMessages[seq].size() < computeQuorum("2f+1", getF())) {
-                                std::string operation;
-                                if (prePrepareOperations.count(seq))
-                                    operation = prePrepareOperations[seq];
-                                else if (prepareOperations.count(seq))
-                                    operation = prepareOperations[seq];
-                                else if (commitOperations.count(seq))
-                                    operation = commitOperations[seq];
-                                else
-                                    continue; // No operation to re-propose
-
-                                nlohmann::json preprepareMsg;
-                                preprepareMsg["type"] = "PrePrepare";
-                                preprepareMsg["view"] = getState().getViewNumber();
-                                preprepareMsg["sequence"] = seq;
-                                preprepareMsg["operation"] = operation;
-                                preprepareMsg["sender"] = getNodeId();
-
-                                Message protocolMsg(preprepareMsg.dump());
-                                sendToAll(protocolMsg);
-                                std::cout << "[Node " << getNodeId() << "] Re-proposed PrePrepare for seq " << seq << " in view " << getState().getViewNumber() << "\n";
-                            }
-                        }
-                        // Optionally: If there are no uncommitted sequences, wait for new client requests as usual.
                     }
                 }
-                return;
-            }
 
-            if (messageType == "NewView") {
-                int newView = j["new_view"].get<int>();
-                std::cout << "[Node " << getNodeId() << "] Received NewView for view " << newView << "\n";
-                getState().setViewNumber(newView);
-                inViewChange = false; // Exit view change mode
-
-                // Stop timer for new view
-                std::lock_guard<std::mutex> lock(timerMtx);
-                if (timeKeeper) {
-                    timeKeeper->stop();
-                    timeKeeper.reset();
+                // Transition state only if all actions succeeded
+                if (actionsSucceeded && phaseConfig["next_state"] && context) {
+                    std::string nextState = phaseConfig["next_state"].as<std::string>();
+                    sequenceStates[seq].setState(nextState);
+                    //std::cout << "\n[Node " << getNodeId() << "] " << "Transitioning to state: " << nextState << std::endl;
                 }
-
-                viewChangeMessages.erase(newView);
-                return;
+                
+            } else {
+                std::cout << " No phase configuration found for: " << phase << std::endl;
             }
 
             // Handle PBFTRequest from Leader
             if (messageType == "PBFTRequest" && getState().getRole() == "Leader") {
+                std::cout << "  Processing PBFTRequest as Leader" << std::endl;
                 std::string operation = j["operation"].get<std::string>();
                 if (!operation.empty() && !hasProcessedOperation(operation)) {
                     int seq = getNextSequenceNumber();
-                    sequenceStates.emplace(seq, EntityState(getState().getRole(), "idle", getState().getViewNumber(), seq));
+                    sequenceStates.emplace(seq, EntityState(getState().getRole(), "PBFTRequest", getState().getViewNumber(), seq));
                     
                     // Create PrePrepare message
                     json preprepareMsg;
@@ -365,22 +181,20 @@ void Entity::handleEvent(const Event* event, EntityState*) {
                 return;
             }
             
-            // Handle protocol messages
+            // For protocol messages, ensure sequence state exists
             if (j.contains("sequence")) {
                 int seq = j["sequence"].get<int>();
                 if (sequenceStates.find(seq) == sequenceStates.end()) {
-                    sequenceStates.emplace(seq, EntityState(getState().getRole(), "idle", getState().getViewNumber(), seq));
-                }
-                
-                auto it = sequenceStates.find(seq);
-                if (it != sequenceStates.end()) {
-                    auto handler = MessageHandlerFactory::getInstance().createHandler(messageType);
-                    handler->handle(this, message, &it->second);
+                    std::cout << "  Creating new sequence state for seq: " << seq << std::endl;
+                    sequenceStates.emplace(seq, EntityState(getState().getRole(), "PBFTRequest", getState().getViewNumber(), seq));
                 }
             }
             
+            //std::cout << "  Final State: " << context->getState() << "\n";
+            //std::cout << "==========================================\n";
+            
         } catch (const json::exception& e) {
-            std::cerr << "[Entity] JSON parsing error: " << e.what() << "\n";
+            std::cerr << "[Node " << getNodeId() << "] JSON parsing error: " << e.what() << "\n";
         }
     }
 }
