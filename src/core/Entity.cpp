@@ -26,7 +26,7 @@ int computeQuorum(const std::string& quorumStr, int f) {
 Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
     : _entityState(role, "PBFTRequest", 0, 0), nodeId(id), peerPorts(peers), connection(5000+id,true), processingThread(), f(2), prePrepareBroadcasted() {
     EventFactory::getInstance().initialize();
-    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml");
+    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.linearpbft.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1200, [this] {
         std::lock_guard<std::mutex> lock(timerMtx);
         this->onTimeout();
@@ -113,10 +113,6 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
 
             int seq = j.contains("sequence") ? j["sequence"].get<int>() : -1;
             int sender = j.contains("sender") ? j["sender"].get<int>() : -1;
-
-            
-            
-            
             //std::cout << "  Current State: " << context->getState() << std::endl;
 
             if (inViewChange && messageType != "ViewChange" && messageType != "NewView") {
@@ -163,7 +159,7 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
             if (messageType == "PBFTRequest" && getState().getRole() == "Leader") {
                 std::cout << "  Processing PBFTRequest as Leader" << std::endl;
                 std::string operation = j["operation"].get<std::string>();
-                if (!operation.empty() && !hasProcessedOperation(operation)) {
+                if (!operation.empty() && !hasProcessedOperation(std::stoi(operation.substr(9)))) {
                     int seq = getNextSequenceNumber();
                     sequenceStates.emplace(seq, EntityState(getState().getRole(), "PBFTRequest", getState().getViewNumber(), seq));
                     
@@ -189,9 +185,6 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                     sequenceStates.emplace(seq, EntityState(getState().getRole(), "PBFTRequest", getState().getViewNumber(), seq));
                 }
             }
-            
-            //std::cout << "  Final State: " << context->getState() << "\n";
-            //std::cout << "==========================================\n";
             
         } catch (const json::exception& e) {
             std::cerr << "[Node " << getNodeId() << "] JSON parsing error: " << e.what() << "\n";
@@ -221,7 +214,7 @@ void Entity::removeSequenceState(int seq) {
     prepareOperations.erase(seq);
     commitOperations.erase(seq);
 }
-void Entity::markOperationProcessed(const std::string& operation) {
+void Entity::markOperationProcessed(const int operation) {
     processedOperations.insert(operation);
     std::cout << "[Node " << getNodeId() << "] Marked operation as processed: " << operation << "\n";
     printCommittedMessages();

@@ -63,11 +63,11 @@ public:
 
     std::set<int> prePrepareBroadcasted;
 
-    bool hasProcessedOperation(const std::string& operation) const {
+    bool hasProcessedOperation(const int operation) const {
         return processedOperations.find(operation) != processedOperations.end();
     }
     
-    void markOperationProcessed(const std::string& operation);
+    void markOperationProcessed(const int operation);
 
     std::vector<int> peerPorts;
     std::map<int, EntityState> sequenceStates;
@@ -84,6 +84,7 @@ public:
 
     // Track received messages: [sequence][type][sender]
     std::unordered_map<int, std::unordered_map<std::string, std::set<int>>> receivedMessages;
+    std::set<int> processedOperations;  // Track completed operations
 
 private:
     int nodeId;
@@ -99,7 +100,7 @@ private:
 
     int nextSequenceNumber = 0;
 
-    std::set<std::string> processedOperations;  // Track completed operations
+    
 
     void onTimeout();
 };

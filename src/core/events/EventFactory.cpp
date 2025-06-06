@@ -62,41 +62,64 @@ public:
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         if (!validateMessage(message, entity)) return false;
         auto j = nlohmann::json::parse(message->getContent());
+
+        // If combinedMessages is present, store each message in the array
+        if (j.contains("combinedMessages") && j["combinedMessages"].is_array()) {
+            for (const auto& msg : j["combinedMessages"]) {
+                int seq = j["sequence"].get<int>(); // Use the outer sequence for all, or msg["sequence"] if each has its own
+                std::string operation = j["operation"].get<std::string>();
+                int senderId = msg.get<int>(); // If your set stores senderId, otherwise adjust as needed
+                std::string currentPhase = j["type"];
+
+                if (currentPhase == "PrePrepare") {
+                    if (!entity->prePrepareMessages[seq].count(senderId)) {
+                        entity->prePrepareMessages[seq].insert(senderId);
+                        if (!operation.empty()) entity->prePrepareOperations[seq] = operation;
+                    }
+                } else if (currentPhase == "prepare") {
+                    if (!entity->prepareMessages[seq].count(senderId)) {
+                        entity->prepareMessages[seq].insert(senderId);
+                        if (!operation.empty()) entity->prepareOperations[seq] = operation;
+                    }
+                } else if (currentPhase == "commit") {
+                    if (!entity->commitMessages[seq].count(senderId)) {
+                        entity->commitMessages[seq].insert(senderId);
+                        if (!operation.empty()) entity->commitOperations[seq] = operation;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Fallback: single message storage (original logic)
         int seq = j["sequence"].get<int>();
         std::string operation = j["operation"].get<std::string>();
         int senderId = j["sender"].get<int>();
         std::string currentPhase = j["type"];
 
-        // Store message based on current phase
         if (currentPhase == "PrePrepare") {
             if (!entity->prePrepareMessages[seq].count(senderId)) {
                 entity->prePrepareMessages[seq].insert(senderId);
                 if (!operation.empty()) entity->prePrepareOperations[seq] = operation;
-                //std::cout << "[Node " << entity->getNodeId() << "] Stored PrePrepare from " << senderId << " for seq " << seq << std::endl;
             } else {
                 return false; // Duplicate, stop further actions
             }
         } 
         else if (currentPhase == "prepare") {
-            //std::this_thread::sleep_for(std::chrono::seconds(2));
             if (!entity->prepareMessages[seq].count(senderId)) {
                 entity->prepareMessages[seq].insert(senderId);
                 if (!operation.empty()) entity->prepareOperations[seq] = operation;
-                //std::cout << "[Node " << entity->getNodeId() << "] Stored Prepare from " << senderId << " for seq " << seq << std::endl;
             } else {
                 return false; // Duplicate, stop further actions
             }
         }
         else if (currentPhase == "commit") {
-            //std::cout << "Node " << entity->getNodeId() << " " << entity->commitMessages[seq].size() << " " << computeQuorumEventFactory("2f+1", entity->getF()) << std::endl;
             if(entity->commitMessages[seq].size() >= computeQuorumEventFactory("2f+1", entity->getF())) {
-                //std::cout << "[Node " << entity->getNodeId() << "] Commit quorum already met for seq " << seq << std::endl;
                 return false; // Quorum already met, stop further actions
             }
             if (!entity->commitMessages[seq].count(senderId)) {
                 entity->commitMessages[seq].insert(senderId);
                 if (!operation.empty()) entity->commitOperations[seq] = operation;
-                //std::cout << "[Node " << entity->getNodeId() << "] Stored Commit from " << senderId << " for seq " << seq << std::endl;
             } else {
                 return false; // Duplicate, stop further actions
             }
@@ -193,8 +216,91 @@ public:
         std::string operation = j["operation"].get<std::string>();
         int seq = j["sequence"].get<int>();
         std::cout << "[Node " << entity->getNodeId() << "] Completed operation: " << operation << " for seq " << seq << "\n";
-        entity->markOperationProcessed(operation);
+        entity->markOperationProcessed(seq);
         //entity->removeSequenceState(seq);
+        return true;
+    }
+};
+
+
+class BroadcastIfLeaderEvent : public BaseEvent {
+public:
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        if (entity->getState().getRole() == "Leader") {
+            auto j = nlohmann::json::parse(message->getContent());
+            int seq = j["sequence"].get<int>();
+            // if already processed, skip
+            if (entity->processedOperations.find(seq) != entity->processedOperations.end()) {
+                //std::cout << "[Node " << entity->getNodeId() << "] Already processed seq " << seq << ", skipping broadcast.\n";
+                return false;
+            }
+            std::string phase = j["type"];
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+            // Combine all messages for this phase and sequence
+            nlohmann::json combinedMessages = nlohmann::json::array();
+            if (phase == "PrePrepare") {
+                for (const auto& msg : entity->prePrepareMessages[seq]) {
+                    combinedMessages.push_back(msg);
+                }
+            } else if (phase == "prepare") {
+                for (const auto& msg : entity->prepareMessages[seq]) {
+                    combinedMessages.push_back(msg);
+                }
+            } else if (phase == "commit") {
+                for (const auto& msg : entity->commitMessages[seq]) {
+                    combinedMessages.push_back(msg);
+                }
+            }
+            std::cout << "[Node " << entity->getNodeId() << "] Combined messages for " << phase << " for seq " << seq << ": " << combinedMessages.dump() << "\n";
+            std::cout << "[Node " << entity->getNodeId() << "] Broadcasting combined messages for " << phase << " for seq " << seq << "\n";
+            // Prepare the broadcast message
+            YAML::Node phaseConfig = entity->getPhaseConfig(j["type"]);
+            if (phaseConfig["next_state"]) {
+                //std::string nextPhase = phaseConfig["next_state"].as<std::string>();
+                //std::cout << "[Node " << entity->getNodeId() << "] Broadcasting to next phase: " << nextPhase << "\n";
+                nlohmann::json outMsg;
+                outMsg["type"] = j["type"];
+                outMsg["view"] = state->getViewNumber();
+                outMsg["sequence"] = seq;
+                outMsg["operation"] = j["operation"];
+                outMsg["sender"] = entity->getNodeId();
+                outMsg["combinedMessages"] = combinedMessages;
+
+                Message protocolMsg(outMsg.dump());
+
+                // Optionally, call the existing BroadcastEvent logic
+                // Or just send directly:
+                entity->sendToAll(protocolMsg);
+            }
+        }
+        return true;
+    }
+};
+
+class UnicastIfParticipantEvent : public BaseEvent {
+public:
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        if (entity->getState().getRole() != "Leader") {
+            // Your unicast logic here (send to leader or specific node)
+            auto j = nlohmann::json::parse(message->getContent());
+            int seq = j["sequence"].get<int>();
+            YAML::Node phaseConfig = entity->getPhaseConfig(j["type"]);
+            if (phaseConfig["next_state"]) {
+                std::string nextPhase = phaseConfig["next_state"].as<std::string>();
+                nlohmann::json outMsg;
+                outMsg["type"] = nextPhase;
+                outMsg["view"] = state->getViewNumber();
+                outMsg["sequence"] = seq;
+                outMsg["operation"] = j["operation"];
+                outMsg["sender"] = entity->getNodeId();
+                Message protocolMsg(outMsg.dump());
+                // Assuming you have a method to get leader ID
+                int leaderId = (state->getViewNumber()+1) % (entity->peerPorts.size());
+                std::cout << "[Node " << entity->getNodeId() << "] Unicasting to leader: " << leaderId << " phase:" << nextPhase << "\n";
+                entity->sendTo(leaderId, protocolMsg);
+            }
+        }
         return true;
     }
 };
@@ -314,6 +420,8 @@ void EventFactory::initialize() {
     
     this->registerEvent<HandleViewChangeEvent>("handleViewChange");
     this->registerEvent<HandleNewViewEvent>("handleNewView");
+    this->registerEvent<BroadcastIfLeaderEvent>("broadcastifLeader");
+    this->registerEvent<UnicastIfParticipantEvent>("unicastifParticipant");
 }
 
 // Explicit template instantiations to avoid linker errors (for all events you register)
@@ -329,6 +437,8 @@ template void EventFactory::registerEvent<ManageTimerEvent>(const std::string&);
 template void EventFactory::registerEvent<CheckQuorumEvent>(const std::string&);
 template void EventFactory::registerEvent<BroadcastEvent>(const std::string&);
 template void EventFactory::registerEvent<CompleteEvent>(const std::string&);
+template void EventFactory::registerEvent<BroadcastIfLeaderEvent>(const std::string&);
+template void EventFactory::registerEvent<UnicastIfParticipantEvent>(const std::string&);
 
 #include "../../../include/core/Entity.h" // or the header where computeQuorumEventFactory is defined
 
