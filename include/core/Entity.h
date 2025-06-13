@@ -16,6 +16,7 @@
 #include <nlohmann/json.hpp>
 #include <map>
 #include "TimeKeeper.h"
+#include <atomic>
 
 class Event;
 class Message;
@@ -85,6 +86,8 @@ public:
     // Track received messages: [sequence][type][sender]
     std::unordered_map<int, std::unordered_map<std::string, std::set<int>>> receivedMessages;
     std::set<int> processedOperations;  // Track completed operations
+    std::unordered_map<int, std::atomic<bool>> preparePhaseTimerRunning;
+    std::unordered_map<std::string, std::unique_ptr<Event>> actions;
 
 private:
     int nodeId;
@@ -94,7 +97,7 @@ private:
     std::thread processingThread;
 
     YAML::Node protocolConfig;
-    std::unordered_map<std::string, std::unique_ptr<Event>> actions;
+    
 
     DataSet dataset;
 

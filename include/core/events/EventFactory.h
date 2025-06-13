@@ -4,6 +4,8 @@
 #include <memory>
 #include <functional>
 #include <string>
+#include <yaml-cpp/yaml.h>
+#include <nlohmann/json.hpp>
 
 class EventFactory {
 public:

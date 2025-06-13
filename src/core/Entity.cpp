@@ -26,7 +26,7 @@ int computeQuorum(const std::string& quorumStr, int f) {
 Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
     : _entityState(role, "PBFTRequest", 0, 0), nodeId(id), peerPorts(peers), connection(5000+id,true), processingThread(), f(2), prePrepareBroadcasted() {
     EventFactory::getInstance().initialize();
-    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.linearpbft.yaml");
+    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.sbft.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1200, [this] {
         std::lock_guard<std::mutex> lock(timerMtx);
         this->onTimeout();

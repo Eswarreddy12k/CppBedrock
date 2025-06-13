@@ -7,7 +7,7 @@ int main() {
     CoordinationServer server;
     CoordinationUnit unit;
 
-    server.loadConfig("config/pbft.yaml");
+    server.loadConfig("config.pbft.yaml");
     server.sendStartSignal();
 
     // Start CoordinationUnit in a separate thread

@@ -1,0 +1,42 @@
+protocol: LinearPBFT
+phases:
+  PBFTRequest:
+    quorum: 1
+    next_state: PrePrepare
+    actions:
+      - "storeMessage"
+  PrePrepare:
+    quorum: 1
+    next_state: prepare
+    actions:
+      - "storeMessage"
+      - "manageTimer"
+      - "unicastifParticipant"
+  prepare:
+    quorum: 2f
+    next_state: commit
+    actions:
+      - "storeMessage"
+      - "checkQuorumForSBFT"
+      - "manageTimer"
+      - "broadcastifLeader"
+      - "unicastifParticipant"
+  commit:
+    quorum: 2f
+    next_state: PBFTRequest
+    actions:
+      - "storeMessage"
+      - "checkQuorumForSBFT"
+      - "manageTimer"
+      - "broadcastifLeader"
+      - "complete"
+  ViewChange:
+    quorum: 2f+1
+    next_state: PBFTRequest
+    actions:
+      - "handleViewChange"
+  NewView:
+    quorum: 1
+    next_state: PBFTRequest
+    actions:
+      - "handleNewView"
