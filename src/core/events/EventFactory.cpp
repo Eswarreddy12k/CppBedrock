@@ -63,6 +63,7 @@ public:
         if (!validateMessage(message, entity)) return false;
         auto j = nlohmann::json::parse(message->getContent());
         
+        //std::cout << "[Node " << entity->getNodeId() << "] Storing message: " << j.dump() << std::endl;
         // If combinedMessages is present, store each message in the array
         if (j.contains("combinedMessages") && j["combinedMessages"].is_array()) {
             for (const auto& msg : j["combinedMessages"]) {
@@ -70,38 +71,34 @@ public:
                 std::string operation = j["operation"].get<std::string>();
                 int senderId = msg.get<int>(); // If your set stores senderId, otherwise adjust as needed
                 std::string currentPhase = j["type"];
-
-                if (currentPhase == "PrePrepare") {
-                    if (!entity->prePrepareMessages[seq].count(senderId)) {
-                        entity->prePrepareMessages[seq].insert(senderId);
-                        if (!operation.empty()) entity->prePrepareOperations[seq] = operation;
-                    }
-                } else if (currentPhase == "prepare") {
-                    if (!entity->prepareMessages[seq].count(senderId)) {
-                        entity->prepareMessages[seq].insert(senderId);
-                        if (!operation.empty()) entity->prepareOperations[seq] = operation;
-                    }
-                } else if (currentPhase == "commit") {
-                    if (!entity->commitMessages[seq].count(senderId)) {
-                        entity->commitMessages[seq].insert(senderId);
-                        if (!operation.empty()) entity->commitOperations[seq] = operation;
-                        // --- Trigger CompleteEvent if quorum is now met ---
-                        if(entity->commitMessages[seq].size() >= 6) {
-                            auto completeEvent = EventFactory::getInstance().createEvent("complete");
-                            if (completeEvent) {
-                                nlohmann::json outMsg;
-                                outMsg["type"] = "commit";
-                                outMsg["view"] = state->getViewNumber();
-                                outMsg["sequence"] = seq;
-                                outMsg["operation"] = entity->commitOperations[seq];
-                                outMsg["sender"] = entity->getNodeId();
-
-                                Message protocolMsg(outMsg.dump());
-                                completeEvent->execute(entity, &protocolMsg, state);
-                            }
+                std::string protocolName = "Unknown - will be set later"; // Placeholder for protocol name
+                ProtocolMessageRecord record{seq, senderId, operation, currentPhase, protocolName};
+                entity->allMessagesBySeq[seq].push_back(record);
+                YAML::Node phaseConfig = entity->getPhaseConfig(currentPhase);
+                if (currentPhase == "commit" && phaseConfig["next_state"].as<std::string>()=="PBFTRequest") {
+                    std::unordered_set<int> uniqueSenders;
+                    for (const auto& record : entity->allMessagesBySeq[seq]) {
+                        if (record.phase == currentPhase) {
+                            uniqueSenders.insert(record.senderId);
                         }
-                        // --- End CompleteEvent trigger ---
                     }
+                    // --- Trigger CompleteEvent if quorum is now met ---
+                    if(uniqueSenders.size() >= 6) {
+                        auto completeEvent = EventFactory::getInstance().createEvent("complete");
+                        if (completeEvent) {
+                            nlohmann::json outMsg;
+                            outMsg["type"] = "commit";
+                            outMsg["view"] = entity->getState().getViewNumber();
+                            outMsg["sequence"] = seq;
+                            outMsg["operation"] = entity->commitOperations[seq];
+                            outMsg["sender"] = entity->getNodeId();
+                            outMsg["qc"] = state->getLockedQC(); // Include QC if available
+                            Message protocolMsg(outMsg.dump());
+                            completeEvent->execute(entity, &protocolMsg, state);
+                        }
+                    }
+                    // --- End CompleteEvent trigger ---
+                    
                 }
             }
             return true;
@@ -112,35 +109,20 @@ public:
         std::string operation = j["operation"].get<std::string>();
         int senderId = j["sender"].get<int>();
         std::string currentPhase = j["type"];
-
-        if (currentPhase == "PrePrepare") {
-            if (!entity->prePrepareMessages[seq].count(senderId)) {
-                entity->prePrepareMessages[seq].insert(senderId);
-                if (!operation.empty()) entity->prePrepareOperations[seq] = operation;
-            } else {
-                return false; // Duplicate, stop further actions
-            }
-        } 
-        else if (currentPhase == "prepare") {
-            if (!entity->prepareMessages[seq].count(senderId)) {
-                entity->prepareMessages[seq].insert(senderId);
-                if (!operation.empty()) entity->prepareOperations[seq] = operation;
-            } else {
-                return false; // Duplicate, stop further actions
+        std::string protocolName = "Unknown - will be set later"; // Placeholder for protocol name
+        // Check for duplicate sender in this phase and sequence
+        bool isDuplicate = false;
+        for (const auto& rec : entity->allMessagesBySeq[seq]) {
+            if (rec.phase == "commit" && rec.senderId == senderId) {
+                isDuplicate = true;
+                break;
             }
         }
-        else if (currentPhase == "commit") {
-            if(entity->commitMessages[seq].size() >= computeQuorumEventFactory("2f+1", entity->getF())) {
-                return false; // Quorum already met, stop further actions
-            }
-            if (!entity->commitMessages[seq].count(senderId)) {
-                entity->commitMessages[seq].insert(senderId);
-                if (!operation.empty()) entity->commitOperations[seq] = operation;
-                
-            } else {
-                return false; // Duplicate, stop further actions
-            }
+        if (isDuplicate) {
+            return false; // Duplicate, stop further actions
         }
+        ProtocolMessageRecord record{seq, senderId, operation, currentPhase, protocolName};
+        entity->allMessagesBySeq[seq].push_back(record);
         return true;
     }
 };
@@ -160,6 +142,24 @@ public:
     }
 };
 
+class StartTimerEvent : public BaseEvent {
+public:
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        //std::cout << "[Node " << entity->getNodeId() << "] Starting timer" << std::endl;
+        if (entity->timeKeeper) entity->timeKeeper->start();
+        return true;
+    }
+};
+
+class ResetTimerEvent : public BaseEvent {
+public:
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        //std::cout << "[Node " << entity->getNodeId() << "] Resetting timer" << std::endl;
+        if (entity->timeKeeper) entity->timeKeeper->reset();
+        return true;
+    }
+};
+
 class CheckQuorumEvent : public BaseEvent {
 public:
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
@@ -173,21 +173,31 @@ public:
         int quorum = computeQuorumEventFactory(quorumStr, entity->getF());
         bool quorumMet = true;
         //std::cout << "[Node " << entity->getNodeId() << "] Checking quorum for " << currentPhase << " for seq " << seq << std::endl;
-        if (currentPhase == "prepare") {
-            quorumMet = entity->prepareMessages[seq].size() >= quorum;
-            if (!quorumMet){
-                //std::cout << "[Node " << entity->getNodeId() << "] Prepare quorum not met for seq " << seq << std::endl;
-                return false;
-            }
+        // if (currentPhase == "prepare") {
+        //     quorumMet = entity->prepareMessages[seq].size() >= quorum;
+        //     if (!quorumMet){
+        //         //std::cout << "[Node " << entity->getNodeId() << "] Prepare quorum not met for seq " << seq << std::endl;
+        //         return false;
+        //     }
             
+        // }
+        // else if (currentPhase == "commit") {
+        //     quorumMet = entity->commitMessages[seq].size() >= quorum;
+        //     if (!quorumMet){
+        //         //std::cout << "[Node " << entity->getNodeId() << "] commit quorum not met for seq " << seq << std::endl;
+        //         return false;
+        //     }
+            
+        // }
+        std::unordered_set<int> uniqueSenders;
+        for (const auto& record : entity->allMessagesBySeq[seq]) {
+            if (record.phase == currentPhase) {
+                uniqueSenders.insert(record.senderId);
+            }
         }
-        else if (currentPhase == "commit") {
-            quorumMet = entity->commitMessages[seq].size() >= quorum;
-            if (!quorumMet){
-                //std::cout << "[Node " << entity->getNodeId() << "] commit quorum not met for seq " << seq << std::endl;
-                return false;
-            }
-            
+        quorumMet = uniqueSenders.size() >= quorum;
+        if (!quorumMet) {
+            return false;
         }
         if (quorumMet && phaseConfig["next_state"]) {
             std::string nextState = phaseConfig["next_state"].as<std::string>();
@@ -212,18 +222,24 @@ public:
         bool quorumMet = true;
 
         if (currentPhase == "prepare") {
-            quorumMet = entity->prepareMessages[seq].size() >= quorum;
+            std::unordered_set<int> uniqueSenders;
+            for (const auto& record : entity->allMessagesBySeq[seq]) {
+                if (record.phase == "prepare") {
+                    uniqueSenders.insert(record.senderId);
+                }
+            }
+            quorumMet = uniqueSenders.size() >= quorum;
             if (!quorumMet) return false;
 
             // Start timer only once per sequence
-            if (!entity->preparePhaseTimerRunning[seq].exchange(true) && entity->prepareMessages[seq].size() <= quorum) {
-                std::thread([entity, seq, phaseConfig, currentPhase]() {
+            if (!entity->preparePhaseTimerRunning[seq].exchange(true) && uniqueSenders.size() <= quorum) {
+                std::thread([entity, seq, phaseConfig, currentPhase, uniqueSenders]() {
                     std::this_thread::sleep_for(std::chrono::milliseconds(25));
                     entity->preparePhaseTimerRunning[seq] = false;
-                    std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer expired for seq " << entity->prepareMessages[seq].size() << "\n";    
+                    std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer expired for seq " << uniqueSenders.size() << "\n";    
                     YAML::Node nextPhaseConfig = entity->getPhaseConfig(currentPhase);
                     std::string nextState;
-                    if (entity->prepareMessages[seq].size() == 6) {
+                    if (uniqueSenders.size() == 6) {
                         // Go to commit phase
                         nextState = nextPhaseConfig["next_state"].as<std::string>();
                         entity->sequenceStates[seq].setState(nextState);
@@ -261,7 +277,7 @@ public:
                                 else
                                     outMsg["operation"] = "";
                                 outMsg["sender"] = entity->getNodeId();
-
+                                
                                 Message protocolMsg(outMsg.dump());
                                 it->second->execute(entity, &protocolMsg, &entity->sequenceStates[seq]);
                             }
@@ -272,7 +288,13 @@ public:
         }
         else if (currentPhase == "commit") {
             
-            quorumMet = entity->commitMessages[seq].size() >= quorum;
+            std::unordered_set<int> uniqueSenders;
+            for (const auto& record : entity->allMessagesBySeq[seq]) {
+                if (record.phase == "commit") {
+                    uniqueSenders.insert(record.senderId);
+                }
+            }
+            quorumMet = uniqueSenders.size() >= quorum;
             if (!quorumMet){
                 return false;
             }
@@ -281,6 +303,27 @@ public:
             std::string nextState = phaseConfig["next_state"].as<std::string>();
         }
         return quorumMet;
+    }
+};
+
+class CheckQCEvent : public BaseEvent {
+public:
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        // Check if QC is present in the message, if not it is initial message
+        if(!j.contains("qc") || j["qc"].is_null() || j["qc"].empty() || j["qc"]=="") {
+            //std::cout << "[Node " << entity->getNodeId() << "] No QC found in message for seq " << j["sequence"] << "\n";
+            return true;
+        }
+        auto qc = j["qc"];
+        // Example: Check QC fields (type, viewNumber, node, sig)
+        //std::cout << "current view is ::: " << entity->getState().getViewNumber() << "  " << qc << "\n";
+        std::string curview = qc.get<std::string>();
+        if (std::stoi(curview)<= (entity->getState().getViewNumber()) ){
+            //std::cout << "[Node " << entity->getNodeId() << "] QC is missing required fields for seq " << j["sequence"] << "\n";
+            return true;
+        }
+        return false;
     }
 };
 
@@ -295,11 +338,11 @@ public:
             std::string nextPhase = phaseConfig["next_state"].as<std::string>();
             nlohmann::json outMsg;
             outMsg["type"] = nextPhase;
-            outMsg["view"] = state->getViewNumber();
+            outMsg["view"] = entity->getState().getViewNumber();
             outMsg["sequence"] = seq;
             outMsg["operation"] = j["operation"];
             outMsg["sender"] = entity->getNodeId();
-
+            outMsg["qc"] = state->getLockedQC(); // Include QC if available
             class ProtocolMessage : public Message {
             public:
                 ProtocolMessage(const std::string& content) : Message(content) {}
@@ -324,11 +367,29 @@ public:
     }
 };
 
+class UpdateLockedQCEvent : public BaseEvent {
+public:
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        if (!j.contains("qc")) {
+            std::cout << "[Node " << entity->getNodeId() << "] No QC found in message for seq " << j["sequence"] << "\n";
+            return false;
+        }
+        // Store or update the lockedQC in the state or entity
+        state->setLockedQC(j["qc"]);
+        return true;
+    }
+};
 
 class BroadcastIfLeaderEvent : public BaseEvent {
 public:
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
-        if (entity->getState().getRole() == "Leader") {
+        // test to trigger view change by making node 1 as faulty by skipping broadcast
+        // Uncomment the following lines to simulate a faulty leader
+        // if(entity->getNodeId() == 1){
+        //     return false; // Skip if not leader
+        // }
+        if ((entity->getState().getViewNumber()+1) % (entity->peerPorts.size()) == entity->getNodeId()) {
             auto j = nlohmann::json::parse(message->getContent());
             int seq = j["sequence"].get<int>();
             // if already processed, skip
@@ -337,25 +398,25 @@ public:
             }
             std::string phase = j["type"];
             //std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-            // Combine all messages for this phase and sequence
-            nlohmann::json combinedMessages = nlohmann::json::array();
-            if (phase == "PrePrepare") {
-                for (const auto& msg : entity->prePrepareMessages[seq]) {
-                    combinedMessages.push_back(msg);
+            if (phase == "prepare") {
+                std::unordered_set<int> uniqueSenders;
+                for (const auto& record : entity->allMessagesBySeq[seq]) {
+                    if (record.phase == "prepare") {
+                        uniqueSenders.insert(record.senderId);
+                    }
                 }
-            } else if (phase == "prepare") {
-                if(entity->preparePhaseTimerRunning[seq] && entity->prepareMessages[seq].size() != 7) {
-                    std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer is still running for seq " << entity->prepareMessages[seq].size() << ", skipping broadcast.\n";
+                if(entity->preparePhaseTimerRunning[seq] && uniqueSenders.size() != 7) {
+                    std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer is still running for seq " << uniqueSenders.size() << ", skipping broadcast.\n";
                     return false;
                 }
-                for (const auto& msg : entity->prepareMessages[seq]) {
-                    combinedMessages.push_back(msg);
-                }
-                
-            } else if (phase == "commit") {
-                for (const auto& msg : entity->commitMessages[seq]) {
-                    combinedMessages.push_back(msg);
+            }
+            // Combine all messages for this phase and sequence
+            // Combine all messages for this phase and sequence
+            nlohmann::json combinedMessages = nlohmann::json::array();
+            std::unordered_set<int> uniqueSenders;
+            for (const auto& record : entity->allMessagesBySeq[seq]) {
+                if (record.phase == phase && uniqueSenders.insert(record.senderId).second) {
+                    combinedMessages.push_back(record.senderId);
                 }
             }
             std::cout << "[Node " << entity->getNodeId() << "] Combined messages for " << phase << " for seq " << seq << ": " << combinedMessages.dump() << "\n";
@@ -365,12 +426,12 @@ public:
             if (phaseConfig["next_state"]) {
                 nlohmann::json outMsg;
                 outMsg["type"] = j["type"];
-                outMsg["view"] = state->getViewNumber();
+                outMsg["view"] = entity->getState().getViewNumber();
                 outMsg["sequence"] = seq;
                 outMsg["operation"] = j["operation"];
                 outMsg["sender"] = entity->getNodeId();
                 outMsg["combinedMessages"] = combinedMessages;
-
+                outMsg["qc"] = state->getLockedQC(); // Include QC if available
                 Message protocolMsg(outMsg.dump());
 
                 entity->sendToAll(protocolMsg);
@@ -383,7 +444,7 @@ public:
 class UnicastIfParticipantEvent : public BaseEvent {
 public:
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
-        if (entity->getState().getRole() != "Leader") {
+        if ((entity->getState().getViewNumber()+1) % (entity->peerPorts.size()) != entity->getNodeId()) {
             auto j = nlohmann::json::parse(message->getContent());
             int seq = j["sequence"].get<int>();
             YAML::Node phaseConfig = entity->getPhaseConfig(j["type"]);
@@ -391,12 +452,15 @@ public:
                 std::string nextPhase = phaseConfig["next_state"].as<std::string>();
                 nlohmann::json outMsg;
                 outMsg["type"] = nextPhase;
-                outMsg["view"] = state->getViewNumber();
+                outMsg["view"] = entity->getState().getViewNumber();
                 outMsg["sequence"] = seq;
                 outMsg["operation"] = j["operation"];
                 outMsg["sender"] = entity->getNodeId();
+                outMsg["qc"] = state->getLockedQC(); // Include QC if available
                 Message protocolMsg(outMsg.dump());
-                int leaderId = (state->getViewNumber()+1) % (entity->peerPorts.size());
+                //current view is 
+                //std::cout << entity->getState().getViewNumber() << " and next phase is " << nextPhase << "\n";
+                int leaderId = (entity->getState().getViewNumber()+1) % (entity->peerPorts.size());
                 std::cout << "[Node " << entity->getNodeId() << "] Unicasting to leader: " << leaderId << " phase:" << nextPhase << "\n";
                 entity->sendTo(leaderId, protocolMsg);
             }
@@ -485,6 +549,83 @@ public:
     }
 };
 
+class HandleViewChangeHotstuffEvent : public BaseEvent {
+public:
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        int newView = j["new_view"].get<int>();
+        int sender = j["sender"].get<int>();
+
+        // Store the sender for quorum counting
+        entity->viewChangeMessages[newView].insert(sender);
+
+        // Store all required data in an array for this view
+        ViewChangeData data;
+        data.sender = sender;
+        data.last_sequence = j.value("last_sequence", -1);
+        data.last_operation = j.value("last_operation", "");
+        data.locked_qc = j.value("locked_qc", nlohmann::json{});
+        entity->viewChangeDataArray[newView].push_back(data);
+        // Update local view if needed
+        if (newView > entity->getState().getViewNumber()) {
+            state->setViewNumber(newView);
+            std::cout << "[Node " << entity->getNodeId() << "] Updated to new view: " << newView << std::endl;
+        }
+
+        // If this node is the new leader, and has enough view change messages, propose a new block
+        int n = entity->peerPorts.size();
+        int quorum = computeQuorumEventFactory("2f+1", entity->getF());
+        int leaderId = (newView + 1) % n;
+        if (entity->getNodeId() == leaderId && entity->viewChangeMessages[newView].size() >= quorum) {
+            std::cout << "[Node " << entity->getNodeId() << "] I am the new leader for view " << newView << ", proposing new block." << std::endl;
+
+            // Find the highest QC and associated data
+            int highestViewNum = -1;
+            nlohmann::json highestQC;
+            int parentSeq = -1;
+            std::string lastOp;
+            
+
+            for (const auto& d : entity->viewChangeDataArray[newView]) {
+                //std::cout << "[Node " << entity->getNodeId() << "] Processing view change data from sender " << d.sender << "\n";
+                if (!d.locked_qc.empty()) {
+                    int qcView = std::stoi(d.locked_qc.get<std::string>());
+                    //std::cout << "[Node " << entity->getNodeId() << "] Checking QC from sender " << d.sender << " with view " << qcView << "\n";
+                    if (qcView > highestViewNum) {
+                        highestViewNum = qcView;
+                        highestQC = d.locked_qc;
+                        parentSeq = d.last_sequence;
+                        lastOp = d.last_operation;
+                    }
+                }
+            }
+
+            // Construct new proposal
+            nlohmann::json proposal;
+            proposal["type"] = "Prepare";
+            proposal["toturnoffflag"] = "true";
+            proposal["view"] = newView;
+            proposal["sender"] = entity->getNodeId();
+            proposal["sequence"] = parentSeq;
+            proposal["operation"] = lastOp;
+            proposal["qc"] = highestQC;
+
+            std::cout << "[Node " << entity->getNodeId() << "] New proposal: " << proposal.dump() << std::endl;
+            entity->inViewChange = false;
+            std::lock_guard<std::mutex> lock(entity->timerMtx);
+            if (entity->timeKeeper) {
+                entity->timeKeeper->stop();
+                entity->timeKeeper.reset();
+            }
+            entity->viewChangeMessages.erase(newView);
+            entity->viewChangeDataArray.erase(newView);
+            Message proposalMsg(proposal.dump());
+            entity->sendToAll(proposalMsg);
+        }
+        return true;
+    }
+};
+
 // Singleton instance of the EventFactory
 EventFactory& EventFactory::getInstance() {
     static EventFactory instance;
@@ -512,9 +653,12 @@ void EventFactory::initialize() {
     this->registerEvent<StoreMessageEvent>("storeMessage");
     this->registerEvent<CheckQuorumEvent>("checkQuorum");
     this->registerEvent<CheckQuorumEventForSBFT>("checkQuorumForSBFT");
+    this->registerEvent<CheckQCEvent>("checkQC");
     this->registerEvent<BroadcastEvent>("broadcast");
     this->registerEvent<ManageTimerEvent>("manageTimer");
     this->registerEvent<CompleteEvent>("complete");
+    this->registerEvent<StartTimerEvent>("startTimer");
+    this->registerEvent<ResetTimerEvent>("resetTimer");
     
     // Register handle events
     
@@ -522,6 +666,8 @@ void EventFactory::initialize() {
     this->registerEvent<HandleNewViewEvent>("handleNewView");
     this->registerEvent<BroadcastIfLeaderEvent>("broadcastifLeader");
     this->registerEvent<UnicastIfParticipantEvent>("unicastifParticipant");
+    this->registerEvent<UpdateLockedQCEvent>("UpdateLockedQC");
+    this->registerEvent<HandleViewChangeHotstuffEvent>("handleViewChangeHotstuff");
 }
 
 // Explicit template instantiations to avoid linker errors (for all events you register)
@@ -536,10 +682,15 @@ template void EventFactory::registerEvent<StoreMessageEvent>(const std::string&)
 template void EventFactory::registerEvent<ManageTimerEvent>(const std::string&);
 template void EventFactory::registerEvent<CheckQuorumEvent>(const std::string&);
 template void EventFactory::registerEvent<CheckQuorumEventForSBFT>(const std::string&);
+template void EventFactory::registerEvent<CheckQCEvent>(const std::string&);
 template void EventFactory::registerEvent<BroadcastEvent>(const std::string&);
 template void EventFactory::registerEvent<CompleteEvent>(const std::string&);
 template void EventFactory::registerEvent<BroadcastIfLeaderEvent>(const std::string&);
 template void EventFactory::registerEvent<UnicastIfParticipantEvent>(const std::string&);
+template void EventFactory::registerEvent<UpdateLockedQCEvent>(const std::string&);
+template void EventFactory::registerEvent<StartTimerEvent>(const std::string&);
+template void EventFactory::registerEvent<ResetTimerEvent>(const std::string&);
+template void EventFactory::registerEvent<HandleViewChangeHotstuffEvent>(const std::string&);
 
 #include "../../../include/core/Entity.h" // or the header where computeQuorumEventFactory is defined
 

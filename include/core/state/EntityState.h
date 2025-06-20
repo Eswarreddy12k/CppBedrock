@@ -4,7 +4,7 @@
 
 class EntityState {
 public:
-    EntityState() : _role(""), _state("PBFTRequest"), _view(0), _sequence(0) {} // <-- Add this line
+    EntityState() : _role(""), _state("PBFTRequest"), _view(0), _sequence(0), lockedQC("0") {} // <-- Add this line
     EntityState(const std::string& role, const std::string& state, int view, int sequence);
 
     // Getters
@@ -12,6 +12,8 @@ public:
     std::string getState() const;
     int getSequenceNumber() const;
     int getViewNumber() const;
+    std::string getLockedQC() const { return lockedQC; } // Used for Hotstuff protocol
+    
 
     // Setters
     void setRole(const std::string& newRole);
@@ -21,6 +23,7 @@ public:
     void setViewNumber(int newViewNumber);
     int getView() const { return _view; }
     void setView(int view) { _view = view; }
+    void setLockedQC(const std::string& qc) { lockedQC = qc; } // Used for Hotstuff protocol
     int getNextSequence() { return ++_sequence;}
 
 private:
@@ -30,4 +33,5 @@ private:
     int viewNumber;
     int _view;
     int _sequence;
+    std::string lockedQC; // Used for Hotstuff protocol
 };

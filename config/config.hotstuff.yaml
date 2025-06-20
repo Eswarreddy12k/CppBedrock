@@ -1,0 +1,51 @@
+protocol: Hotstuff
+phases:
+  BFTRequest:
+    quorum: 1
+    next_state: Prepare
+    actions:
+      - "storeMessage"
+  Prepare:
+    quorum: 1
+    next_state: PreCommit
+    actions:
+      - "checkQC"
+      - "startTimer"
+      - "storeMessage"
+      - "unicastifParticipant"
+  PreCommit:
+    quorum: 2f
+    next_state: Commit
+    actions:
+      - "checkQC"
+      - "resetTimer"
+      - "storeMessage"
+      - "checkQuorum"
+      - "broadcastifLeader"
+      - "unicastifParticipant"
+  Commit:
+    quorum: 2f
+    next_state: Decide
+    actions:
+      - "checkQC"
+      - "resetTimer"
+      - "storeMessage"
+      - "checkQuorum"
+      - "UpdateLockedQC"
+      - "broadcastifLeader"
+      - "unicastifParticipant"
+  Decide:
+    quorum: 2f
+    next_state: PBFTRequest
+    actions:
+      - "checkQC"
+      - "resetTimer"
+      - "storeMessage"
+      - "checkQuorum"
+      - "broadcastifLeader"
+      - "complete"
+  ViewChange:
+    quorum: 2f+1
+    next_state: PBFTRequest
+    actions:
+      - "handleViewChangeHotstuff"

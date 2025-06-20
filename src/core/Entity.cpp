@@ -26,7 +26,7 @@ int computeQuorum(const std::string& quorumStr, int f) {
 Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
     : _entityState(role, "PBFTRequest", 0, 0), nodeId(id), peerPorts(peers), connection(5000+id,true), processingThread(), f(2), prePrepareBroadcasted() {
     EventFactory::getInstance().initialize();
-    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.sbft.yaml");
+    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.hotstuff.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1200, [this] {
         std::lock_guard<std::mutex> lock(timerMtx);
         this->onTimeout();
@@ -37,17 +37,44 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
 void Entity::onTimeout() {
     if (!timeKeeper) return;
     std::cout << "[Node " << getNodeId() << "] Timeout occurred! Initiating view change.\n";
-    int newView = getState().getViewNumber() + 1;
+    getState().setViewNumber(getState().getViewNumber() + 1);
+    int newView = getState().getViewNumber();
     getState().setViewNumber(newView);
 
     inViewChange = true; // <--- Set flag
-
+    std::string protocol = protocolConfig["protocol"] ? protocolConfig["protocol"].as<std::string>() : "";
+    std::cout << "[Node " << getNodeId() << "] Initiating view change to view " << newView << " for protocol " << protocol << "\n";
     nlohmann::json viewChangeMsg;
     viewChangeMsg["type"] = "ViewChange";
     viewChangeMsg["new_view"] = newView;
     viewChangeMsg["sender"] = getNodeId();
-    Message msg(viewChangeMsg.dump());
-    sendToAll(msg);
+    
+    if (protocol == "Hotstuff"){
+        // Find last transaction in allMessagesBySeq
+        int lastSeq = -1;
+        std::string lastOp;
+        //std::cout << "[Node " << getNodeId() << "] All messages by sequence:\n" << "and size:" << allMessagesBySeq.size() << "\n";
+        if (!allMessagesBySeq.empty()) {
+
+            auto it = allMessagesBySeq.rbegin(); // last sequence (highest key)
+            lastSeq = it->first;
+            if (!it->second.empty()) {
+                lastOp = it->second.back().operation; // last operation for that sequence
+            }
+        }
+        
+        viewChangeMsg["last_sequence"] = lastSeq;
+        viewChangeMsg["last_operation"] = lastOp;
+        viewChangeMsg["locked_qc"] = sequenceStates[lastSeq].getLockedQC();
+        Message msg(viewChangeMsg.dump());
+        int nextLeader = (newView+1) % (peerPorts.size());
+        sendTo(nextLeader, msg);
+    }
+    else{
+        Message msg(viewChangeMsg.dump());
+        sendToAll(msg);
+    }
+    
 }
 
 void Entity::printDataStore() {
@@ -114,7 +141,15 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
             int seq = j.contains("sequence") ? j["sequence"].get<int>() : -1;
             int sender = j.contains("sender") ? j["sender"].get<int>() : -1;
             //std::cout << "  Current State: " << context->getState() << std::endl;
-
+            if(j.contains("toturnoffflag") && j["toturnoffflag"].get<std::string>() == "true") {
+                this->inViewChange = false; // Reset view change flag
+                std::lock_guard<std::mutex> lock(this->timerMtx);
+                if (this->timeKeeper) {
+                    this->timeKeeper->stop();
+                    this->timeKeeper.reset();
+                }
+                this->viewChangeMessages.erase(j["view"].get<int>());
+            }
             if (inViewChange && messageType != "ViewChange" && messageType != "NewView") {
                 std::cout << "  [IGNORED] Node in view change\n";
                 return;
@@ -165,7 +200,7 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                     
                     // Create PrePrepare message
                     json preprepareMsg;
-                    preprepareMsg["type"] = "PrePrepare";
+                    preprepareMsg["type"] = phaseConfig["next_state"].as<std::string>();
                     preprepareMsg["view"] = getState().getViewNumber();
                     preprepareMsg["sequence"] = seq;
                     preprepareMsg["operation"] = operation;
@@ -235,6 +270,7 @@ void Entity::printCommittedMessages() {
     for (const auto& op : processedOperations) {
         std::cout << "  - " << op << "\n";
     }
+    
     std::cout << "====================================\n\n";
 }
 bool Entity::runVerification(const std::string& verifyType, const json& msg, EntityState* context) {

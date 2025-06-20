@@ -21,6 +21,29 @@
 class Event;
 class Message;
 
+struct ProtocolMessageRecord {
+    int seq;
+    int senderId;
+    std::string operation;
+    std::string phase;         // e.g., "prepare", "commit"
+    std::string protocolName;  // e.g., "Hotstuff"
+    std::map<std::string, std::string> customData; // default: empty
+    ProtocolMessageRecord(int s, int sid, const std::string& op, const std::string& ph, const std::string& proto,
+                         const std::map<std::string, std::string>& custom = {})
+        : seq(s), senderId(sid), operation(op), phase(ph), protocolName(proto), customData(custom) {}
+    ProtocolMessageRecord() = default;
+};
+
+// Store all view change data for each view as an array of structs
+struct ViewChangeData {
+    int sender;
+    int last_sequence;
+    std::string last_operation;
+    nlohmann::json locked_qc;
+};
+
+
+
 class Entity : public EventHandler<EntityState> {
     friend class Event; // <-- Add this line
 public:
@@ -88,6 +111,9 @@ public:
     std::set<int> processedOperations;  // Track completed operations
     std::unordered_map<int, std::atomic<bool>> preparePhaseTimerRunning;
     std::unordered_map<std::string, std::unique_ptr<Event>> actions;
+
+    std::map<int, std::vector<ProtocolMessageRecord>> allMessagesBySeq;
+    std::unordered_map<int, std::vector<ViewChangeData>> viewChangeDataArray;
 
 private:
     int nodeId;
