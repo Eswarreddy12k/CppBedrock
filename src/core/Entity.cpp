@@ -11,6 +11,8 @@
 #include <memory>
 #include <cctype>
 #include <set>
+#include <fstream>
+#include <filesystem> // C++17
 
 using json = nlohmann::json;
 
@@ -24,57 +26,91 @@ int computeQuorum(const std::string& quorumStr, int f) {
 
 // ===================== Entity Methods =====================
 Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
-    : _entityState(role, "PBFTRequest", 0, 0), nodeId(id), peerPorts(peers), connection(5000+id,true), processingThread(), f(2), prePrepareBroadcasted() {
+    : _entityState(role, "Request", 0, 0), nodeId(id), peerPorts(peers), connection(5000+id,true), processingThread(), f(2), prePrepareBroadcasted() {
     EventFactory::getInstance().initialize();
-    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.hotstuff.yaml");
-    timeKeeper = std::make_unique<TimeKeeper>(1200, [this] {
+    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml");
+    timeKeeper = std::make_unique<TimeKeeper>(1500, [this] {
         std::lock_guard<std::mutex> lock(timerMtx);
         this->onTimeout();
     });
-    
+    loadOrInitDataset();
+    cryptoProvider = std::make_unique<OpenSSLCryptoProvider>("../keys/server_" + std::to_string(id) + "_private.pem");
 }
 
 void Entity::onTimeout() {
     if (!timeKeeper) return;
     std::cout << "[Node " << getNodeId() << "] Timeout occurred! Initiating view change.\n";
-    getState().setViewNumber(getState().getViewNumber() + 1);
-    int newView = getState().getViewNumber();
-    getState().setViewNumber(newView);
+    // Update view number in entityInfo and persist it
+    int newView = entityInfo["view"].get<int>() + 1;
+    entityInfo["view"] = newView;
+    saveEntityInfo();
 
-    inViewChange = true; // <--- Set flag
+    inViewChange = true;
     std::string protocol = protocolConfig["protocol"] ? protocolConfig["protocol"].as<std::string>() : "";
     std::cout << "[Node " << getNodeId() << "] Initiating view change to view " << newView << " for protocol " << protocol << "\n";
     nlohmann::json viewChangeMsg;
     viewChangeMsg["type"] = "ViewChange";
     viewChangeMsg["new_view"] = newView;
-    viewChangeMsg["sender"] = getNodeId();
-    
+    viewChangeMsg["message_sender_id"] = getNodeId();
+
+    // --- Collect only one prepare message per sequence for the current view ---
+    std::unordered_map<int, nlohmann::json> preparePerSeq;
+    std::string fileName = "messages_" + std::to_string(getNodeId()) + ".json";
+    dataset.loadFromFile(fileName);
+    auto records = dataset.getRecords();
+
+    for (const auto& [key, record] : records) {
+        try {
+            // std::cout << "[Node " << getNodeId() << "] Processing record: " << key << "\n";
+            // Defensive: skip if record is not valid JSON object
+            if (!record.is_object()) continue;
+            if (record.contains("type") && record["type"] == "prepare" && record.contains("sequence")) {
+                int seq = record["sequence"].get<int>();
+                // Only keep the first prepare message per sequence (or replace for the last)
+                // preparePerSeq[seq] = record; // last wins
+                if (preparePerSeq.find(seq) == preparePerSeq.end()) {
+                    preparePerSeq[seq] = record; // first wins
+                }
+            }
+        } catch (const nlohmann::json::exception& e) {
+            std::cerr << "[Node " << getNodeId() << "] Skipping invalid record: " << e.what() << "\n";
+            continue;
+        }
+    }
+    nlohmann::json prepareArray = nlohmann::json::array();
+    for (const auto& [seq, record] : preparePerSeq) {
+        nlohmann::json filtered;
+        if (record.contains("message_sender_id")) filtered["message_sender_id"] = record["message_sender_id"];
+        if (record.contains("timestamp"))         filtered["timestamp"]         = record["timestamp"];
+        if (record.contains("transaction"))       filtered["transaction"]       = record["transaction"];
+        if (record.contains("operation"))         filtered["operation"]         = record["operation"];
+        if (record.contains("sequence"))         filtered["sequence"]         = record["sequence"];
+        prepareArray.push_back(filtered);
+    }
+    viewChangeMsg["prepare_messages"] = prepareArray;
+    // --- End Prepare collection ---
+
     if (protocol == "Hotstuff"){
-        // Find last transaction in allMessagesBySeq
         int lastSeq = -1;
         std::string lastOp;
-        //std::cout << "[Node " << getNodeId() << "] All messages by sequence:\n" << "and size:" << allMessagesBySeq.size() << "\n";
         if (!allMessagesBySeq.empty()) {
-
-            auto it = allMessagesBySeq.rbegin(); // last sequence (highest key)
+            auto it = allMessagesBySeq.rbegin();
             lastSeq = it->first;
             if (!it->second.empty()) {
-                lastOp = it->second.back().operation; // last operation for that sequence
+                lastOp = it->second.back().operation;
             }
         }
-        
         viewChangeMsg["last_sequence"] = lastSeq;
         viewChangeMsg["last_operation"] = lastOp;
         viewChangeMsg["locked_qc"] = sequenceStates[lastSeq].getLockedQC();
         Message msg(viewChangeMsg.dump());
         int nextLeader = (newView+1) % (peerPorts.size());
         sendTo(nextLeader, msg);
-    }
-    else{
+    } else {
         Message msg(viewChangeMsg.dump());
         sendToAll(msg);
     }
-    
+    // std::cout << "[Node " << getNodeId() << "] Sent view change message for view " << viewChangeMsg.dump() << "\n";
 }
 
 void Entity::printDataStore() {
@@ -93,17 +129,20 @@ void Entity::printDataStore() {
 }
 void Entity::start() {
     std::cout << "[Entity] Starting entity with role: " << _entityState.getRole() << "\n";
+    running = true;
     connection.startListening();
     processingThread = std::thread(&Entity::processMessages, this);
 }
 void Entity::stop() {
     std::cout << "[Entity] Stopping entity: " << _entityState.getRole() << "\n";
+    running = false;
     connection.stopListening();
     if (processingThread.joinable()) processingThread.join();
 }
 void Entity::processMessages() {
-    while (true) {
+    while (running) {
         std::string receivedData = connection.receive();
+        if (!running) break; // Optional: check again after receive
         Message msg(receivedData);
         handleEvent(&msg, &_entityState);
     }
@@ -121,8 +160,21 @@ void Entity::loadProtocolConfig(const std::string& configFile) {
             const YAML::Node& phaseConfig = phase_pair.second;
             if (phaseConfig["actions"] && phaseConfig["actions"].IsSequence()) {
                 for (const auto& actionNode : phaseConfig["actions"]) {
-                    std::string actionName = actionNode.as<std::string>();
-                    std::unique_ptr<Event> event = EventFactory::getInstance().createEvent(actionName);
+                    std::string actionName;
+                    nlohmann::json params;
+
+                    if (actionNode.IsScalar()) {
+                        actionName = actionNode.as<std::string>();
+                    } else if (actionNode.IsMap()) {
+                        // Only one key-value pair per map node (the action and its params)
+                        auto it = actionNode.begin();
+                        actionName = it->first.as<std::string>();
+                        const YAML::Node& paramNode = it->second;
+                        for (const auto& param : paramNode) {
+                            params[param.first.as<std::string>()] = param.second.as<std::string>();
+                        }
+                    }
+                    std::unique_ptr<BaseEvent> event = EventFactory::getInstance().createEvent(actionName, params);
                     if (event) actions[actionName] = std::move(event);
                     else std::cerr << "Unknown event: " << actionName << std::endl;
                 }
@@ -138,17 +190,9 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
             json j = json::parse(message->getContent());
             std::string messageType = j["type"].get<std::string>();
 
-            int seq = j.contains("sequence") ? j["sequence"].get<int>() : -1;
-            int sender = j.contains("sender") ? j["sender"].get<int>() : -1;
-            //std::cout << "  Current State: " << context->getState() << std::endl;
-            if(j.contains("toturnoffflag") && j["toturnoffflag"].get<std::string>() == "true") {
-                this->inViewChange = false; // Reset view change flag
-                std::lock_guard<std::mutex> lock(this->timerMtx);
-                if (this->timeKeeper) {
-                    this->timeKeeper->stop();
-                    this->timeKeeper.reset();
-                }
-                this->viewChangeMessages.erase(j["view"].get<int>());
+            int seq = assignSequenceNumber();
+            if(j.contains("sequence")) {
+                seq = j["sequence"].get<int>();
             }
             if (inViewChange && messageType != "ViewChange" && messageType != "NewView") {
                 std::cout << "  [IGNORED] Node in view change\n";
@@ -157,24 +201,38 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
 
             std::string phase = messageType;
             
-
+            
             YAML::Node phaseConfig = getPhaseConfig(phase);
             if (phaseConfig && phaseConfig["actions"] && phaseConfig["actions"].IsSequence()) {
-                //std::cout << "  Phase Configuration found for: " << phase << std::endl;
-                //std::cout << "  Executing actions:" << std::endl;
+                // std::cout << "  Phase Configuration found for: " << phase << std::endl;
+                // std::cout << "  Executing actions:" << std::endl;
                 bool actionsSucceeded = true;
                 // Execute all actions
                 bool quorumMet = false;
                 for (const auto& actionNode : phaseConfig["actions"]) {
-                    std::string actionName = actionNode.as<std::string>();
-                    auto it = actions.find(actionName);
-                    if (it != actions.end()) {
-                        // Now pass 'context' to all event actions
-                        bool shouldContinue = it->second->execute(this, message, &sequenceStates[seq]);
-                        
+                    
+                    std::string actionName;
+                    nlohmann::json params;
+
+                    if (actionNode.IsScalar()) {
+                        actionName = actionNode.as<std::string>();
+                    } else if (actionNode.IsMap()) {
+                        // Only one key-value pair per map node (the action and its params)
+                        auto it = actionNode.begin();
+                        actionName = it->first.as<std::string>();
+                        const YAML::Node& paramNode = it->second;
+                        for (auto paramIt = paramNode.begin(); paramIt != paramNode.end(); ++paramIt) {
+                            params[paramIt->first.as<std::string>()] = paramIt->second.as<std::string>();
+                        }
+                        // std::cout << "[Node " << getNodeId() << "] Executing action: "  << actionName << " with params: " << params.dump() << "\n";
+                    }
+                    // std::cout << "[Node " << getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "\n";
+                    auto eventPtr = EventFactory::getInstance().createEvent(actionName, params);
+                    if (eventPtr) {
+                        bool shouldContinue = eventPtr->execute(this, message, &sequenceStates[seq]);
                         if (!shouldContinue) {
-                            actionsSucceeded = false; // <-- Add this line
-                            break; // Stop further actions if any action returns false
+                            actionsSucceeded = false;
+                            break;
                         }
                     }
                 }
@@ -183,41 +241,21 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                 if (actionsSucceeded && phaseConfig["next_state"] && context) {
                     std::string nextState = phaseConfig["next_state"].as<std::string>();
                     sequenceStates[seq].setState(nextState);
-                    //std::cout << "\n[Node " << getNodeId() << "] " << "Transitioning to state: " << nextState << std::endl;
+                    // std::cout << "\n[Node " << getNodeId() << "] " << "Transitioning to state: " << nextState << std::endl;
                 }
                 
             } else {
                 std::cout << " No phase configuration found for: " << phase << std::endl;
             }
 
-            // Handle PBFTRequest from Leader
-            if (messageType == "PBFTRequest" && getState().getRole() == "Leader") {
-                std::cout << "  Processing PBFTRequest as Leader" << std::endl;
-                std::string operation = j["operation"].get<std::string>();
-                if (!operation.empty() && !hasProcessedOperation(std::stoi(operation.substr(9)))) {
-                    int seq = getNextSequenceNumber();
-                    sequenceStates.emplace(seq, EntityState(getState().getRole(), "PBFTRequest", getState().getViewNumber(), seq));
-                    
-                    // Create PrePrepare message
-                    json preprepareMsg;
-                    preprepareMsg["type"] = phaseConfig["next_state"].as<std::string>();
-                    preprepareMsg["view"] = getState().getViewNumber();
-                    preprepareMsg["sequence"] = seq;
-                    preprepareMsg["operation"] = operation;
-                    preprepareMsg["sender"] = getNodeId();
-                    
-                    Message protocolMsg(preprepareMsg.dump());
-                    sendToAll(protocolMsg);
-                }
-                return;
-            }
             
             // For protocol messages, ensure sequence state exists
             if (j.contains("sequence")) {
+                
                 int seq = j["sequence"].get<int>();
                 if (sequenceStates.find(seq) == sequenceStates.end()) {
                     std::cout << "  Creating new sequence state for seq: " << seq << std::endl;
-                    sequenceStates.emplace(seq, EntityState(getState().getRole(), "PBFTRequest", getState().getViewNumber(), seq));
+                    sequenceStates.emplace(seq, EntityState(getState().getRole(), "Request", getState().getViewNumber(), seq));
                 }
             }
             
@@ -263,6 +301,20 @@ void Entity::markOperationProcessed(const int operation) {
         }
         std::cout << "[Node " << getNodeId() << "] All operations processed. Timer stopped.\n";
     }
+    // dataset.loadFromFile("test" + std::to_string(getNodeId()) + ".json");
+    // // Add or update a record
+    // nlohmann::json user;
+    // user["name"] = "Alice";
+    // user["balance"] = 100;
+    // user["active"] = true;
+    // dataset.update(std::to_string(operation), user);
+
+    // Save to file
+    // dataset.saveToFile("test" + std::to_string(getNodeId()) + ".json");
+
+    // Retrieve and print a record
+    // nlohmann::json loaded = dataset.get("user1");
+    // std::cout << loaded.dump(4) << std::endl;
 }
 void Entity::printCommittedMessages() {
     std::cout << "\n========== Committed Messages ==========\n";
@@ -289,5 +341,50 @@ bool Entity::runVerification(const std::string& verifyType, const json& msg, Ent
     if (verifyType == "preprepare_exists") return true;
     if (verifyType == "prepare_exists") return true;
     return true;
+}
+
+void Entity::loadOrInitDataset() {
+    std::string filename = "entity_info_" + std::to_string(getNodeId()) + ".json";
+    nlohmann::json info;
+
+    if (std::filesystem::exists(filename)) {
+        std::ifstream in(filename);
+        std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+        in.close();
+        if (!content.empty()) {
+            try {
+                info = nlohmann::json::parse(content);
+            } catch (const nlohmann::json::parse_error& e) {
+                std::cerr << "[Node " << getNodeId() << "] Failed to parse JSON from " << filename << ": " << e.what() << std::endl;
+                info["server_name"] = getNodeId();
+                info["view"] = 0;
+                info["sequence"] = 0;
+                info["server_status"] = 1;
+                saveEntityInfo();
+            }
+        }
+    } else {
+        info["server_name"] = getNodeId();
+        info["view"] = 0;
+        info["sequence"] = 0;
+        info["server_status"] = 1;
+        saveEntityInfo();
+    }
+    this->entityInfo = info;
+}
+
+void Entity::updateEntityInfoField(const std::string& key, const nlohmann::json& value) {
+    entityInfo[key] = value;
+    saveEntityInfo();
+}
+
+void Entity::saveEntityInfo() {
+    std::string filename = "entity_info_" + std::to_string(getNodeId()) + ".json";
+    std::string tmpFilename = filename + ".tmp";
+    {
+        std::ofstream out(tmpFilename, std::ios::trunc);
+        out << entityInfo.dump(4) << std::endl;
+    }
+    std::filesystem::rename(tmpFilename, filename);
 }
 

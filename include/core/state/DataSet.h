@@ -2,26 +2,25 @@
 
 #include <unordered_map>
 #include <mutex>
+#include <string>
+#include <nlohmann/json.hpp>
 
 class DataSet {
 public:
-    // Constructor
     DataSet() = default;
-
-    // Delete the copy constructor and copy assignment operator
     DataSet(const DataSet&) = delete;
     DataSet& operator=(const DataSet&) = delete;
 
-    // Set records
-    void setRecords(const std::unordered_map<int, int>& records);
+    void setRecords(const std::unordered_map<std::string, nlohmann::json>& records);
+    std::unordered_map<std::string, nlohmann::json> getRecords() const;
+    void update(const std::string& key, const nlohmann::json& value);
+    nlohmann::json get(const std::string& key) const;
 
-    // Get records
-    std::unordered_map<int, int> getRecords() const;
-
-    // Update a record
-    void update(const int& key, const int& value);
+    void saveToFile(const std::string& filename = "dataset.json") const;
+    void loadFromFile(const std::string& filename = "dataset.json");
+    bool exists(const std::string& key) const;
 
 private:
-    std::unordered_map<int, int> _records;  // The actual records
-    mutable std::mutex _mtx;  // Mutex for thread-safety
+    std::unordered_map<std::string, nlohmann::json> _records;
+    mutable std::mutex _mtx;
 };

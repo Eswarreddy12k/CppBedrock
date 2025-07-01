@@ -1,6 +1,7 @@
 #pragma once
 
 #include "events/EventHandler.h"
+#include "events/BaseEvent.h"
 #include "state/StateMachine.h"
 #include "state/DataSet.h"
 #include "state/EntityState.h"
@@ -17,6 +18,9 @@
 #include <map>
 #include "TimeKeeper.h"
 #include <atomic>
+#include "crypto/CryptoProvider.h"
+#include "crypto/OpenSSLCryptoProvider.h"
+#include "crypto/CryptoUtils.h"
 
 class Event;
 class Message;
@@ -71,7 +75,10 @@ public:
     int getPrePrepareCount(int sequence) const;
     void printDataStore();
     void printCommittedMessages();
-
+    void loadOrInitDataset();
+    void updateEntityInfoField(const std::string& key, const nlohmann::json& value);
+    
+    void saveEntityInfo();
     // Protocol config access
     //const YAML::Node& getPhaseConfig(const std::string& phase) const;
     YAML::Node getPhaseConfig(const std::string& phase) const;
@@ -80,6 +87,9 @@ public:
     bool runVerification(const std::string& verifyType, const nlohmann::json& msg, EntityState* context);
 
     int getNextSequenceNumber() { return nextSequenceNumber++; }
+    int assignSequenceNumber() {
+        return nextSequenceNumber+1;
+    }
 
     void removeSequenceState(int seq);
 
@@ -101,7 +111,7 @@ public:
     std::unordered_map<int, std::string> prePrepareOperations;
     std::unordered_map<int, std::string> prepareOperations;
     std::unordered_map<int, std::string> commitOperations;
-    std::unordered_map<int, std::set<int>> viewChangeMessages;
+    std::unordered_map<int, std::vector<nlohmann::json>> viewChangeMessages;
     bool inViewChange = false;
     std::unique_ptr<TimeKeeper> timeKeeper;
     std::mutex timerMtx;
@@ -110,10 +120,15 @@ public:
     std::unordered_map<int, std::unordered_map<std::string, std::set<int>>> receivedMessages;
     std::set<int> processedOperations;  // Track completed operations
     std::unordered_map<int, std::atomic<bool>> preparePhaseTimerRunning;
-    std::unordered_map<std::string, std::unique_ptr<Event>> actions;
+    std::unordered_map<std::string, std::unique_ptr<BaseEvent>> actions;
 
     std::map<int, std::vector<ProtocolMessageRecord>> allMessagesBySeq;
     std::unordered_map<int, std::vector<ViewChangeData>> viewChangeDataArray;
+
+    DataSet dataset;
+    nlohmann::json entityInfo;
+    std::unique_ptr<CryptoProvider> cryptoProvider;
+    YAML::Node protocolConfig;
 
 private:
     int nodeId;
@@ -122,11 +137,11 @@ private:
     TcpConnection connection;
     std::thread processingThread;
 
-    YAML::Node protocolConfig;
+    
     
 
-    DataSet dataset;
-
+    
+    std::atomic<bool> running = false;
     int nextSequenceNumber = 0;
 
     

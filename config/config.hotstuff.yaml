@@ -1,6 +1,6 @@
 protocol: Hotstuff
 phases:
-  BFTRequest:
+  Request:
     quorum: 1
     next_state: Prepare
     actions:
@@ -36,7 +36,7 @@ phases:
       - "unicastifParticipant"
   Decide:
     quorum: 2f
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "checkQC"
       - "resetTimer"
@@ -46,6 +46,6 @@ phases:
       - "complete"
   ViewChange:
     quorum: 2f+1
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "handleViewChangeHotstuff"

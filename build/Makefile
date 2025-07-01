@@ -117,6 +117,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named CppBedrockLib
+
+# Build rule for target.
+CppBedrockLib: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CppBedrockLib
+.PHONY : CppBedrockLib
+
+# fast build rule for target.
+CppBedrockLib/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/build
+.PHONY : CppBedrockLib/fast
+
+#=============================================================================
 # Target rules for targets named CppBedrock
 
 # Build rule for target.
@@ -129,12 +142,25 @@ CppBedrock/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/build
 .PHONY : CppBedrock/fast
 
+#=============================================================================
+# Target rules for targets named integration_test
+
+# Build rule for target.
+integration_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 integration_test
+.PHONY : integration_test
+
+# fast build rule for target.
+integration_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/integration_test.dir/build.make CMakeFiles/integration_test.dir/build
+.PHONY : integration_test/fast
+
 src/coordination/CoordinationServer.o: src/coordination/CoordinationServer.cpp.o
 .PHONY : src/coordination/CoordinationServer.o
 
 # target to build an object file
 src/coordination/CoordinationServer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/CoordinationServer.cpp.o
 .PHONY : src/coordination/CoordinationServer.cpp.o
 
 src/coordination/CoordinationServer.i: src/coordination/CoordinationServer.cpp.i
@@ -142,7 +168,7 @@ src/coordination/CoordinationServer.i: src/coordination/CoordinationServer.cpp.i
 
 # target to preprocess a source file
 src/coordination/CoordinationServer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/CoordinationServer.cpp.i
 .PHONY : src/coordination/CoordinationServer.cpp.i
 
 src/coordination/CoordinationServer.s: src/coordination/CoordinationServer.cpp.s
@@ -150,7 +176,7 @@ src/coordination/CoordinationServer.s: src/coordination/CoordinationServer.cpp.s
 
 # target to generate assembly for a file
 src/coordination/CoordinationServer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/CoordinationServer.cpp.s
 .PHONY : src/coordination/CoordinationServer.cpp.s
 
 src/coordination/CoordinationUnit.o: src/coordination/CoordinationUnit.cpp.o
@@ -158,7 +184,7 @@ src/coordination/CoordinationUnit.o: src/coordination/CoordinationUnit.cpp.o
 
 # target to build an object file
 src/coordination/CoordinationUnit.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/CoordinationUnit.cpp.o
 .PHONY : src/coordination/CoordinationUnit.cpp.o
 
 src/coordination/CoordinationUnit.i: src/coordination/CoordinationUnit.cpp.i
@@ -166,7 +192,7 @@ src/coordination/CoordinationUnit.i: src/coordination/CoordinationUnit.cpp.i
 
 # target to preprocess a source file
 src/coordination/CoordinationUnit.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/CoordinationUnit.cpp.i
 .PHONY : src/coordination/CoordinationUnit.cpp.i
 
 src/coordination/CoordinationUnit.s: src/coordination/CoordinationUnit.cpp.s
@@ -174,7 +200,7 @@ src/coordination/CoordinationUnit.s: src/coordination/CoordinationUnit.cpp.s
 
 # target to generate assembly for a file
 src/coordination/CoordinationUnit.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/CoordinationUnit.cpp.s
 .PHONY : src/coordination/CoordinationUnit.cpp.s
 
 src/coordination/connections/TcpConnection.o: src/coordination/connections/TcpConnection.cpp.o
@@ -182,7 +208,7 @@ src/coordination/connections/TcpConnection.o: src/coordination/connections/TcpCo
 
 # target to build an object file
 src/coordination/connections/TcpConnection.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/connections/TcpConnection.cpp.o
 .PHONY : src/coordination/connections/TcpConnection.cpp.o
 
 src/coordination/connections/TcpConnection.i: src/coordination/connections/TcpConnection.cpp.i
@@ -190,7 +216,7 @@ src/coordination/connections/TcpConnection.i: src/coordination/connections/TcpCo
 
 # target to preprocess a source file
 src/coordination/connections/TcpConnection.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/connections/TcpConnection.cpp.i
 .PHONY : src/coordination/connections/TcpConnection.cpp.i
 
 src/coordination/connections/TcpConnection.s: src/coordination/connections/TcpConnection.cpp.s
@@ -198,7 +224,7 @@ src/coordination/connections/TcpConnection.s: src/coordination/connections/TcpCo
 
 # target to generate assembly for a file
 src/coordination/connections/TcpConnection.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/connections/TcpConnection.cpp.s
 .PHONY : src/coordination/connections/TcpConnection.cpp.s
 
 src/core/Entity.o: src/core/Entity.cpp.o
@@ -206,7 +232,7 @@ src/core/Entity.o: src/core/Entity.cpp.o
 
 # target to build an object file
 src/core/Entity.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/Entity.cpp.o
 .PHONY : src/core/Entity.cpp.o
 
 src/core/Entity.i: src/core/Entity.cpp.i
@@ -214,7 +240,7 @@ src/core/Entity.i: src/core/Entity.cpp.i
 
 # target to preprocess a source file
 src/core/Entity.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/Entity.cpp.i
 .PHONY : src/core/Entity.cpp.i
 
 src/core/Entity.s: src/core/Entity.cpp.s
@@ -222,7 +248,7 @@ src/core/Entity.s: src/core/Entity.cpp.s
 
 # target to generate assembly for a file
 src/core/Entity.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/Entity.cpp.s
 .PHONY : src/core/Entity.cpp.s
 
 src/core/TimeKeeper.o: src/core/TimeKeeper.cpp.o
@@ -230,7 +256,7 @@ src/core/TimeKeeper.o: src/core/TimeKeeper.cpp.o
 
 # target to build an object file
 src/core/TimeKeeper.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/TimeKeeper.cpp.o
 .PHONY : src/core/TimeKeeper.cpp.o
 
 src/core/TimeKeeper.i: src/core/TimeKeeper.cpp.i
@@ -238,7 +264,7 @@ src/core/TimeKeeper.i: src/core/TimeKeeper.cpp.i
 
 # target to preprocess a source file
 src/core/TimeKeeper.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/TimeKeeper.cpp.i
 .PHONY : src/core/TimeKeeper.cpp.i
 
 src/core/TimeKeeper.s: src/core/TimeKeeper.cpp.s
@@ -246,15 +272,63 @@ src/core/TimeKeeper.s: src/core/TimeKeeper.cpp.s
 
 # target to generate assembly for a file
 src/core/TimeKeeper.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/TimeKeeper.cpp.s
 .PHONY : src/core/TimeKeeper.cpp.s
+
+src/core/crypto/CryptoUtils.o: src/core/crypto/CryptoUtils.cpp.o
+.PHONY : src/core/crypto/CryptoUtils.o
+
+# target to build an object file
+src/core/crypto/CryptoUtils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/crypto/CryptoUtils.cpp.o
+.PHONY : src/core/crypto/CryptoUtils.cpp.o
+
+src/core/crypto/CryptoUtils.i: src/core/crypto/CryptoUtils.cpp.i
+.PHONY : src/core/crypto/CryptoUtils.i
+
+# target to preprocess a source file
+src/core/crypto/CryptoUtils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/crypto/CryptoUtils.cpp.i
+.PHONY : src/core/crypto/CryptoUtils.cpp.i
+
+src/core/crypto/CryptoUtils.s: src/core/crypto/CryptoUtils.cpp.s
+.PHONY : src/core/crypto/CryptoUtils.s
+
+# target to generate assembly for a file
+src/core/crypto/CryptoUtils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/crypto/CryptoUtils.cpp.s
+.PHONY : src/core/crypto/CryptoUtils.cpp.s
+
+src/core/crypto/OpenSSLCryptoProvider.o: src/core/crypto/OpenSSLCryptoProvider.cpp.o
+.PHONY : src/core/crypto/OpenSSLCryptoProvider.o
+
+# target to build an object file
+src/core/crypto/OpenSSLCryptoProvider.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/crypto/OpenSSLCryptoProvider.cpp.o
+.PHONY : src/core/crypto/OpenSSLCryptoProvider.cpp.o
+
+src/core/crypto/OpenSSLCryptoProvider.i: src/core/crypto/OpenSSLCryptoProvider.cpp.i
+.PHONY : src/core/crypto/OpenSSLCryptoProvider.i
+
+# target to preprocess a source file
+src/core/crypto/OpenSSLCryptoProvider.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/crypto/OpenSSLCryptoProvider.cpp.i
+.PHONY : src/core/crypto/OpenSSLCryptoProvider.cpp.i
+
+src/core/crypto/OpenSSLCryptoProvider.s: src/core/crypto/OpenSSLCryptoProvider.cpp.s
+.PHONY : src/core/crypto/OpenSSLCryptoProvider.s
+
+# target to generate assembly for a file
+src/core/crypto/OpenSSLCryptoProvider.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/crypto/OpenSSLCryptoProvider.cpp.s
+.PHONY : src/core/crypto/OpenSSLCryptoProvider.cpp.s
 
 src/core/events/Event.o: src/core/events/Event.cpp.o
 .PHONY : src/core/events/Event.o
 
 # target to build an object file
 src/core/events/Event.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/Event.cpp.o
 .PHONY : src/core/events/Event.cpp.o
 
 src/core/events/Event.i: src/core/events/Event.cpp.i
@@ -262,7 +336,7 @@ src/core/events/Event.i: src/core/events/Event.cpp.i
 
 # target to preprocess a source file
 src/core/events/Event.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/Event.cpp.i
 .PHONY : src/core/events/Event.cpp.i
 
 src/core/events/Event.s: src/core/events/Event.cpp.s
@@ -270,7 +344,7 @@ src/core/events/Event.s: src/core/events/Event.cpp.s
 
 # target to generate assembly for a file
 src/core/events/Event.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/Event.cpp.s
 .PHONY : src/core/events/Event.cpp.s
 
 src/core/events/EventFactory.o: src/core/events/EventFactory.cpp.o
@@ -278,7 +352,7 @@ src/core/events/EventFactory.o: src/core/events/EventFactory.cpp.o
 
 # target to build an object file
 src/core/events/EventFactory.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactory.cpp.o
 .PHONY : src/core/events/EventFactory.cpp.o
 
 src/core/events/EventFactory.i: src/core/events/EventFactory.cpp.i
@@ -286,7 +360,7 @@ src/core/events/EventFactory.i: src/core/events/EventFactory.cpp.i
 
 # target to preprocess a source file
 src/core/events/EventFactory.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactory.cpp.i
 .PHONY : src/core/events/EventFactory.cpp.i
 
 src/core/events/EventFactory.s: src/core/events/EventFactory.cpp.s
@@ -294,15 +368,39 @@ src/core/events/EventFactory.s: src/core/events/EventFactory.cpp.s
 
 # target to generate assembly for a file
 src/core/events/EventFactory.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactory.cpp.s
 .PHONY : src/core/events/EventFactory.cpp.s
+
+src/core/events/EventFactoryProtocolSpecific.o: src/core/events/EventFactoryProtocolSpecific.cpp.o
+.PHONY : src/core/events/EventFactoryProtocolSpecific.o
+
+# target to build an object file
+src/core/events/EventFactoryProtocolSpecific.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.o
+.PHONY : src/core/events/EventFactoryProtocolSpecific.cpp.o
+
+src/core/events/EventFactoryProtocolSpecific.i: src/core/events/EventFactoryProtocolSpecific.cpp.i
+.PHONY : src/core/events/EventFactoryProtocolSpecific.i
+
+# target to preprocess a source file
+src/core/events/EventFactoryProtocolSpecific.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.i
+.PHONY : src/core/events/EventFactoryProtocolSpecific.cpp.i
+
+src/core/events/EventFactoryProtocolSpecific.s: src/core/events/EventFactoryProtocolSpecific.cpp.s
+.PHONY : src/core/events/EventFactoryProtocolSpecific.s
+
+# target to generate assembly for a file
+src/core/events/EventFactoryProtocolSpecific.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.s
+.PHONY : src/core/events/EventFactoryProtocolSpecific.cpp.s
 
 src/core/state/DataSet.o: src/core/state/DataSet.cpp.o
 .PHONY : src/core/state/DataSet.o
 
 # target to build an object file
 src/core/state/DataSet.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/DataSet.cpp.o
 .PHONY : src/core/state/DataSet.cpp.o
 
 src/core/state/DataSet.i: src/core/state/DataSet.cpp.i
@@ -310,7 +408,7 @@ src/core/state/DataSet.i: src/core/state/DataSet.cpp.i
 
 # target to preprocess a source file
 src/core/state/DataSet.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/DataSet.cpp.i
 .PHONY : src/core/state/DataSet.cpp.i
 
 src/core/state/DataSet.s: src/core/state/DataSet.cpp.s
@@ -318,7 +416,7 @@ src/core/state/DataSet.s: src/core/state/DataSet.cpp.s
 
 # target to generate assembly for a file
 src/core/state/DataSet.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/DataSet.cpp.s
 .PHONY : src/core/state/DataSet.cpp.s
 
 src/core/state/EntityState.o: src/core/state/EntityState.cpp.o
@@ -326,7 +424,7 @@ src/core/state/EntityState.o: src/core/state/EntityState.cpp.o
 
 # target to build an object file
 src/core/state/EntityState.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/EntityState.cpp.o
 .PHONY : src/core/state/EntityState.cpp.o
 
 src/core/state/EntityState.i: src/core/state/EntityState.cpp.i
@@ -334,7 +432,7 @@ src/core/state/EntityState.i: src/core/state/EntityState.cpp.i
 
 # target to preprocess a source file
 src/core/state/EntityState.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/EntityState.cpp.i
 .PHONY : src/core/state/EntityState.cpp.i
 
 src/core/state/EntityState.s: src/core/state/EntityState.cpp.s
@@ -342,7 +440,7 @@ src/core/state/EntityState.s: src/core/state/EntityState.cpp.s
 
 # target to generate assembly for a file
 src/core/state/EntityState.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/EntityState.cpp.s
 .PHONY : src/core/state/EntityState.cpp.s
 
 src/core/state/StateMachine.o: src/core/state/StateMachine.cpp.o
@@ -350,7 +448,7 @@ src/core/state/StateMachine.o: src/core/state/StateMachine.cpp.o
 
 # target to build an object file
 src/core/state/StateMachine.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/StateMachine.cpp.o
 .PHONY : src/core/state/StateMachine.cpp.o
 
 src/core/state/StateMachine.i: src/core/state/StateMachine.cpp.i
@@ -358,7 +456,7 @@ src/core/state/StateMachine.i: src/core/state/StateMachine.cpp.i
 
 # target to preprocess a source file
 src/core/state/StateMachine.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/StateMachine.cpp.i
 .PHONY : src/core/state/StateMachine.cpp.i
 
 src/core/state/StateMachine.s: src/core/state/StateMachine.cpp.s
@@ -366,7 +464,7 @@ src/core/state/StateMachine.s: src/core/state/StateMachine.cpp.s
 
 # target to generate assembly for a file
 src/core/state/StateMachine.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/core/state/StateMachine.cpp.s
 .PHONY : src/core/state/StateMachine.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -374,6 +472,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/main.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
@@ -382,6 +481,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/main.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
@@ -390,8 +490,33 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/main.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+tests/integration_test.o: tests/integration_test.cpp.o
+.PHONY : tests/integration_test.o
+
+# target to build an object file
+tests/integration_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/integration_test.dir/build.make CMakeFiles/integration_test.dir/tests/integration_test.cpp.o
+.PHONY : tests/integration_test.cpp.o
+
+tests/integration_test.i: tests/integration_test.cpp.i
+.PHONY : tests/integration_test.i
+
+# target to preprocess a source file
+tests/integration_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/integration_test.dir/build.make CMakeFiles/integration_test.dir/tests/integration_test.cpp.i
+.PHONY : tests/integration_test.cpp.i
+
+tests/integration_test.s: tests/integration_test.cpp.s
+.PHONY : tests/integration_test.s
+
+# target to generate assembly for a file
+tests/integration_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/integration_test.dir/build.make CMakeFiles/integration_test.dir/tests/integration_test.cpp.s
+.PHONY : tests/integration_test.cpp.s
 
 # Help Target
 help:
@@ -402,6 +527,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... CppBedrock"
+	@echo "... CppBedrockLib"
+	@echo "... integration_test"
 	@echo "... src/coordination/CoordinationServer.o"
 	@echo "... src/coordination/CoordinationServer.i"
 	@echo "... src/coordination/CoordinationServer.s"
@@ -417,12 +544,21 @@ help:
 	@echo "... src/core/TimeKeeper.o"
 	@echo "... src/core/TimeKeeper.i"
 	@echo "... src/core/TimeKeeper.s"
+	@echo "... src/core/crypto/CryptoUtils.o"
+	@echo "... src/core/crypto/CryptoUtils.i"
+	@echo "... src/core/crypto/CryptoUtils.s"
+	@echo "... src/core/crypto/OpenSSLCryptoProvider.o"
+	@echo "... src/core/crypto/OpenSSLCryptoProvider.i"
+	@echo "... src/core/crypto/OpenSSLCryptoProvider.s"
 	@echo "... src/core/events/Event.o"
 	@echo "... src/core/events/Event.i"
 	@echo "... src/core/events/Event.s"
 	@echo "... src/core/events/EventFactory.o"
 	@echo "... src/core/events/EventFactory.i"
 	@echo "... src/core/events/EventFactory.s"
+	@echo "... src/core/events/EventFactoryProtocolSpecific.o"
+	@echo "... src/core/events/EventFactoryProtocolSpecific.i"
+	@echo "... src/core/events/EventFactoryProtocolSpecific.s"
 	@echo "... src/core/state/DataSet.o"
 	@echo "... src/core/state/DataSet.i"
 	@echo "... src/core/state/DataSet.s"
@@ -435,6 +571,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... tests/integration_test.o"
+	@echo "... tests/integration_test.i"
+	@echo "... tests/integration_test.s"
 .PHONY : help
 
 

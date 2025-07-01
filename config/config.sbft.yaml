@@ -1,6 +1,6 @@
 protocol: LinearPBFT
 phases:
-  PBFTRequest:
+  Request:
     quorum: 1
     next_state: PrePrepare
     actions:
@@ -23,7 +23,7 @@ phases:
       - "unicastifParticipant"
   commit:
     quorum: 2f
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "storeMessage"
       - "checkQuorumForSBFT"
@@ -32,11 +32,11 @@ phases:
       - "complete"
   ViewChange:
     quorum: 2f+1
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "handleViewChange"
   NewView:
     quorum: 1
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "handleNewView"

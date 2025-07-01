@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories("/opt/homebrew/Cellar/yaml-cpp/0.8.0/include")
 # Find nlohmann json package
 find_package(nlohmann_json REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 # Manually specify the library path for yaml-cpp
 link_directories("/opt/homebrew/Cellar/yaml-cpp/0.8.0/lib")
@@ -27,10 +28,20 @@ set(SOURCES
     src/coordination/CoordinationServer.cpp
     src/coordination/CoordinationUnit.cpp
     src/core/TimeKeeper.cpp
+    src/core/crypto/OpenSSLCryptoProvider.cpp
+    src/core/crypto/CryptoUtils.cpp
+    src/core/events/EventFactoryProtocolSpecific.cpp
 )
 
-# Add the executable and link libraries
-add_executable(${PROJECT_NAME} ${SOURCES})
+# Add the library and link libraries
+add_library(CppBedrockLib ${SOURCES})
+target_link_libraries(CppBedrockLib PUBLIC OpenSSL::Crypto yaml-cpp nlohmann_json::nlohmann_json)
+target_include_directories(CppBedrockLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Link yaml-cpp library
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp nlohmann_json::nlohmann_json)
+# Add the executable and link libraries
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE CppBedrockLib)
+
+# Add integration test executable and link libraries
+add_executable(integration_test tests/integration_test.cpp)
+target_link_libraries(integration_test PRIVATE CppBedrockLib)

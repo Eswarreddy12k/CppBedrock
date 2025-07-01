@@ -7,6 +7,7 @@ int main() {
     CoordinationServer server;
     CoordinationUnit unit;
 
+    //change path in entity.cpp to change protocol
     server.loadConfig("config.pbft.yaml");
     server.sendStartSignal();
 
@@ -19,7 +20,7 @@ int main() {
     std::cout << "Main thread continues execution while server is listening..." << std::endl;
     
     // Simulate some other task
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 10; i++) {
         //std::cout << "Main is doing work..." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }

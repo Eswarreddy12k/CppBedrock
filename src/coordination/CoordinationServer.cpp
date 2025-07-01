@@ -42,5 +42,7 @@ void CoordinationServer::sendStartSignal() {
 }
 
 void CoordinationServer::sendStopSignal() {
+    TcpConnection client(50001, false);
+    client.send("stop the units");
     std::cout << "Sending stop signal to all coordination units." << std::endl;
 }

@@ -1,10 +1,12 @@
 protocol: LinearPBFT
 phases:
-  PBFTRequest:
+  Request:
     quorum: 1
     next_state: PrePrepare
     actions:
-      - "storeMessage"
+      - verifySignature:
+          public_key: "../keys/${client_id}_public.pem"
+      - "handleClientRequestAsLeader"
   PrePrepare:
     quorum: 1
     next_state: prepare
@@ -23,7 +25,7 @@ phases:
       - "unicastifParticipant"
   commit:
     quorum: 2f
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "storeMessage"
       - "checkQuorum"
@@ -32,11 +34,11 @@ phases:
       - "complete"
   ViewChange:
     quorum: 2f+1
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "handleViewChange"
   NewView:
     quorum: 1
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "handleNewView"

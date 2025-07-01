@@ -1,0 +1,50 @@
+{
+    "PrePrepare_0_1": {
+        "client_signature": "4f2ae5a5aabcf0424f2ffbf89a682cb83916dceed0489db6ae5f1e9209e2f9e181528e7f004f15e2f727c4f394c1b341ecb49d4919ac98d217a8b4d4d205f66a12e3b78ba1575bedfd3596708a37dfa779a8ca2f821f8803fff6db7777543ff5bb4ab220ede5b258f8eb16211b75ec27b49bcc7b08810d3a41b45c79cc44c937ff57d28e539e973ba5de60df9d2b11626e22dd1fb9b0619b243f769e3d66fbcf20afd8e31631a18dc3c05181441e3f6fe04d309b173c3b2d8d687b0f179975ee8636608ea82628ad8550ce3d4a137470b911fff6a465d5c25a19975adfcf6a5cdb7b5516ff38807d08882a0bf4bb6aa7b6247da6f76b579ed0a212e66e46f8a0",
+        "clientid": "client",
+        "digest": "fc2b7c5587d1cf8bf1f39c6f5ffab67083c318285e743491f5ee5015ccb32c53",
+        "message_sender_id": 1,
+        "operation": "1750888957376",
+        "sequence": 0,
+        "timestamp": "1750888957376",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 0
+    },
+    "PrePrepare_1_1": {
+        "client_signature": "26185616dd4f7f1ebd1a290ea88fa750be84803ea8ce04682edf814e6bbd95c97bd8a086b5fb819ca1585e40eb5b45d28d632a395490e641dfc4e32e15f20ca1dea7fa3fdd5db840f4aafdf8bfb5a2d0da97b907e15acd87fd1733cfdd477e5e7107cbbaa38c1a30614399c211081e4a3a3859be1bc802564bd8f2225181a794df0c7d0bc132c6ee42b1160756c23fe8fdbe7286b1fafc22dc2626a145ac2acd6fca100a3ac6da9f500e7bb9fb51c33b2cf2fb7becd50e363c3218f04a39b2a74674b9a90a02ce18e4026687fb48a99aa637035fa7f03cd015605f115f7d305c533daedb68c6287d4d0947aefc45c14ffe1ce31c06b821f5f3fd5e816d575282",
+        "clientid": "client",
+        "digest": "f516a766dfa074c9c8606b3d60a972d6ae0b41b67c6a4b3ce2ed41656ad39ae0",
+        "message_sender_id": 1,
+        "operation": "1750888957589",
+        "sequence": 1,
+        "timestamp": "1750888957589",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 0
+    },
+    "PrePrepare_2_1": {
+        "client_signature": "426ab0d598d4b90cc59b51496f2dc16dee595d5e29732f4d2965a99db4d24362ba3599e34d0d9f96ebdfcc2c42103f5c3fc5c007ed73b304336ac8c9ae872f064785cf14823dced61114a0b72c5535fa4cf205c808e368bf2f77227051107ca1b4372e0dc5cc0d8dff1d5b52981a767fb54d0afa4fb239ac896a50d9d989cc290c704bb1fe59250d4ea9c4e34271815d07030aa1302468e6be4984c9de68c1294544dd432e141338bab23e0ff0bfda328cc357ba8aac456f695059f64677aefe5bd464aece8d25beec05279e097f659513f94550243ceee4c0451afce6e48afe74d889b6a9a2e3eaf950bf65285ca676c722a93e2a1bf04d89f0640a92a6cd5d",
+        "clientid": "client",
+        "digest": "0e1bb248a2a2150d0051dae425d30e7bdedfd6d095b042ae523d8909d04e9395",
+        "message_sender_id": 1,
+        "operation": "1750888957795",
+        "sequence": 2,
+        "timestamp": "1750888957795",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 0
+    }
+}

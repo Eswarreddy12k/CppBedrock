@@ -86,177 +86,19 @@ CMakeFiles/CppBedrock.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/main.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/main.cpp -o CMakeFiles/CppBedrock.dir/src/main.cpp.s
 
-CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/state/StateMachine.cpp
-CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o -MF CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/core/state/StateMachine.cpp
-
-CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/core/state/StateMachine.cpp > CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/core/state/StateMachine.cpp -o CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/state/DataSet.cpp
-CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o -MF CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/core/state/DataSet.cpp
-
-CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/core/state/DataSet.cpp > CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/core/state/DataSet.cpp -o CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/state/EntityState.cpp
-CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o -MF CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/core/state/EntityState.cpp
-
-CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/core/state/EntityState.cpp > CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/core/state/EntityState.cpp -o CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/events/Event.cpp
-CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o -MF CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/core/events/Event.cpp
-
-CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/core/events/Event.cpp > CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/core/events/Event.cpp -o CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/events/EventFactory.cpp
-CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o -MF CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/core/events/EventFactory.cpp
-
-CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/core/events/EventFactory.cpp > CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/core/events/EventFactory.cpp -o CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/Entity.cpp
-CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o -MF CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/core/Entity.cpp
-
-CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/core/Entity.cpp > CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/core/Entity.cpp -o CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o: /Users/eswar/Downloads/CppBedrock/src/coordination/connections/TcpConnection.cpp
-CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o -MF CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/coordination/connections/TcpConnection.cpp
-
-CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/coordination/connections/TcpConnection.cpp > CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/coordination/connections/TcpConnection.cpp -o CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o: /Users/eswar/Downloads/CppBedrock/src/coordination/CoordinationServer.cpp
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o -MF CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/coordination/CoordinationServer.cpp
-
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/coordination/CoordinationServer.cpp > CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/coordination/CoordinationServer.cpp -o CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o: /Users/eswar/Downloads/CppBedrock/src/coordination/CoordinationUnit.cpp
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o -MF CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/coordination/CoordinationUnit.cpp
-
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/coordination/CoordinationUnit.cpp > CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/coordination/CoordinationUnit.cpp -o CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.s
-
-CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
-CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/TimeKeeper.cpp
-CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o -MF CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/core/TimeKeeper.cpp
-
-CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/core/TimeKeeper.cpp > CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.i
-
-CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/core/TimeKeeper.cpp -o CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.s
-
 # Object files for target CppBedrock
 CppBedrock_OBJECTS = \
-"CMakeFiles/CppBedrock.dir/src/main.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o" \
-"CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o"
+"CMakeFiles/CppBedrock.dir/src/main.cpp.o"
 
 # External object files for target CppBedrock
 CppBedrock_EXTERNAL_OBJECTS =
 
 CppBedrock: CMakeFiles/CppBedrock.dir/src/main.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/core/state/StateMachine.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/core/state/DataSet.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/core/state/EntityState.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/core/events/Event.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/core/events/EventFactory.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/core/Entity.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/coordination/connections/TcpConnection.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/coordination/CoordinationServer.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/coordination/CoordinationUnit.cpp.o
-CppBedrock: CMakeFiles/CppBedrock.dir/src/core/TimeKeeper.cpp.o
 CppBedrock: CMakeFiles/CppBedrock.dir/build.make
+CppBedrock: libCppBedrockLib.a
+CppBedrock: /opt/homebrew/Cellar/openssl@3/3.4.1/lib/libcrypto.dylib
 CppBedrock: CMakeFiles/CppBedrock.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable CppBedrock"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable CppBedrock"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/CppBedrock.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

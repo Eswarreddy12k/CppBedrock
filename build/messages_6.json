@@ -1,0 +1,1025 @@
+{
+    "PrePrepare_0_1": {
+        "clientid": "client",
+        "digest": "d41d067b5231a4c4371c561522c6d6d010fd407dafffd9dd61fc8c838d8a5e4c",
+        "message_sender_id": 1,
+        "operation": "1751404247387",
+        "protocol_name": "LinearPBFT",
+        "sequence": 0,
+        "signature": "57c3f380748107509a4fa88e91d888adbb6fba0938158fc407d35888b89acbb05cdf7e147093d04f6e308848d552b9b9049b195bcd66cde6c7ed7e8cdaaa10636e8624c963e417f7a76402d0a84b3de64ed593bdb0027d15259ce322100adbb638905e5066c99c7bf26ee62be2256709f485ea776248d86c25c2aebaf9508a9f6bc400555618763f2dc8d9798712c65a099d9fdf20bbe0ccf2a6294d167f38bee9ced669c8e504255b4daeb869784d2dbf79eafeb7d1c4c59613bd2c485c5f30b2e83dfa7df61eca22bd147add894cb726b8985055638148147c4f1730ec889799e793538fe6ea1a196190df3dc97d3cf0c6639987791c5139c34723bdae47d1",
+        "timestamp": "1751404247387",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 1
+    },
+    "PrePrepare_0_2": {
+        "clientid": "1",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 2,
+        "operation": "1751403914969",
+        "protocol_name": "LinearPBFT",
+        "sequence": 0,
+        "signature": "30dbd202f279d627fbfc5c2a6fa401446fa98d6f79775e315a09857f74080a512c261678cc6344fef7ddc7c4277c7491ea441070493dc07ed72c40e40cc39c2feab496975d02ae948772da22e007f677552397bda5d97f5164c35f175489c2e629b74bbc264e162a7a26d2df3cd70787094613c27279f832b3a2a30195c9c5a43fc655a49cdb09cabba7cfe0d1c80d61437bd9cc9b019b22e379632085480d6a8f69b6831f4dea39fda77406d1de2ff1cb038070b4b3b9b8e8249b47c42e8c59ba50b447a20af060bb138d2cc5c2f0c178241c48a00c01275e0072d556a34344495a43e94392f3db2e09493c53d3c25dece88780db5c8375dba70045efba33ff",
+        "timestamp": "1751403914969",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 2
+    },
+    "PrePrepare_0_3": {
+        "clientid": "1",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 3,
+        "operation": "1751403914969",
+        "protocol_name": "LinearPBFT",
+        "sequence": 0,
+        "signature": "8e869642d900592cdad53e0ffccceff5b5c2c3619ac10bf03aaaf8ef9955b2de0b617b961ded87bab0ce195e612c97070a25923fe389b6ed7791546eee64f33599c8f38c8deecf8837f61cafec0c6b100fed3749918ae2dd163bbf00a7fc18e5e357958e119091824ea1e62f5c2d69e4f7bed6078b7c3823a3eecf6e271ca9ca406c3176968e695e01e72257e1df8ba73838ae2e0aa4e8951c553f605d78c0720ef49ff3d853e0a8fb8408bb7df5abd4ecdd5d7b19d8f4af7b681d3f30186874b8a0b1a1074cbf2f13b88f146f3da75dca450a36a72f6e86a4a8ec37595d7a524e0a690600fbe50fc8edf4254fe753a919f7bb37549b4ce540a1ee39ce9137ce",
+        "timestamp": "1751403914969",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 3
+    },
+    "PrePrepare_0_4": {
+        "clientid": "2",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 4,
+        "operation": "1751403914969",
+        "protocol_name": "LinearPBFT",
+        "sequence": 0,
+        "signature": "31ef26bde2dde47becf6d6808d9e20fb868cb06bd428efe6ac31ea1b981b67ccace3454504cd7ad85003335f7ef7c5ab013eb364bf85f6236fcb300f055919ee3f44a4200a2945f18824edd39cb4386f06cf63eb105c60fbee19c888720f4ab97039d254fcdcec63ee4a5c229f67781ffa2f433f95b700849410ef780a1dad8ab9f58637f27481a0cb9fb06a60b4d8b0295a26dde349e7c3a2f36ce55ea670b7aae475da1216a3d25bb2425b16385842fae2358a3170ffce0813fa647fd714c974f10accdbd1ac8d9e27afc88636a3075639a59c561080b7d1e2b1282cb341ecf561e808ff6d3f1a9e860d685f6289d252fef0c1b21b7d5cb3382ca1a31eedd0",
+        "timestamp": "1751403914969",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 4
+    },
+    "PrePrepare_0_5": {
+        "clientid": "2",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 5,
+        "operation": "1751403914969",
+        "protocol_name": "LinearPBFT",
+        "sequence": 0,
+        "signature": "7e6953cbaa0ad5ef0fa63b2dcfeed0cfb6dfddd9933271adb32132d0404d24417b1fd5cf03667be31b458e90816e6467a2583379acaf618e799a40600c99f1af8117049abe2710dffd88996137a91427db5a38ecf4c5288386e6c01a954f3642fb582b2639f3e2588da9b060c49ca77d99c6a71830bcfff0dc90eccb6ecfcb872e886e83449d1f90e36a32e5851c471a5f1c434f7a4faa8bdf3e0d8227e3078c27e60360c7d8670aba65eb7bc5110f60e6a978023189eb81272abd2f24e7b9bf311bff4c3b69f26e1dfa9e1adf4e0f053b8df4b68ba674a228d11af9daecf37b58fb2aba83052bda31198c0730dcfc8574fd18211d3add6e3088cf592e5011c3",
+        "timestamp": "1751403914969",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 5
+    },
+    "PrePrepare_1_1": {
+        "clientid": "client",
+        "digest": "3d706ffc5717758748a3459658906b5542493ea5fb4cbebfa8d59b3757562647",
+        "message_sender_id": 1,
+        "operation": "1751404247453",
+        "protocol_name": "LinearPBFT",
+        "sequence": 1,
+        "signature": "46c826169f269061b3162070c9d424028ff972354e7352bcb01cc7e47d9490e9496bfa6c1474d33685d510a1158ec209f8d52ce9691f0cd0971ef8cf115b49b7c8ce573df83eb26e30d868145d46171179664b453e2d308dc3b3d2531527c579352041bf58691ac30aaa27a0b8fdb7a890f1c64650a14183d5d051ecf9553d50f984dbcfd071120bea6ed5b6897a9f70d142f8dd2ef54f5a879f13b6bfbf5fd3864b2f81707cd7a1d08db8425b320a0c336b00ab17243b9304c71175faac512c44c00f71d9b8447eb7c5959f02c630a62b54963fa7d636ecfe5748d7cfa178103687998fc398f974704ec2fa5af09a15d3bcc0e784a85603c29d53e25fd436d4",
+        "timestamp": "1751404247453",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 1
+    },
+    "PrePrepare_1_2": {
+        "clientid": "2",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 2,
+        "operation": "1751403915034",
+        "protocol_name": "LinearPBFT",
+        "sequence": 1,
+        "signature": "24de1b0e71286d2fc43b5bc45253c0f23c124c3770353b5d96a8e67eb20f6ade518b1158651c6e31714820267307ba7791d20adacac4831a020412e7549d05ebb0c432b5231d63a0b252e2f0a524378c73f68f80167cb07053399aeddb8e58af6095e78bc5e6bb5f24397f1bc7041721d49f3a86b2c19446870aee93f65c27db25d92081415330e871e734e2211078e1f7f989565089329a5460e7ba707a1705064fcd4a6a05fcfcb9594e2b082d17c6c999af34955bdab6145dffffd8694b3be1d99f9d3a53d43c759f74e8fb3ad0b449f7b7fb6238a3f1bf602db421ae76dc97e39799da56d6f6308501a4c0332fc276cbf31306971509f675dc11cc36b540",
+        "timestamp": "1751403915034",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 2
+    },
+    "PrePrepare_1_3": {
+        "clientid": "2",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 3,
+        "operation": "1751403915034",
+        "protocol_name": "LinearPBFT",
+        "sequence": 1,
+        "signature": "b84f46e7d1f87097cf59ce2703d5e2ee36f57f5c07a939c2aafcc3c006a7711fbd216e7a03cfc058f2b4f5324119281cce41f3a167d173fa983c502ad060c02d9b8278f460a005970b6f1722c6b6687f20dd4f2408e6ed24c4812c6a21ce1f06101fd7502b90e0e74a7d9ec00b1216f3782f54e8a9376c31f23b385d0c41fd8c82ed52d8bc16e70bb616f1bccf2c240901e956456964c2910e6756dc8c3da12ca01039edf3175ebc3e55816bbe2372593caec3208a38d34911bbe3719d6fffb28d1d5e098865dba31de9ada2dde4f6831826fd76012c5dfe488d7daedcc54f36a412daf16d5d004a339ad3a945fe7a05741475622b5af321f443abff991fbb6c",
+        "timestamp": "1751403915034",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 3
+    },
+    "PrePrepare_1_4": {
+        "clientid": "1",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 4,
+        "operation": "1751403915034",
+        "protocol_name": "LinearPBFT",
+        "sequence": 1,
+        "signature": "2b8a4b064bd33b74e58f4d216aa7f69cef7e0fac56ed6eb71b44a973c93ad2a36688891546f5d38d9e5b5fc3dfd4e08812b64b12e310b5efbae8a66542bc1ec2d78bc70609b992768a77c7d7de7269c0766b43211e4880a3f78daefb2dd5842d80b0284fdc1c5bf1b57b3a7d3a246e1961b38fd2da4874ba0cce8667f000e7a9f812b95b96d9151b245a9976ffd6f4af585e5023ccf7ce2903706b8a820ed03842bfef5de32f22cbbe039fb711e14aa7c51586e2a283acf56c41fa625c92558f3add40049402941071bb264a50c082516256c2086d4a4cabd39ab254b1673f7d9ffec89ca349dd7da264a0013f45a035da47adb7a0a906f5954e71f51d2e4162",
+        "timestamp": "1751403915034",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 4
+    },
+    "PrePrepare_1_5": {
+        "clientid": "1",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 5,
+        "operation": "1751403915034",
+        "protocol_name": "LinearPBFT",
+        "sequence": 1,
+        "signature": "74469ce2f307a97bb5b8daeec0662893a7c9927ecb980480a200e2973336a1f161d1d994f1d27eb1d4542dff9b1659b8f413c7b73f669c1fb26ea55192a618cdb8ebb08326b57e3af495ff5cf209e6a057e1c7d3d29a63d428518f8e0c91d95d851379d89d9c3e00df9a4e2c4e0ffc8b43a4e03f3e0e3972ba9c235f9ca69e47ec53762f2a6e4378baae2a0179fd710c7dbcfe834fb710dd12fa06b05e309190ce417a1d9bb5832986ef07eab83f31e30c65ff6a100c2bfa7750fef1984ab6ed97dac4f4de8e69456fee875e255ed3f05258a982e3292f6563db93ccdf4b08c72b2b8f7e696491667d12e494bd86738adf21ae0f481117f968e069e9f501a7f4",
+        "timestamp": "1751403915034",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 5
+    },
+    "PrePrepare_2_1": {
+        "clientid": "client",
+        "digest": "3e9663a29bc5c1e919666a61626d6ee362668e2870de0d3d111fc61244ce6dc7",
+        "message_sender_id": 1,
+        "operation": "1751404247509",
+        "protocol_name": "LinearPBFT",
+        "sequence": 2,
+        "signature": "1b0a5bfbb01ebc1ac33c4a092a675512b8e78bdf9f8d640786fe8cfc03e2545ffa51700d5ae0e72371f4c8f8d00383cca037f458035903819924b995204372d6eb62daf547f3f847725b399fd8de5e0911480f16d02375d8b0c438066ca3c6292969ead06c079f3ae67f9f054e391b9ba2af67a837dbf6501162b6740edbbea01ae40400649b9b1be22b708e73b47581a2b6e745d933e39e00305fd215ddb5558c8595c817318ad6e63d8b51c1473cdefbc42796996a909862e6ba6924233ba59b12ee4d8f3dfe68731074aeba399a4d34a6ebd2af45310d8a28d369ae9eae9abf6b585599972d8420a255727b0a32daf1e7ae0d8f78b42a47d643a3373ba52b",
+        "timestamp": "1751404247509",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 1
+    },
+    "PrePrepare_2_2": {
+        "clientid": "3",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 2,
+        "operation": "1751403915090",
+        "protocol_name": "LinearPBFT",
+        "sequence": 2,
+        "signature": "7c94ec23669967005b7451137d17bb0bdde9f31be4666448e5c8e6130bb7a0de2677f18f0b8241f3f855ac469794f4b22e991854ae70c0003085ad0bdb355860d54e3e2f4fbada9b0375d8a732e46847da1aed02ac31479e74c7823464dbb4c9dc24f79256314c5d6c2a8bc9da733d0773fdc285c27c2aa6ab6d43ac77701f46eeebaa7c2defe7be8fede0f28ebfe0280d1f776dfbf61d2362ae43ac4262195111ffc6617f9377d80fc523c62240f513d650747f5e4607755eeb843bd865f93c184ca84ac9a91c190891f5a2050b0a6c13f638b16297ae67c40d54a85fb48247c3abf45004e890e1db64cca457c861034c91b30af59e266d0603db803954125f",
+        "timestamp": "1751403915090",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 2
+    },
+    "PrePrepare_2_3": {
+        "clientid": "6",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 3,
+        "operation": "1751403915090",
+        "protocol_name": "LinearPBFT",
+        "sequence": 2,
+        "signature": "908587ffb65e48e67533f756161715773a41622c84fd48a40bb3f4d60c22d052d9ec6e390a2dc42c76b9b54d2e8ef01fbe4d575d061a75fbe4d4772544fcb459414a975439dc59f2b54191939d71aaedb654787d340db3b91923d7c92cdf6b357ef02a8dde3e1b981d5ddadf3d409e0d1b953716fbf6fb4238ba661a5246915546337641a367afaf7be30cfc79ccf240dac2ceb23d07b3d502484e39f521c2b966ae7ad8b3f99c0122ab9300f22dc2c5e8b88c99a505985de1b4fc162a45aea26f8ab74e6b7c0922aff73d1798fabf6f673bce7f768fe0c1cb9cbe4ec38d077e6061a529f7f568d243a396a3be57f6c1342862d1eba269b969819251a0547c9c",
+        "timestamp": "1751403915090",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 3
+    },
+    "PrePrepare_2_4": {
+        "clientid": "6",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 4,
+        "operation": "1751403915090",
+        "protocol_name": "LinearPBFT",
+        "sequence": 2,
+        "signature": "8103224679a73a6712ec591363155b6ef53494b4c81e68fac5dd73c793d641735cde3e2eca37f87eb110a31a077578e912d8f75df95655082d9b399a11ac665a2c420e95931757debf0ed67f8086c97a9c75d3ead5d9d9168c99f01b2ce7ab7b725e863f0997341fe195c3e649d1baa36d0efaff614ae87e9bd0bea76eda257682e5d157fd35a2dd35e75d0b87721c766b2464d83f194a2883b7d51a3dea57108f57602982df6176982c6fce00247b390eaa625526d04aea9ccc597747c6ac359b0e9189d6e06273fce3540e7c41cbb2d5bd9de80075d2a2d2c748c7e687bf28584442d5402d48a77829bcb6f7070ab58ec010c70163a4f366c3c3305a57c701",
+        "timestamp": "1751403915090",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 4
+    },
+    "PrePrepare_2_5": {
+        "clientid": "6",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 5,
+        "operation": "1751403915090",
+        "protocol_name": "LinearPBFT",
+        "sequence": 2,
+        "signature": "1e9b7755c0324b6c7fa6209d4c4409abc890b426793f990e2a4392a9560332bde8adc0bca866bdc9222f325a4a9fbca568b220fa9c9b83d91e2eb3c188ff0e3b5269c442c286352bdf92e626aa3bd6e388328984274427f2d4d86255f2bb3cc0cf61abdaf351c2870c3b5832fe4e6253401f2bc1c725c07509a4b7419270fa20f90d6c109b1bbb01a49434ce0805dfbbaf3685169961459d3e81ffbf9f863f72b6c9d5544e5785753dd966236dae37cda17c6b7c27eab8f547b436d8dff098e35deb4524e31813d922709b97113a7f3580961ecc9f03384b4f980c95701f0ae07c95147fb56d9627503e5ac303840239f723d30477a56e2c3c0bc8120112e6e2",
+        "timestamp": "1751403915090",
+        "toturnoffflag": "true",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "PrePrepare",
+        "view": 5
+    },
+    "commit_0_1": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 1,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_0_2": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 2,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_0_3": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 3,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_0_4": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 4,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_0_5": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 5,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_0_6": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 6,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_0_7": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 7,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_1_1": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 1,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_1_2": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 2,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_1_3": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 3,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_1_4": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 4,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_1_5": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 5,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_1_6": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 6,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_1_7": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 7,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_2_1": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 1,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_2_2": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 2,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_2_3": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 3,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_2_4": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 4,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_2_5": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 5,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_2_6": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 6,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "commit_2_7": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 7,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "commit",
+        "view": 1
+    },
+    "prepare_0_1": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 1,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_0_2": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 2,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_0_3": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 3,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_0_4": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 4,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_0_5": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 5,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_0_6": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 6,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_0_7": {
+        "clientid": "client",
+        "digest": "49f2362f9074e9ea3191ddb2b9f3c9257467fb7f075bad1ade7d58261996f860",
+        "message_sender_id": 7,
+        "operation": "1751403914969",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 0,
+        "signature": "b287c448b22d8734e3d9eeead30b30b7959063aa101dfd7ca97a18fc14875ff4c35f1d742a2a38f875c9c2686830a234bc03eb4342613b66374c702808ee5807431aea0af9b093aa87bd6500d291eb6f554a39bbeb0e2b289e0cb1712d8a438676263f41b33045cc54e1495b7d4082a14c4bf1bf553cf09e2959d0f06312ad46e57f93063df9cc4a45e55c82559cc4c4d731dc8093c1ed08b56422c5f6e14bb938eb5e33db3f407d10c25fd29917c3e3c23187b73fdb64aed26529b7526ca90ee6f844bc6c243c1523b8ba91894852922438051032d43700ea9a5df50779054fe5b205bff7d4c2dfe886d25269f33d4784a2b314e1e02b52d74fc3784e7832fc",
+        "timestamp": "1751403914969",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_1_1": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 1,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_1_2": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 2,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_1_3": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 3,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_1_4": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 4,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_1_5": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 5,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_1_6": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 6,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_1_7": {
+        "clientid": "client",
+        "digest": "2b0539f06734c60bfdb6a4db08f202d56351e6172f61a99150dbffde3df39464",
+        "message_sender_id": 7,
+        "operation": "1751403915034",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 1,
+        "signature": "4c095da4f9bcbadadfc52efc2d1aa54fc6aa2f6b5e14e80c95825935a28e4dfb29924fc6a0b06160580e9738f8e497f571e1ae46de99ab731557350a5f4f7ff77499900a6737be87ab5fc700e4c6af38bceef2633b91d926fda8ef265cc5e8119387955588dca198c4e91257732ab4343ed04729b73326c6dc951238df2c3c74cdda34a55fc0b499cfd7afaac22dc508d69e36aa02c62c2951ea8edd37c2f99a8fd8b2fe1c9be68bc9ee4043223279dd56a883bac2739ae73d76a8d79d4effd873ae4f3a75fccdb17d890a137a567cfcb4c5abf02d02a188e0864e35d88b479ff22bfef5f85bf25bec2dafeda899a94e27545d907b7b43e8e81e1df29589f149",
+        "timestamp": "1751403915034",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_2_1": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 1,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_2_2": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 2,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_2_3": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 3,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_2_4": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 4,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_2_5": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 5,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_2_6": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 6,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    },
+    "prepare_2_7": {
+        "clientid": "client",
+        "digest": "6e1adcd39e9b30817785a4072ad31462aaf35fffde7b8bde35f14dc1bfcadf8a",
+        "message_sender_id": 7,
+        "operation": "1751403915090",
+        "protocol_name": "PBFT",
+        "qc": "0",
+        "sequence": 2,
+        "signature": "39112d3619bfeb284f8eb9e64d88e9127f45f852dac1a1a8012f0e3cdbd8f805fdf3fa32c409e6d7d6ac9c430e38d93db743aed21faf744490ceb6d4028efda39d35f2c0659dfe6355b33ae9d52b41895b0e1293219fb46f914f29d1570be7dee8777b2bdf622f0c9724866bdf1895e90cf16b8a274c52209bafc8f8247fa7588a689594e908d1150db89796cad2973041b940edc87243d97ad3296268b428dc38198a20e747079337ef86c4764e0a92be93047fd13e2650543ed0afa93dd1b0cea0ffa12ec64f254a72ab7c6f2e9b3c1ed908fbc7f2f4652adc8b392bc2c2f71d70221b1c6ea7e4295367fb7c4375b8e53b2329daf784a688dccaf6655d0a54",
+        "timestamp": "1751403915090",
+        "transaction": {
+            "amount": 50,
+            "from": "A",
+            "to": "B"
+        },
+        "type": "prepare",
+        "view": 1
+    }
+}

@@ -1,40 +1,45 @@
 protocol: PBFT
 phases:
-  PBFTRequest:
+  Request:
     quorum: 1
     next_state: PrePrepare
     actions:
-      - "storeMessage"
+      - verifySignature:
+          public_key: "../keys/${client_id}_public.pem"
+      - "handleClientRequestAsLeader"
   PrePrepare:
     quorum: 1
     next_state: prepare
     actions:
+      - "startTimer"
       - "storeMessage"
-      - "manageTimer"
+      - verifySignature:
+          public_key: "../keys/server_${client_id}_public.pem"
+      - "verifyPBFTConditions"
       - "broadcast"
   prepare:
-    quorum: 2f
+    quorum: 2f+1
     next_state: commit
     actions:
       - "storeMessage"
       - "checkQuorum"
-      - "manageTimer"
+      - "resetTimer"
       - "broadcast"
   commit:
     quorum: 2f+1
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "storeMessage"
       - "checkQuorum"
-      - "manageTimer"
+      - "resetTimer"
       - "complete"
   ViewChange:
     quorum: 2f+1
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "handleViewChange"
   NewView:
     quorum: 1
-    next_state: PBFTRequest
+    next_state: Request
     actions:
       - "handleNewView"
