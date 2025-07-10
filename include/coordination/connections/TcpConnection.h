@@ -17,6 +17,7 @@ public:
     std::string receive();
     void startListening();  // New function to start a listener thread
     void stopListening();   // Graceful shutdown of thread
+    void closeConnection();
 
 private:
     int sockfd;

@@ -25,8 +25,16 @@ int computeQuorum(const std::string& quorumStr, int f) {
 
 
 // ===================== Entity Methods =====================
-Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
-    : _entityState(role, "Request", 0, 0), nodeId(id), peerPorts(peers), connection(5000+id,true), processingThread(), f(2), prePrepareBroadcasted() {
+Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, bool byzantine)
+    : _entityState(role, "Request", 0, 0),
+      nodeId(id),
+      peerPorts(peers),
+      isByzantine(byzantine), // <-- set the member variable
+      connection(5000 + id, true),
+      processingThread(),
+      f(2),
+      prePrepareBroadcasted()
+{
     EventFactory::getInstance().initialize();
     loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1500, [this] {
@@ -35,6 +43,11 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers)
     });
     loadOrInitDataset();
     cryptoProvider = std::make_unique<OpenSSLCryptoProvider>("../keys/server_" + std::to_string(id) + "_private.pem");
+}
+
+Entity::~Entity() {
+    stop(); // Ensure thread is joined before destruction
+    //std::cout << "[Entity] Destructor called for role: " << _entityState.getRole() << std::endl;
 }
 
 void Entity::onTimeout() {
@@ -90,27 +103,52 @@ void Entity::onTimeout() {
     viewChangeMsg["prepare_messages"] = prepareArray;
     // --- End Prepare collection ---
 
-    if (protocol == "Hotstuff"){
+    if (protocol == "Hotstuff") {
         int lastSeq = -1;
         std::string lastOp;
-        if (!allMessagesBySeq.empty()) {
-            auto it = allMessagesBySeq.rbegin();
-            lastSeq = it->first;
-            if (!it->second.empty()) {
-                lastOp = it->second.back().operation;
+        nlohmann::json lastQC;
+    
+        // Load messages from file
+        std::string fileName = "messages_" + std::to_string(getNodeId()) + ".json";
+        dataset.loadFromFile(fileName);
+        auto records = dataset.getRecords();
+    
+        // Find the message with the highest sequence
+        for (const auto& [key, record] : records) {
+            if (record.contains("sequence") && record["sequence"].is_number_integer()) {
+                int seq = record["sequence"].get<int>();
+                if (seq > lastSeq) {
+                    lastSeq = seq;
+                    lastOp = record.value("operation", "");
+                    if (record.contains("qc")) {
+                        lastQC = record["qc"];
+                    } else {
+                        lastQC = nullptr;
+                    }
+                }
             }
         }
+    
         viewChangeMsg["last_sequence"] = lastSeq;
         viewChangeMsg["last_operation"] = lastOp;
-        viewChangeMsg["locked_qc"] = sequenceStates[lastSeq].getLockedQC();
+        viewChangeMsg["locked_qc"] = (lastSeq != -1 && sequenceStates.count(lastSeq))
+            ? nlohmann::json(sequenceStates[lastSeq].getLockedQC())
+            : nlohmann::json{};
         Message msg(viewChangeMsg.dump());
-        int nextLeader = (newView+1) % (peerPorts.size());
+        int nextLeader = (newView + 1) % (peerPorts.size());
         sendTo(nextLeader, msg);
     } else {
         Message msg(viewChangeMsg.dump());
         sendToAll(msg);
     }
-    // std::cout << "[Node " << getNodeId() << "] Sent view change message for view " << viewChangeMsg.dump() << "\n";
+
+    if(true){
+        std::lock_guard<std::mutex> lock(timerMtx);
+        if (timeKeeper) {
+            timeKeeper->start();
+        }
+    }
+    
 }
 
 void Entity::printDataStore() {
@@ -137,12 +175,15 @@ void Entity::stop() {
     std::cout << "[Entity] Stopping entity: " << _entityState.getRole() << "\n";
     running = false;
     connection.stopListening();
-    if (processingThread.joinable()) processingThread.join();
+    if (processingThread.joinable() && std::this_thread::get_id() != processingThread.get_id()) {
+        processingThread.join();
+    }
 }
 void Entity::processMessages() {
     while (running) {
         std::string receivedData = connection.receive();
-        if (!running) break; // Optional: check again after receive
+        // std::cout << "[Node " << getNodeId() << "] Received data: " << receivedData << "\n";
+        if (!running || receivedData.empty()) break; // <-- Add this check
         Message msg(receivedData);
         handleEvent(&msg, &_entityState);
     }
@@ -190,6 +231,24 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
             json j = json::parse(message->getContent());
             std::string messageType = j["type"].get<std::string>();
 
+            // // --- Special handling for QueryBalances ---
+            // if (messageType == "QueryBalances" && j.contains("client_listen_port")) {
+            //     int clientPort = j["client_listen_port"];
+            //     json response = {
+            //         {"type", "BalancesReply"},
+            //         {"balances", balances} // or whatever your balances map is called
+            //     };
+            //     std::string respStr = response.dump();
+
+            //     // Connect to client and send response
+            //     TcpConnection clientConn(clientPort, false);
+            //     clientConn.send(respStr);
+            //     clientConn.closeConnection(); // If you have this method
+            //     std::cout << "[Node " << getNodeId() << "] Sent balances to client on port " << clientPort << std::endl;
+            //     return;
+            // }
+            // // --- End special handling ---
+
             int seq = assignSequenceNumber();
             if(j.contains("sequence")) {
                 seq = j["sequence"].get<int>();
@@ -198,8 +257,16 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                 std::cout << "  [IGNORED] Node in view change\n";
                 return;
             }
+            
+            // if(inViewChange && messageType == "NewView") {
+            //     std::lock_guard<std::mutex> lock(timerMtx);
+            //     if (timeKeeper) {
+            //         timeKeeper->stop();
+            //     }
+            // }
 
             std::string phase = messageType;
+            
             
             
             YAML::Node phaseConfig = getPhaseConfig(phase);
@@ -271,10 +338,16 @@ void Entity::sendToAll(const Message& message) {
     for (int peer : peerPorts) {
         sendTo(peer, message);
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Wait for all nodes to receive the new view message
 }
 void Entity::sendTo(int peerId, const Message& message) {
-    TcpConnection client(5000 + peerId, false);
-    client.send(message.getContent());
+    try {
+        TcpConnection client(5000 + peerId, false);
+        client.send(message.getContent());
+        // client.closeConnection(); // Close connection after sending
+    } catch (const std::exception& e) {
+        std::cerr << "[Node " << getNodeId() << "] Failed to connect send to peer " << peerId << ": " << e.what() << std::endl;
+    }
 }
 EntityState& Entity::getState() { return _entityState; }
 YAML::Node Entity::getPhaseConfig(const std::string& phase) const { return protocolConfig["phases"][phase]; }

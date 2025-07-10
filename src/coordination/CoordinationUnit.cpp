@@ -2,6 +2,7 @@
 #include "../../include/core/state/StateMachine.h"
 #include "../../include/core/Entity.h"
 #include <nlohmann/json.hpp>
+#include <yaml-cpp/yaml.h>
 #include <iostream>
 #include <memory>
 
@@ -45,29 +46,31 @@ void CoordinationUnit::receiveMessage() {
 
     if (receivedMessage == "start the units" && !entitiesStarted) {
         entitiesStarted = true;
-        entity1 = std::make_unique<Entity>("Leader", 1, std::vector<int>{1, 2, 3, 4, 5, 6, 7});
-        entity2 = std::make_unique<Entity>("Node2", 2, std::vector<int>{1, 2, 3, 4, 5, 6, 7});
-        entity3 = std::make_unique<Entity>("Node3", 3, std::vector<int>{1, 2, 3, 4, 5, 6, 7});
-        entity4 = std::make_unique<Entity>("Node4", 4, std::vector<int>{1, 2, 3, 4, 5, 6, 7});
-        entity5 = std::make_unique<Entity>("Node5", 5, std::vector<int>{1, 2, 3, 4, 5, 6, 7});
-        entity6 = std::make_unique<Entity>("Node6", 6, std::vector<int>{1, 2, 3, 4, 5, 6, 7});
-        entity7 = std::make_unique<Entity>("Node7", 7, std::vector<int>{1, 2, 3, 4, 5, 6, 7});
-        entity1->start();
-        entity2->start();
-        entity3->start();
-        entity4->start();
-        entity5->start();
-        entity6->start();
-        entity7->start();
-        std::cout << "[CoordinationUnit] Entities started.\n";
+        YAML::Node config = YAML::LoadFile("../config/config.entities.normal.yaml");
+        const auto& entitiesNode = config["entities"];
+        std::vector<std::unique_ptr<Entity>> tempEntities;
+        for (const auto& entityNode : entitiesNode) {
+            int id = entityNode["id"].as<int>();
+            std::string role = entityNode["role"].as<std::string>();
+            std::vector<int> peers = entityNode["peers"].as<std::vector<int>>();
+            bool byzantine = entityNode["byzantine"].as<bool>(false); // default to false if missing
+            tempEntities.push_back(std::make_unique<Entity>(role, id, peers, byzantine));
+        }
+        // Start all entities
+        for (auto& entity : tempEntities) {
+            entity->start();
+        }
+        // Move to member variables if needed
+        entities.clear();
+        for (auto& entity : tempEntities) {
+            entities.push_back(std::move(entity));
+        }
+        std::cout << "[CoordinationUnit] Entities started from config.\n";
     } else if (receivedMessage == "stop the units" && entitiesStarted) {
-        entity1->stop();
-        entity2->stop();
-        entity3->stop();
-        entity4->stop();
-        entity5->stop();
-        entity6->stop();
-        entity7->stop();
+        for (auto& entity : entities) {
+            entity->stop();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
         entitiesStarted = false;
         std::cout << "[CoordinationUnit] Entities stopped.\n";
     } else if (entitiesStarted) {
@@ -75,7 +78,7 @@ void CoordinationUnit::receiveMessage() {
         try {
             nlohmann::json j = nlohmann::json::parse(receivedMessage);
             Message msg(receivedMessage);
-            entity1->handleEvent(&msg, &entity1->getState());
+            entities[0]->handleEvent(&msg, &entities[0]->getState());
             std::cout << "[CoordinationUnit] Forwarded client request to leader.\n";
         } catch (...) {
             std::cout << "[CoordinationUnit] Received non-JSON message while running.\n";

@@ -12,15 +12,16 @@ phases:
     next_state: prepare
     actions:
       - "storeMessage"
-      - "manageTimer"
+      - "startTimer"
+      - "verifyPBFTConditions"
       - "unicastifParticipant"
   prepare:
-    quorum: 2f
+    quorum: 2f+1
     next_state: commit
     actions:
       - "storeMessage"
       - "checkQuorum"
-      - "manageTimer"
+      - "resetTimer"
       - "broadcastifLeader"
       - "unicastifParticipant"
   commit:
@@ -29,7 +30,7 @@ phases:
     actions:
       - "storeMessage"
       - "checkQuorum"
-      - "manageTimer"
+      - "stopTimer"
       - "broadcastifLeader"
       - "complete"
   ViewChange:
@@ -42,3 +43,9 @@ phases:
     next_state: Request
     actions:
       - "handleNewView"
+
+  QueryBalances:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "queryBalances"

@@ -31,7 +31,7 @@ phases:
     actions:
       - "storeMessage"
       - "checkQuorum"
-      - "resetTimer"
+      - "stopTimer"
       - "complete"
   ViewChange:
     quorum: 2f+1
@@ -43,3 +43,9 @@ phases:
     next_state: Request
     actions:
       - "handleNewView"
+
+  QueryBalances:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "queryBalances"

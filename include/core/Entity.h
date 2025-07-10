@@ -12,6 +12,7 @@
 #include <yaml-cpp/yaml.h>
 #include <functional>
 #include <unordered_map>
+#include <unordered_set>
 #include <set>
 #include <thread>
 #include <nlohmann/json.hpp>
@@ -21,6 +22,8 @@
 #include "crypto/CryptoProvider.h"
 #include "crypto/OpenSSLCryptoProvider.h"
 #include "crypto/CryptoUtils.h"
+#include <string>
+#include <mutex>
 
 class Event;
 class Message;
@@ -51,7 +54,8 @@ struct ViewChangeData {
 class Entity : public EventHandler<EntityState> {
     friend class Event; // <-- Add this line
 public:
-    Entity(const std::string& role, int id, const std::vector<int>& peers);
+    Entity(const std::string& role, int id, const std::vector<int>& peers, bool byzantine = false);
+    ~Entity(); // <-- Add this line
     void start();
     void stop();
     void handleEvent(const Event* event, EntityState* context) override;
@@ -103,7 +107,17 @@ public:
     
     void markOperationProcessed(const int operation);
 
+    void updateBalances(const std::string& from, const std::string& to, int amount) {
+        std::lock_guard<std::mutex> lock(balancesMutex);
+        if (balances.find(from) == balances.end()) balances[from] = 100;
+        if (balances.find(to) == balances.end()) balances[to] = 100;
+        balances[from] -= amount;
+        balances[to] += amount;
+    }
+
     std::vector<int> peerPorts;
+    std::map<std::string, int> balances;
+    std::mutex balancesMutex;
     std::map<int, EntityState> sequenceStates;
     std::unordered_map<int, std::set<int>> prePrepareMessages;
     std::unordered_map<int, std::set<int>> prepareMessages;
@@ -129,6 +143,13 @@ public:
     nlohmann::json entityInfo;
     std::unique_ptr<CryptoProvider> cryptoProvider;
     YAML::Node protocolConfig;
+    void onTimeout();
+
+    bool isByzantine;
+    std::unordered_map<int, std::unique_ptr<TimeKeeper>> prepareTimers;
+
+    // Add this line:
+    std::unordered_map<std::string, std::unordered_set<int>> keyToSenderIds;
 
 private:
     int nodeId;
@@ -146,6 +167,8 @@ private:
 
     
 
-    void onTimeout();
+    
+
+    
 };
 

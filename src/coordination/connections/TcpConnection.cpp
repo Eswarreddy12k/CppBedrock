@@ -25,7 +25,8 @@ TcpConnection::TcpConnection(int port, bool isServer)
         listen(sockfd, 5);
     } else {
         if (connect(sockfd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-            //std::cerr << "Client failed to connect\n";
+            std::cerr << "Client failed to connect\n";
+            throw std::runtime_error("Client failed to connect");
         }
     }
 }
@@ -61,23 +62,17 @@ void TcpConnection::listenForConnections() {
             continue;
         }
 
-        //std::cout << "Client connected!\n";
-
         while (running) {
-            char buffer[1024] = {0};
+            char buffer[16 * 1024] = {0}; // 16 KB buffer
             int bytesReceived = recv(clientSock, buffer, sizeof(buffer), 0);
             if (bytesReceived > 0) {
                 std::string receivedMessage(buffer, bytesReceived);
-                //std::cout << "Received: " << receivedMessage << std::endl;
-
-                // Store the message in the queue
                 {
                     std::lock_guard<std::mutex> lock(queueMutex);
                     messageQueue.push(receivedMessage);
                 }
                 queueCondVar.notify_one();
             } else if (bytesReceived == 0) {
-                //std::cout << "Client disconnected.\n";
                 close(clientSock);
                 clientSock = -1;
                 break;
@@ -93,4 +88,11 @@ std::string TcpConnection::receive() {
     std::string message = messageQueue.front();
     messageQueue.pop();
     return message;
+}
+
+void TcpConnection::closeConnection() {
+    if (sockfd >= 0) {
+        close(sockfd);
+        sockfd = -1;
+    }
 }

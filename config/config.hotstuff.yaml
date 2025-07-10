@@ -4,7 +4,9 @@ phases:
     quorum: 1
     next_state: Prepare
     actions:
-      - "storeMessage"
+      - verifySignature:
+          public_key: "../keys/${client_id}_public.pem"
+      - "handleClientRequestAsLeader"
   Prepare:
     quorum: 1
     next_state: PreCommit
@@ -39,7 +41,7 @@ phases:
     next_state: Request
     actions:
       - "checkQC"
-      - "resetTimer"
+      - "stopTimer"
       - "storeMessage"
       - "checkQuorum"
       - "broadcastifLeader"
@@ -49,3 +51,14 @@ phases:
     next_state: Request
     actions:
       - "handleViewChangeHotstuff"
+  NewView:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "handleNewView"
+
+  QueryBalances:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "queryBalances"

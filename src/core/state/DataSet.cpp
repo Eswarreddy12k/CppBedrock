@@ -14,6 +14,11 @@ std::unordered_map<std::string, nlohmann::json> DataSet::getRecords() const {
 
 void DataSet::update(const std::string& key, const nlohmann::json& value) {
     std::lock_guard<std::mutex> lock(_mtx);
+    constexpr size_t MAX_RECORDS = 100000; // or a value suitable for your workload
+    if (_records.size() >= MAX_RECORDS && _records.find(key) == _records.end()) {
+        std::cerr << "[DataSet] Max record limit reached, not inserting key: " << key << std::endl;
+        return;
+    }
     _records[key] = value;
 }
 

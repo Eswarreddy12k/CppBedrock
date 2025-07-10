@@ -22,9 +22,9 @@ int main() {
     // Simulate some other task
     for (int i = 0; i < 10; i++) {
         //std::cout << "Main is doing work..." << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(100));
     }
-
+    std::cout << "Main thread finished work, stopping server..." << std::endl;
     server.sendStopSignal();
     unit.stop();
 

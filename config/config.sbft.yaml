@@ -1,33 +1,36 @@
-protocol: LinearPBFT
+protocol: SBFT
 phases:
   Request:
     quorum: 1
     next_state: PrePrepare
     actions:
-      - "storeMessage"
+      - verifySignature:
+          public_key: "../keys/${client_id}_public.pem"
+      - "handleClientRequestAsLeader"
   PrePrepare:
     quorum: 1
     next_state: prepare
     actions:
       - "storeMessage"
-      - "manageTimer"
+      - "startTimer"
+      - "verifyPBFTConditions"
       - "unicastifParticipant"
   prepare:
-    quorum: 2f
+    quorum: 2f+1
     next_state: commit
     actions:
       - "storeMessage"
       - "checkQuorumForSBFT"
-      - "manageTimer"
+      - "resetTimer"
       - "broadcastifLeader"
       - "unicastifParticipant"
   commit:
-    quorum: 2f
+    quorum: 2f+1
     next_state: Request
     actions:
       - "storeMessage"
       - "checkQuorumForSBFT"
-      - "manageTimer"
+      - "stopTimer"
       - "broadcastifLeader"
       - "complete"
   ViewChange:
@@ -40,3 +43,8 @@ phases:
     next_state: Request
     actions:
       - "handleNewView"
+  QueryBalances:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "queryBalances"

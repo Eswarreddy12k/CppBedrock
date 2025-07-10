@@ -17,7 +17,7 @@ public:
     void initializeEntities();
     void receiveMessage();
 
-    std::unique_ptr<Entity> entity1, entity2, entity3, entity4, entity5, entity6, entity7;
+    std::vector<std::unique_ptr<Entity>> entities;
     bool entitiesStarted = false;
 
 private:

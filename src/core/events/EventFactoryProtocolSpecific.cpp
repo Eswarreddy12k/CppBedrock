@@ -22,7 +22,7 @@ public:
         
         auto j = nlohmann::json::parse(message->getContent());
         if(j["view"].get<int>() != entity->entityInfo["view"].get<int>()) {
-            std::cout << "[Node " << entity->getNodeId() << "] View mismatch: expected " << entity->getState().getViewNumber() << ", got " << j["view"].get<int>() << "\n";
+            std::cout << "[Node " << entity->getNodeId() << "] View mismatch: expected " << entity->entityInfo["view"]<< ", got " << j["view"].get<int>() << "\n";
             return false;
         }
         return true;
