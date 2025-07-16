@@ -24,6 +24,7 @@
 #include "crypto/CryptoUtils.h"
 #include <string>
 #include <mutex>
+#include <iostream>
 
 class Event;
 class Message;
@@ -113,6 +114,7 @@ public:
         if (balances.find(to) == balances.end()) balances[to] = 100;
         balances[from] -= amount;
         balances[to] += amount;
+        std::cout << "[Node " << getNodeId() << "] Updated balances: " << from << "=" << balances[from] << ", " << to << "=" << balances[to] << std::endl;
     }
 
     std::vector<int> peerPorts;
@@ -150,6 +152,8 @@ public:
 
     // Add this line:
     std::unordered_map<std::string, std::unordered_set<int>> keyToSenderIds;
+
+    std::unordered_set<std::string> executedTransactions;
 
 private:
     int nodeId;

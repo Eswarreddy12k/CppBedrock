@@ -46,7 +46,7 @@ void CoordinationUnit::receiveMessage() {
 
     if (receivedMessage == "start the units" && !entitiesStarted) {
         entitiesStarted = true;
-        YAML::Node config = YAML::LoadFile("../config/config.entities.normal.yaml");
+        YAML::Node config = YAML::LoadFile("../config/config.entities.yaml");
         const auto& entitiesNode = config["entities"];
         std::vector<std::unique_ptr<Entity>> tempEntities;
         for (const auto& entityNode : entitiesNode) {

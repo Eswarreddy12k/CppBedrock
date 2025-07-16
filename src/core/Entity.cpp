@@ -29,7 +29,7 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
     : _entityState(role, "Request", 0, 0),
       nodeId(id),
       peerPorts(peers),
-      isByzantine(byzantine), // <-- set the member variable
+      isByzantine(byzantine),
       connection(5000 + id, true),
       processingThread(),
       f(2),
@@ -38,10 +38,12 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
     EventFactory::getInstance().initialize();
     loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1500, [this] {
-        std::lock_guard<std::mutex> lock(timerMtx);
         this->onTimeout();
     });
-    loadOrInitDataset();
+    entityInfo["server_name"] = getNodeId();
+    entityInfo["view"] = 0;
+    entityInfo["sequence"] = 0;
+    entityInfo["server_status"] = 1;
     cryptoProvider = std::make_unique<OpenSSLCryptoProvider>("../keys/server_" + std::to_string(id) + "_private.pem");
 }
 
@@ -56,7 +58,7 @@ void Entity::onTimeout() {
     // Update view number in entityInfo and persist it
     int newView = entityInfo["view"].get<int>() + 1;
     entityInfo["view"] = newView;
-    saveEntityInfo();
+    //saveEntityInfo();
 
     inViewChange = true;
     std::string protocol = protocolConfig["protocol"] ? protocolConfig["protocol"].as<std::string>() : "";
@@ -143,7 +145,7 @@ void Entity::onTimeout() {
     }
 
     if(true){
-        std::lock_guard<std::mutex> lock(timerMtx);
+        //std::lock_guard<std::mutex> lock(timerMtx);
         if (timeKeeper) {
             timeKeeper->start();
         }
@@ -230,6 +232,20 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
         try {
             json j = json::parse(message->getContent());
             std::string messageType = j["type"].get<std::string>();
+            if(j["type"]=="changeServerStatus"){
+                if(j.contains("server_status")) {
+                    entityInfo["server_status"] = j["server_status"].get<int>();
+                    std::cout << "[Node " << getNodeId() << "] Server status changed to: " << entityInfo["server_status"] << "\n";
+                } else {
+                    std::cerr << "[Node " << getNodeId() << "] Invalid changeServerStatus message: missing server_status field.\n";
+                }
+                return;
+            }
+            if(entityInfo["server_status"]!=1) {
+                // std::cout << "[Node " << getNodeId() << "] Ignoring message while server is down.\n";
+                return;
+            }
+            
 
             // // --- Special handling for QueryBalances ---
             // if (messageType == "QueryBalances" && j.contains("client_listen_port")) {
@@ -254,12 +270,12 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                 seq = j["sequence"].get<int>();
             }
             if (inViewChange && messageType != "ViewChange" && messageType != "NewView") {
-                std::cout << "  [IGNORED] Node in view change\n";
+                std::cout << "  [IGNORED] Node " << getNodeId() << "in view change\n";
                 return;
             }
             
             // if(inViewChange && messageType == "NewView") {
-            //     std::lock_guard<std::mutex> lock(timerMtx);
+            //     //std::lock_guard<std::mutex> lock(timerMtx);
             //     if (timeKeeper) {
             //         timeKeeper->stop();
             //     }
@@ -293,7 +309,7 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                         }
                         // std::cout << "[Node " << getNodeId() << "] Executing action: "  << actionName << " with params: " << params.dump() << "\n";
                     }
-                    // std::cout << "[Node " << getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "\n";
+                    // std::cout << "[Node " << getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "type: " << j["type"] << "\n";
                     auto eventPtr = EventFactory::getInstance().createEvent(actionName, params);
                     if (eventPtr) {
                         bool shouldContinue = eventPtr->execute(this, message, &sequenceStates[seq]);
@@ -338,7 +354,6 @@ void Entity::sendToAll(const Message& message) {
     for (int peer : peerPorts) {
         sendTo(peer, message);
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Wait for all nodes to receive the new view message
 }
 void Entity::sendTo(int peerId, const Message& message) {
     try {
@@ -363,10 +378,10 @@ void Entity::removeSequenceState(int seq) {
 void Entity::markOperationProcessed(const int operation) {
     processedOperations.insert(operation);
     std::cout << "[Node " << getNodeId() << "] Marked operation as processed: " << operation << "\n";
-    printCommittedMessages();
+    //printCommittedMessages();
 
-    const int TOTAL_OPERATIONS = 3;
-    std::lock_guard<std::mutex> lock(timerMtx);
+    const int TOTAL_OPERATIONS = 50;
+    //std::lock_guard<std::mutex> lock(timerMtx);
     if (processedOperations.size() >= TOTAL_OPERATIONS) {
         if (timeKeeper) {
             timeKeeper->stop();
@@ -433,7 +448,7 @@ void Entity::loadOrInitDataset() {
                 info["view"] = 0;
                 info["sequence"] = 0;
                 info["server_status"] = 1;
-                saveEntityInfo();
+                //saveEntityInfo();
             }
         }
     } else {
@@ -441,14 +456,13 @@ void Entity::loadOrInitDataset() {
         info["view"] = 0;
         info["sequence"] = 0;
         info["server_status"] = 1;
-        saveEntityInfo();
+        //saveEntityInfo();
     }
     this->entityInfo = info;
 }
 
 void Entity::updateEntityInfoField(const std::string& key, const nlohmann::json& value) {
     entityInfo[key] = value;
-    saveEntityInfo();
 }
 
 void Entity::saveEntityInfo() {

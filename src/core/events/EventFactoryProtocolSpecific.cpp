@@ -25,6 +25,7 @@ public:
             std::cout << "[Node " << entity->getNodeId() << "] View mismatch: expected " << entity->entityInfo["view"]<< ", got " << j["view"].get<int>() << "\n";
             return false;
         }
+        entity->entityInfo["sequence"] = j["sequence"].get<int>();
         return true;
     }
 };

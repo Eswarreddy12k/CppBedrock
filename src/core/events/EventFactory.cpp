@@ -10,7 +10,7 @@ void registerUncommonEvents(EventFactory& factory);
 
 int computeQuorumEventFactory(const std::string& quorumStr, int f) {
     if (quorumStr == "2f") return 2 * f;
-    if (quorumStr == "2f+1") return 2 * f + 1;
+    if (quorumStr == "2f+1") return (2 * f) + 1;
     try { return std::stoi(quorumStr); } catch (...) { return 1; }
 }
 
@@ -66,7 +66,7 @@ public:
         if (j.contains("combinedMessages") && j["combinedMessages"].is_array()) {
             // std::cout << "[Node " << entity->getNodeId() << "] Storing combined messages: " << j.dump() << std::endl;
             std::string fileName = "messages_" + std::to_string(entity->getNodeId()) + ".json";
-            entity->dataset.loadFromFile(fileName);
+            //entity->dataset.loadFromFile(fileName);
             for (const auto& msg : j["combinedMessages"]) {
                 // int seq = j["sequence"].get<int>(); // Use the outer sequence for all, or msg["sequence"] if each has its own
                 int seq = msg.value("sequence", j.value("sequence", 0));
@@ -104,7 +104,7 @@ public:
                 std::string key2 = currentPhase + "_" + std::to_string(seq);
                 if (currentPhase== "commit" && entity->processedOperations.count(seq)) {
                     // senderId already exists for this key2
-                    std::cout << "[Node " << entity->getNodeId() << "] Sender ID " << senderId << " already exists for key2: " << key2 << std::endl;
+                    // std::cout << "[Node " << entity->getNodeId() << "] Sender ID " << senderId << " already exists for key2: " << key2 << std::endl;
                     return false;
                 }
                 entity->keyToSenderIds[key2].insert(senderId);
@@ -167,7 +167,7 @@ public:
                     
                 }
             }
-            entity->dataset.saveToFile(fileName);
+            //entity->dataset.saveToFile(fileName);
             return true;
         }
 
@@ -182,20 +182,15 @@ public:
 
         // Prepare DataSet for persistent storage
         std::string fileName = "messages_" + std::to_string(entity->getNodeId()) + ".json";
-        entity->dataset.loadFromFile(fileName);
+        //entity->dataset.loadFromFile(fileName);
         // Check for duplicate: see if key exists in dataset
         std::string key = currentPhase + "_" + std::to_string(seq) + "_" + std::to_string(senderId);
         std::string key2 = currentPhase + "_" + std::to_string(seq);
         j["protocol_name"] = protocolName; // Add protocol name to message
         // Store the message in the dataset
         entity->dataset.update(key, j);
-        if (currentPhase== "commit" && entity->processedOperations.count(seq)) {
-            // senderId already exists for this key2
-            std::cout << "[Node " << entity->getNodeId() << "] Sender ID " << senderId << " already exists for key2: " << key2 << std::endl;
-            return false;
-        }
         entity->keyToSenderIds[key2].insert(senderId);
-        entity->dataset.saveToFile(fileName);
+        //entity->dataset.saveToFile(fileName);
 
         return true;
     }
@@ -208,7 +203,7 @@ public:
         auto j = nlohmann::json::parse(message->getContent());
         std::string currentPhase = j["type"];
         if (currentPhase == "PrePrepare") {
-            std::cout << "[Node " << entity->getNodeId() << "] Starting timer for PrePrepare" << std::endl;
+            // std::cout << "[Node " << entity->getNodeId() << "] Starting timer for PrePrepare" << std::endl;
             if (entity->timeKeeper) entity->timeKeeper->start();
         } else {
             if (entity->timeKeeper) entity->timeKeeper->reset();
@@ -224,7 +219,7 @@ public:
         //std::cout << "[Node " << entity->getNodeId() << "] Starting timer" << std::endl;
         if (entity->timeKeeper){
             entity->timeKeeper->start();
-            std::cout << "[Node " << entity->getNodeId() << "] Timer started" << std::endl;
+            // std::cout << "[Node " << entity->getNodeId() << "] Timer started" << std::endl;
         } 
         
         return true;
@@ -248,6 +243,7 @@ public:
         //std::cout << "[Node " << entity->getNodeId() << "] Resetting timer" << std::endl;
         if (entity->timeKeeper) {
             entity->timeKeeper->stop();
+            entity->timeKeeper.reset();
         }
         return true;
     }
@@ -268,7 +264,7 @@ public:
 
         // --- Use DataSet for quorum check (messages JSON file) ---
         std::string fileName = "messages_" + std::to_string(entity->getNodeId()) + ".json";
-        entity->dataset.loadFromFile(fileName);
+        // entity->dataset.loadFromFile(fileName);
         auto records = entity->dataset.getRecords();
 
         std::unordered_set<int> uniqueSenders;
@@ -312,19 +308,19 @@ public:
 
         // Use DataSet for quorum check (messages JSON file)
         std::string fileName = "messages_" + std::to_string(entity->getNodeId()) + ".json";
-        entity->dataset.loadFromFile(fileName);
+        // entity->dataset.loadFromFile(fileName);
         auto records = entity->dataset.getRecords();
         std::string key2 = currentPhase + "_" + std::to_string(seq);
-        std::cout << key2 << std::endl;
+        //std::cout << key2 << std::endl;
         int uniqueSendersSize = entity->keyToSenderIds[key2].size();
 
         std::unordered_set<int> uniqueSenders;
         
         quorumMet = uniqueSendersSize >= quorum;
-        std::cout << "[Node " << entity->getNodeId() << "] Quorum check for phase " << currentPhase 
-                  << " and sequence " << seq << ": " << uniqueSendersSize 
-                  << " unique senders found, required: " << quorum 
-                  << (quorumMet ? " - Quorum met" : " - Quorum NOT met") << std::endl;
+        // std::cout << "[Node " << entity->getNodeId() << "] Quorum check for phase " << currentPhase 
+        //           << " and sequence " << seq << ": " << uniqueSendersSize 
+        //           << " unique senders found, required: " << quorum 
+        //           << (quorumMet ? " - Quorum met" : " - Quorum NOT met") << std::endl;
         if (!quorumMet) return false;
 
         // Optionally, you can keep the timer logic for prepare phase if needed
@@ -334,22 +330,22 @@ public:
                     std::unordered_set<int> uniqueSenders;
                     std::this_thread::sleep_for(std::chrono::milliseconds(25));
                     entity->preparePhaseTimerRunning[seq] = false;
-                    std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer expired for seq " << uniqueSendersSize << "\n";    
+                    // std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer expired for seq " << uniqueSendersSize << "\n";    
                     YAML::Node nextPhaseConfig = entity->getPhaseConfig(currentPhase);
                     std::string nextState;
                     //print unique senders
                     
                     std::string key = currentPhase + "_" + std::to_string(seq);
-                    std::cout << "[Node " << entity->getNodeId() << "] Unique senders in prepare phase: " << entity->keyToSenderIds[key].size() << std::endl;
+                    // std::cout << "[Node " << entity->getNodeId() << "] Unique senders in prepare phase: " << entity->keyToSenderIds[key].size() << std::endl;
                     if (entity->keyToSenderIds[key].size() == 7) {
                         // Go to commit phase
                         nextState = nextPhaseConfig["next_state"].as<std::string>();
                         entity->sequenceStates[seq].setState(nextState);
-                        std::cout << "[Node " << entity->getNodeId() << "] Prepare phase complete for seq " << seq << ", transitioning to " << nextState << std::endl;
+                        // std::cout << "[Node " << entity->getNodeId() << "] Prepare phase complete for seq " << seq << ", transitioning to " << nextState << std::endl;
                         
                     } else {
                         nextState = currentPhase;
-                        std::cout << "[Node " << entity->getNodeId() << "] Prepare phase NOT complete for seq " << seq << ", staying in " << nextState << std::endl;
+                        // std::cout << "[Node " << entity->getNodeId() << "] Prepare phase NOT complete for seq " << seq << ", staying in " << nextState << std::endl;
                     }
                     // if (nextPhaseConfig && nextPhaseConfig["actions"] && nextPhaseConfig["actions"].IsSequence()) {
                     //     for (const auto& actionNode : nextPhaseConfig["actions"]) {
@@ -408,12 +404,12 @@ public:
                             }
                         }
                     }
-                    std::cout << "[Node " << entity->getNodeId() << "] urike bro for this state ra unga " << nextState  << std::endl;
+                    // std::cout << "[Node " << entity->getNodeId() << "] urike bro for this state ra unga " << nextState  << std::endl;
                     
                     if (nextPhaseConfig && nextPhaseConfig["actions"] && nextPhaseConfig["actions"].IsSequence()) {
                         for (const auto& actionNode : nextPhaseConfig["actions"]) {
                             std::string actionName = actionNode.as<std::string>();
-                            std::cout << "[Node " << entity->getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "\n";
+                            // std::cout << "[Node " << entity->getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "\n";
                             auto it = entity->actions.find(actionName);
                             if (it != entity->actions.end()) {
                                 nlohmann::json outMsg;
@@ -478,11 +474,11 @@ public:
         
         auto j = nlohmann::json::parse(message->getContent());
         if(entity->isByzantine && j["type"] == "prepare") {
-            std::cout << "[Node " << entity->getNodeId() << "] Skipping broadcast for prepare phase as faulty leader\n";
+            //std::cout << "[Node " << entity->getNodeId() << "] Skipping broadcast for prepare phase as faulty leader\n";
             return false; // Skip if not leader
         }
         else{
-            std::cout << "[Node " << entity->getNodeId() << "] Broadcasting prepare: Not Byzantine\n";
+            // std::cout << "[Node " << entity->getNodeId() << "] Broadcasting prepare: Not Byzantine\n";
         }
         int seq = j["sequence"].get<int>();
 
@@ -512,30 +508,26 @@ public:
         auto j = nlohmann::json::parse(message->getContent());
         std::string operation = j["operation"].get<std::string>();
         int seq = j["sequence"].get<int>();
-        std::cout << "[Node " << entity->getNodeId() << "] Completed operation: " << operation << " for seq " << seq << "\n";
 
-        // --- Update balances if transaction is present ---
-        if (j.contains("transaction")) {
-            auto tx = j["transaction"];
-            std::string from = tx.value("from", "");
-            std::string to = tx.value("to", "");
-            int amount = tx.value("amount", 0);
+        // --- Use timestamp as unique transaction ID ---
+        std::string txnId = j.value("timestamp", "");
+        if (!txnId.empty() && entity->executedTransactions.count(txnId) == 0) {
+            if (j.contains("transaction")) {
+                auto tx = j["transaction"];
+                std::string from = tx.value("from", "");
+                std::string to = tx.value("to", "");
+                int amount = tx.value("amount", 0);
 
-            if (!from.empty() && !to.empty() && amount > 0) {
-                entity->updateBalances(from, to, amount);
-                std::cout << "[Node " << entity->getNodeId() << "] Transaction executed: " << from << " -> " << to << " : " << amount << std::endl;
-                std::cout << "[Node " << entity->getNodeId() << "] New balance: " << from << "=" << entity->balances[from] << ", " << to << "=" << entity->balances[to] << std::endl;
-
-                // Print all balances
-                std::cout << "[Node " << entity->getNodeId() << "] All balances: ";
-                for (const auto& [acct, bal] : entity->balances) {
-                    std::cout << acct << "=" << bal << " ";
+                if (!from.empty() && !to.empty() && amount > 0) {
+                    entity->updateBalances(from, to, amount);
+                    entity->executedTransactions.insert(txnId); // Mark as executed
+                    std::cout << "[Node " << entity->getNodeId() << "] Transaction executed: " << from << " -> " << to << " : " << amount << " Sequence: " << seq << std::endl;
+                    std::cout << std::endl;
                 }
-                std::cout << std::endl;
             }
+        } else if (!txnId.empty()) {
+            //std::cout << "[Node " << entity->getNodeId() << "] Transaction with timestamp " << txnId << " already executed, skipping.\n";
         }
-
-        
 
         entity->markOperationProcessed(seq);
         // std::cout << "[Node " << entity->getNodeId() << "] Marked operation " << j.dump() << " as processed.\n";
@@ -552,13 +544,13 @@ public:
             Message BalancesReply(response.dump());
             if (clientPort != -1) {
                 entity->sendTo(clientPort-5000, BalancesReply);
-                std::cout << "[Node " << entity->getNodeId() << "] Sent response to client on port " << clientPort << "\n";
+                // std::cout << "[Node " << entity->getNodeId() << "] Sent response to client on port " << clientPort << "\n";
             } else {
                 std::cerr << "[Node " << entity->getNodeId() << "] Invalid client port, could not send response.\n";
             }
         }
         else{
-            std::cout << "[Node " << entity->getNodeId() << "] No client port specified, skipping response to client.\n";
+            // std::cout << "[Node " << entity->getNodeId() << "] No client port specified, skipping response to client.\n";
         }
         return true;
     }
@@ -570,7 +562,7 @@ public:
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         auto j = nlohmann::json::parse(message->getContent());
         if (!j.contains("qc")) {
-            std::cout << "[Node " << entity->getNodeId() << "] No QC found in message for seq " << j["sequence"] << "\n";
+            // std::cout << "[Node " << entity->getNodeId() << "] No QC found in message for seq " << j["sequence"] << "\n";
             return false;
         }
         // Store or update the lockedQC in the state or entity
@@ -590,7 +582,7 @@ public:
             auto j = nlohmann::json::parse(message->getContent());
             
             if(entity->isByzantine && j["type"] == "prepare") {
-                std::cout << "[Node " << entity->getNodeId() << "] Skipping broadcast for prepare phase as faulty leader\n";
+                // std::cout << "[Node " << entity->getNodeId() << "] Skipping broadcast for prepare phase as faulty leader\n";
                 return false; // Skip if not leader
             }
 
@@ -599,7 +591,7 @@ public:
 
             // --- Load messages from file ---
             std::string fileName = "messages_" + std::to_string(entity->getNodeId()) + ".json";
-            entity->dataset.loadFromFile(fileName);
+            //entity->dataset.loadFromFile(fileName);
             auto records = entity->dataset.getRecords();
 
             // --- Find unique senders for this phase and sequence ---
@@ -640,14 +632,14 @@ public:
                 }
                 
                 if(entity->preparePhaseTimerRunning[seq] && uniqueSenders.size() <= 7) {
-                    std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer is still running for seq " << uniqueSenders.size() << ", skipping broadcast.\n";
+                    // std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer is still running for seq " << uniqueSenders.size() << ", skipping broadcast.\n";
                     return false;
                 }
             }
 
             // std::cout << "[Node " << entity->getNodeId() << "] Combined messages for " << phase << " for seq " << seq << ": " << combinedMessages.dump() << "\n";
             // std::cout << "[Node " << entity->getNodeId() << "] Broadcasting combined messages for " << phase << " for seq " << seq  << " phase: " << phase << "\n";
-            std::cout << "[Node " << entity->getNodeId() << "] Broadcasting message if leader" << j["type"] << "\n";
+            // std::cout << "[Node " << entity->getNodeId() << "] Broadcasting message if leader" << j["type"] << "\n";
             // Prepare the broadcast message
             YAML::Node phaseConfig = entity->getPhaseConfig(j["type"]);
             if (phaseConfig["next_state"]) {
@@ -668,9 +660,9 @@ public:
                 entity->sendToAll(protocolMsg);
             }
         } else {
-            std::cout << "[Node " << entity->getNodeId() << "] Not the leader, skipping broadcast.\n";
+            // std::cout << "[Node " << entity->getNodeId() << "] Not the leader, skipping broadcast.\n";
         }
-        std::cout << "[Node " << entity->getNodeId() << "] BroadcastIfLeaderEvent executed successfully.\n";
+        // std::cout << "[Node " << entity->getNodeId() << "] BroadcastIfLeaderEvent executed successfully.\n";
         return true;
     }
 };
@@ -694,7 +686,7 @@ public:
                 //current view is 
                 //std::cout << entity->getState().getViewNumber() << " and next phase is " << nextPhase << "\n";
                 int leaderId = (entity->entityInfo["view"].get<int>()+1) % (entity->peerPorts.size());
-                std::cout << "[Node " << entity->getNodeId() << "] Unicasting to leader: " << leaderId << " phase:" << nextPhase << "\n";
+                // std::cout << "[Node " << entity->getNodeId() << "] Unicasting to leader: " << leaderId << " phase:" << nextPhase << "\n";
                 entity->sendTo(leaderId, protocolMsg);
             }
         }
@@ -716,12 +708,12 @@ public:
 
         int quorum = computeQuorumEventFactory("2f+1", entity->getF());
         if ((int)entity->viewChangeMessages[newView].size() >= quorum && entity->inViewChange) {
-            std::cout << "[Node " << entity->getNodeId() << "] View change quorum reached for view " << newView << "\n";
+            // std::cout << "[Node " << entity->getNodeId() << "] View change quorum reached for view " << newView << "\n";
             
 
             int leaderId = (newView+1) % (entity->peerPorts.size());
             if (entity->getNodeId() == leaderId && !entity->isByzantine) {
-                std::cout << "[Node " << entity->getNodeId() << "] I am the new leader for view " << newView << "\n";
+                // std::cout << "[Node " << entity->getNodeId() << "] I am the new leader for view " << newView << "\n";
                 nlohmann::json newViewMsg;
                 newViewMsg["type"] = "NewView";
                 newViewMsg["new_view"] = newView;
@@ -746,10 +738,10 @@ public:
                         }
                     }
                 }
-                std::cout << "[Node " << entity->getNodeId() << "] Best prepare messages aggregated for view change:\n";
-                for (const auto& [seq, prepareMsg] : bestPreparePerSeq) {
-                    std::cout << "[Node " << entity->getNodeId() << "] Seq " << seq << ": " << prepareMsg.dump() << "\n";
-                }
+                // std::cout << "[Node " << entity->getNodeId() << "] Best prepare messages aggregated for view change:\n";
+                // for (const auto& [seq, prepareMsg] : bestPreparePerSeq) {
+                //     std::cout << "[Node " << entity->getNodeId() << "] Seq " << seq << ": " << prepareMsg.dump() << "\n";
+                // }
                 for (const auto& item : bestPreparePerSeq) {
                     int seq = item.first;
                     const auto& prepareMsg = item.second;
@@ -792,16 +784,16 @@ public:
 
                     Message protocolMsg(preprepareMsg.dump());
                     entity->sendToAll(protocolMsg);
-                    std::cout << "[Node " << entity->getNodeId() << "] Re-proposed PrePrepare for seq " << seq << "\n";
+                    // std::cout << "[Node " << entity->getNodeId() << "] Re-proposed PrePrepare for seq " << seq << "\n";
                     
                     
                 }
-                std::cout << "[Node " << entity->getNodeId() << "] View change complete \n";
+                // std::cout << "[Node " << entity->getNodeId() << "] View change complete \n";
             }
             else{
                 // entity->getNodeId() == leaderId && !entity->isByzantine print which condition failed
                 
-                std::cout << "[Node " << entity->getNodeId() << "] I am not the leader for view " << newView << leaderId << entity->isByzantine << ", waiting for new view message.\n";
+                // std::cout << "[Node " << entity->getNodeId() << "] I am not the leader for view " << newView << leaderId << entity->isByzantine << ", waiting for new view message.\n";
             }
             
         }
@@ -819,15 +811,33 @@ public:
         int newView = j["new_view"].get<int>();
         std::cout << "[Node " << entity->getNodeId() << "] Received NewView for view " << newView << "\n";
         entity->entityInfo["view"] = newView;
-        entity->saveEntityInfo();  
+        //entity->saveEntityInfo();  
         entity->inViewChange = false;
 
-        std::lock_guard<std::mutex> lock(entity->timerMtx);
-        if (entity->timeKeeper) {
-            entity->timeKeeper->stop();
-            //entity->timeKeeper.reset();
-        }
+        // {
+            
+        //     std::lock_guard<std::mutex> lock(entity->timerMtx);
+            
+        //     if (entity->timeKeeper) {
+                
+        //         entity->timeKeeper->stop();
+                
+        //         entity->timeKeeper.reset();
+                
+        //     }
+        // }
+        // std::cout << "[Node " << entity->getNodeId() << "] Stopping timekeeper and resetting view change messages for view " << newView << "\n";
         entity->viewChangeMessages.erase(newView);
+        //std::cout << "[Node " << entity->getNodeId() << "] 1.Stopping timekeeper and resetting view change messages for view " << newView << "\n";
+        {
+            //std::cout << "[Node " << entity->getNodeId() << "] 2.Stopping timekeeper and resetting view change messages for view " << newView << "\n";
+            //std::lock_guard<std::mutex> lock(entity->timerMtx);
+            if (entity->timeKeeper) {
+                entity->timeKeeper->stop();
+                entity->timeKeeper.reset();
+            }
+        }
+        //std::cout << "[Node " << entity->getNodeId() << "] Updated to new view: " << newView << "\n";
         return true;
     }
 };
@@ -853,8 +863,8 @@ public:
         // Update local view if needed
         if (newView > entity->entityInfo["view"].get<int>()) {
             entity->entityInfo["view"] = newView;
-            entity->saveEntityInfo();  
-            std::cout << "[Node " << entity->getNodeId() << "] Updated to new view: " << newView << std::endl;
+            // entity->saveEntityInfo();  
+            //std::cout << "[Node " << entity->getNodeId() << "] Updated to new view: " << newView << std::endl;
         }
 
         // If this node is the new leader, and has enough view change messages, propose a new block
@@ -862,7 +872,7 @@ public:
         int quorum = computeQuorumEventFactory("2f+1", entity->getF());
         int leaderId = (newView + 1) % n;
         if (entity->getNodeId() == leaderId && entity->viewChangeMessages[newView].size() >= quorum) {
-            std::cout << "[Node " << entity->getNodeId() << "] I am the new leader for view " << newView << ", proposing new block." << std::endl;
+            //std::cout << "[Node " << entity->getNodeId() << "] I am the new leader for view " << newView << ", proposing new block." << std::endl;
 
             // Find the highest QC and associated data
             int highestViewNum = -1;
@@ -893,7 +903,7 @@ public:
             
 
             if (parentSeq == -1 || lastOp.empty()) {
-                std::cout << "[Node " << entity->getNodeId() << "] Skipping proposal: parentSeq == -1 or lastOp is empty\n";
+                //std::cout << "[Node " << entity->getNodeId() << "] Skipping proposal: parentSeq == -1 or lastOp is empty\n";
                 entity->inViewChange = false;
                 {
                     std::lock_guard<std::mutex> lock(entity->timerMtx);
@@ -916,7 +926,7 @@ public:
             proposal["operation"] = lastOp;
             proposal["qc"] = highestQC;
 
-            std::cout << "[Node " << entity->getNodeId() << "] New proposal: " << proposal.dump() << std::endl;
+            //std::cout << "[Node " << entity->getNodeId() << "] New proposal: " << proposal.dump() << std::endl;
             entity->inViewChange = false;
             std::lock_guard<std::mutex> lock(entity->timerMtx);
             if (entity->timeKeeper) {
@@ -946,14 +956,20 @@ public:
             try {
                 TcpConnection leaderConn(leaderPort, false);
                 leaderConn.closeConnection();
-                std::cout << "[Node " << entity->getNodeId() << "] Successfully reached leader " << leaderId << "\n";
+                if (!entity->timeKeeper) {
+                    entity->timeKeeper = std::make_unique<TimeKeeper>(1500, [entity] {
+                        entity->onTimeout();
+                    });
+                }
+                entity->timeKeeper->start();
+                //std::cout << "[Node " << entity->getNodeId() << "] Successfully reached leader " << leaderId << "\n";
             } catch (...) {
-                std::cout << "[Node " << entity->getNodeId() << "] Could not connect to leader " << leaderId << ", triggering view change\n";
+                //std::cout << "[Node " << entity->getNodeId() << "] Could not connect to leader " << leaderId << ", triggering view change\n";
                 entity->onTimeout(); // or your view change trigger logic
             }
             return false; // Skip if not leader
         }
-        // std::cout << "[Node " << entity->getNodeId() << "] Handling Request as leader\n";
+        //std::cout << "[Node " << entity->getNodeId() << "] Handling Request as leader\n";
         
         std::string operation = j["operation"].get<std::string>();
         std::string currentPhase = j["type"];
@@ -961,8 +977,8 @@ public:
         // std::cout << "[Node " << entity->getNodeId() << "] Entity Info: " << entity->entityInfo.dump(4) << "\n";
 
         if (!operation.empty() && !entity->hasProcessedOperation(std::stoi(operation.substr(9)))) {
-            int seq = entity->getNextSequenceNumber();
-            entity->updateEntityInfoField("sequence", seq);
+            int seq = entity->entityInfo["sequence"].get<int>() + 1;
+            entity->entityInfo["sequence"] = seq; // Update sequence number
             // std::cout << "[Node " << entity->getNodeId() << "] Entity Info: " << entity->entityInfo.dump(4) << "\n";
             entity->sequenceStates.emplace(seq, EntityState(entity->getState().getRole(), currentPhase, entity->entityInfo["view"], seq));
 
@@ -987,13 +1003,13 @@ public:
             entity->sendToAll(protocolMsg);
         }
         else{
-            std::cout << "[Node " << entity->getNodeId() << "] Operation already processed or empty, skipping broadcast.\n";
+            // std::cout << "[Node " << entity->getNodeId() << "] Operation already processed or empty, skipping broadcast.\n";
             //print processed operations
-            std::cout << "[Node " << entity->getNodeId() << "] Processed operations: ";
-            for (const auto& op : entity->processedOperations) {
-                std::cout << op << " ";
-            }
-            std::cout << "\n";
+            //std::cout << "[Node " << entity->getNodeId() << "] Processed operations: ";
+            // for (const auto& op : entity->processedOperations) {
+            //     std::cout << op << " ";
+            // }
+            // std::cout << "\n";
         }
         return true;
     }
@@ -1067,10 +1083,10 @@ public:
             response["type"] = "BalancesReply";
             response["view"] = entity->entityInfo["view"];
             response["balances"] = entity->balances; // or whatever your balances map is called
-            
+            response["message_sender_id"] = entity->getNodeId();
             Message BalancesReply(response.dump());
             entity->sendTo(clientPort-5000, BalancesReply);
-            std::cout << "[Node " << entity->getNodeId() << "] Sent balances to client on port " << clientPort << std::endl;
+            //std::cout << "[Node " << entity->getNodeId() << "] Sent balances to client on port " << clientPort << std::endl;
         }
         // connection using raw socket code
         // if (j.contains("client_listen_port")) {

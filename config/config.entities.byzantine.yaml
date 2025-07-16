@@ -6,7 +6,7 @@ entities:
   #   peers: [1, 2, 3, 4, 5, 6, 7]
   - id: 2
     role: Replica
-    byzantine: false
+    byzantine: true
     peers: [1, 2, 3, 4, 5, 6, 7]
   - id: 3
     role: Replica

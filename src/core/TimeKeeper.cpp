@@ -1,4 +1,5 @@
 #include "../../include/core/TimeKeeper.h"
+#include <iostream>
 
 TimeKeeper::TimeKeeper(int timeoutMs, Callback cb)
     : timeoutMs(timeoutMs), callback(cb) {}
@@ -15,40 +16,59 @@ void TimeKeeper::start() {
 }
 
 void TimeKeeper::reset() {
-    std::lock_guard<std::mutex> lock(mtx);
-    if (!running) return;
-    resetFlag = true;
-    cv.notify_one();
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        if (!running) return;
+        resetFlag = true;
+        cv.notify_one();
+    }
 }
 
 void TimeKeeper::stop() {
+    bool should_join = false;
     {
         std::lock_guard<std::mutex> lock(mtx);
         if (!running) return;
         running = false;
         resetFlag = true;
-        cv.notify_one();
+        cv.notify_all();
+        should_join = timerThread.joinable();
     }
-    if (timerThread.joinable()) {
+    
+    if (should_join) {
         timerThread.join();
     }
+    
 }
 
 void TimeKeeper::run() {
-    Callback cbCopy = callback; // Copy the callback to avoid use-after-free
+    Callback cbCopy = callback;
     std::unique_lock<std::mutex> lock(mtx);
+
     while (running) {
         resetFlag = false;
-        auto status = cv.wait_for(lock, 
+
+        auto status = cv.wait_for(lock,
             std::chrono::milliseconds(timeoutMs),
             [this] { return resetFlag || !running; });
+
         if (!running) break;
-        if (status) continue; // Timer was reset
-        // Timeout occurred - release lock while calling callback
+        if (status) continue;
+
         if (running && cbCopy) {
             lock.unlock();
-            cbCopy();
+
+            // Offload callback to a detached thread
+            std::thread([cbCopy]() {
+                try {
+                    cbCopy();
+                } catch (const std::exception&) {
+                    // Optionally log error
+                }
+            }).detach();
+
             lock.lock();
+            if (!running) break;
         }
     }
 }
