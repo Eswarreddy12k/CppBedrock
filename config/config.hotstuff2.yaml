@@ -1,0 +1,62 @@
+protocol: Hotstuff2
+phases:
+  Request:
+    quorum: 1
+    next_state: Prepare
+    actions:
+      - verifySignature:
+          public_key: "../keys/${client_id}_public.pem"
+      - "checkNewViewQuorum"
+      - "handleClientRequestAsLeader"
+  Prepare:
+    quorum: 1
+    next_state: Commit
+    actions:
+      - "checkQC"
+      - "startTimer"
+      - "storeMessage"
+      - "unicastifParticipant"
+  Commit:
+    quorum: 2f+1
+    next_state: Decide
+    actions:
+      - "checkQC"
+      - "resetTimer"
+      - "storeMessage"
+      - "checkQuorum"
+      - "UpdateLockedQC"
+      - "broadcastifLeader"
+      - "unicastifParticipant"
+  Decide:
+    quorum: 2f+1
+    next_state: Request
+    actions:
+      - "checkQC"
+      - "stopTimer"
+      - "storeMessage"
+      - "checkQuorum"
+      - "broadcastifLeader"
+      - "complete"
+      - "sendNewViewToNextLeader"
+  ViewChange:
+    quorum: 2f+1
+    next_state: Request
+    actions:
+      - "handleViewChangeHotstuff"
+  NewView:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "handleNewView"
+
+  NewViewforHotstuff:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "storeNewViewMessage"
+
+  QueryBalances:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "queryBalances"

@@ -146,6 +146,7 @@ public:
     std::unique_ptr<CryptoProvider> cryptoProvider;
     YAML::Node protocolConfig;
     void onTimeout();
+    void sendNewViewToNextLeader();
 
     bool isByzantine;
     std::unordered_map<int, std::unique_ptr<TimeKeeper>> prepareTimers;
@@ -154,6 +155,8 @@ public:
     std::unordered_map<std::string, std::unordered_set<int>> keyToSenderIds;
 
     std::unordered_set<std::string> executedTransactions;
+
+    std::map<int, std::set<int>> newViewHotstuffSenders;
 
 private:
     int nodeId;

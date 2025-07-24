@@ -32,8 +32,8 @@ int main(int argc, char* argv[]) {
     // Parse scenario from command line argument if provided
     if (argc > 1) {
         scenario = std::stoi(argv[1]);
-        if (scenario < 1 || scenario > 5) {
-            std::cerr << "Invalid scenario. Use 1 (single), 2 (sequential), 3 (concurrent), 4 (randomized), or 5 (failure test)." << std::endl;
+        if (scenario < 1 || scenario > 6) {
+            std::cerr << "Invalid scenario. Use 1 (single), 2 (sequential), 3 (concurrent), 4 (randomized), 5 (failure test), or 6 (HotStuff)." << std::endl;
             return 1;
         }
     }
@@ -320,8 +320,54 @@ int main(int argc, char* argv[]) {
             std::string strtoSend = j.dump();
             txnQueue.push(Transaction{timestamp, strtoSend, 0});
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    }
+    else if (scenario == 6) {
+        // HotStuff: A->B, B->C, C->D, leader rotates for each transaction
+        transactions = {
+            {"A", "B", 30},
+            {"B", "C", 20},
+            {"C", "D", 10}
+        };
+        NUM_REQUESTS = transactions.size();
+        int txnIdx = 0;
+        for (const auto& [from, to, amount] : transactions) {
+            int leaderIdx = txnIdx % nodePorts.size(); // round robin leader
+            int leaderPortForTxn = nodePorts[leaderIdx];
+            json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
+            auto now = std::chrono::system_clock::now();
+            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+            std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
+            std::string clientId = "client";
+            json j = {
+                {"type", "Request"},
+                {"message_sender_id", clientId},
+                {"timestamp", timestamp},
+                {"transaction", transaction},
+                {"view", txnIdx}, // view number matches leader rotation
+                {"operation", timestamp},
+                {"client_listen_port", clientListenPort}
+            };
+            std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
+            std::string signature = crypto.sign(msgToSign);
+            j["signature"] = signature;
+            std::string strtoSend = j.dump();
 
-            
+            // Send directly to the rotating leader
+            try {
+                TcpConnection clientConn(leaderPortForTxn, false);
+                clientConn.send(strtoSend);
+                clientConn.closeConnection();
+                std::cout << "[HotStuffTest] Sent txn " << txnIdx << " to leader on port " << leaderPortForTxn << "\n";
+            } catch (...) {
+                std::cout << "[HotStuffTest] Could not connect to leader on port " << leaderPortForTxn << ".\n";
+            }
+            {
+                std::lock_guard<std::mutex> lock(txnMutex);
+                txnResponses[timestamp] = 0;
+            }
+            txnIdx++;
+            std::this_thread::sleep_for(std::chrono::milliseconds(150));
         }
     }
 

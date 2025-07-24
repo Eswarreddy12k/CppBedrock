@@ -36,7 +36,7 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
       prePrepareBroadcasted()
 {
     EventFactory::getInstance().initialize();
-    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml");
+    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.hotstuff2.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1500, [this] {
         this->onTimeout();
     });
@@ -45,6 +45,7 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
     entityInfo["sequence"] = 0;
     entityInfo["server_status"] = 1;
     cryptoProvider = std::make_unique<OpenSSLCryptoProvider>("../keys/server_" + std::to_string(id) + "_private.pem");
+    
 }
 
 Entity::~Entity() {
@@ -153,6 +154,25 @@ void Entity::onTimeout() {
     
 }
 
+void Entity::sendNewViewToNextLeader() {
+    int currentView = entityInfo["view"].get<int>();
+    if(currentView==0){
+        currentView-=1;
+    }
+    currentView+=1;
+    entityInfo["view"] = currentView;
+    int nextLeader = (currentView + 1) % peerPorts.size();
+    
+    nlohmann::json newViewMsg;
+    newViewMsg["type"] = "NewViewforHotstuff";
+    newViewMsg["new_view"] = currentView;
+    newViewMsg["message_sender_id"] = getNodeId();
+    Message msg(newViewMsg.dump());
+    sendTo(nextLeader, msg);
+    std::cout << "[Node " << getNodeId() << "] Sent NewView message to node " << nextLeader << "\n";
+
+}
+
 void Entity::printDataStore() {
     std::cout << "========== Data Store ==========\n";
     std::cout << "[Entity] Commit Message Store:\n";
@@ -172,6 +192,8 @@ void Entity::start() {
     running = true;
     connection.startListening();
     processingThread = std::thread(&Entity::processMessages, this);
+    //std::this_thread::sleep_for(std::chrono::milliseconds(0)); 
+    sendNewViewToNextLeader();
 }
 void Entity::stop() {
     std::cout << "[Entity] Stopping entity: " << _entityState.getRole() << "\n";
@@ -359,9 +381,9 @@ void Entity::sendTo(int peerId, const Message& message) {
     try {
         TcpConnection client(5000 + peerId, false);
         client.send(message.getContent());
-        // client.closeConnection(); // Close connection after sending
+        //client.closeConnection(); // Close connection after sending
     } catch (const std::exception& e) {
-        std::cerr << "[Node " << getNodeId() << "] Failed to connect send to peer " << peerId << ": " << e.what() << std::endl;
+        std::cerr << "[Node " << getNodeId() << "] Failed to connect & send to peer " << peerId << ": " << e.what() << std::endl;
     }
 }
 EntityState& Entity::getState() { return _entityState; }
