@@ -36,7 +36,7 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
       prePrepareBroadcasted()
 {
     EventFactory::getInstance().initialize();
-    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.hotstuff2.yaml");
+    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.zyzzyva.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1500, [this] {
         this->onTimeout();
     });
@@ -45,6 +45,13 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
     entityInfo["sequence"] = 0;
     entityInfo["server_status"] = 1;
     cryptoProvider = std::make_unique<OpenSSLCryptoProvider>("../keys/server_" + std::to_string(id) + "_private.pem");
+    
+    // Example: in Entity constructor or init
+    std::string protocol = protocolConfig["protocol"] ? protocolConfig["protocol"].as<std::string>() : "";
+    if(protocol=="ChainedHotstuff"){
+        auto event = EventFactory::getInstance().createEvent("periodicPiggybackBroadcast");
+        if (event) event->execute(this, nullptr, nullptr);
+    }
     
 }
 
@@ -193,7 +200,11 @@ void Entity::start() {
     connection.startListening();
     processingThread = std::thread(&Entity::processMessages, this);
     //std::this_thread::sleep_for(std::chrono::milliseconds(0)); 
-    sendNewViewToNextLeader();
+    std::string protocol = protocolConfig["protocol"] ? protocolConfig["protocol"].as<std::string>() : "";
+    if(protocol=="Hotstuff" || protocol=="ChainedHotstuff"){
+        sendNewViewToNextLeader();
+    }
+    
 }
 void Entity::stop() {
     std::cout << "[Entity] Stopping entity: " << _entityState.getRole() << "\n";
@@ -254,6 +265,7 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
         try {
             json j = json::parse(message->getContent());
             std::string messageType = j["type"].get<std::string>();
+
             if(j["type"]=="changeServerStatus"){
                 if(j.contains("server_status")) {
                     entityInfo["server_status"] = j["server_status"].get<int>();
@@ -291,10 +303,10 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
             if(j.contains("sequence")) {
                 seq = j["sequence"].get<int>();
             }
-            if (inViewChange && messageType != "ViewChange" && messageType != "NewView") {
-                std::cout << "  [IGNORED] Node " << getNodeId() << "in view change\n";
-                return;
-            }
+            // if (inViewChange && messageType != "ViewChange" && messageType != "NewView") {
+            //     std::cout << "  [IGNORED] Node " << getNodeId() << "in view change\n";
+            //     return;
+            // }
             
             // if(inViewChange && messageType == "NewView") {
             //     //std::lock_guard<std::mutex> lock(timerMtx);
@@ -303,9 +315,27 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
             //     }
             // }
 
+            // --- PiggybackBroadcast handling ---
+            if (messageType == "PiggybackBroadcast" && j.contains("piggyback") && j["piggyback"].is_array()) {
+                // std::cout << "[Node " << getNodeId() << "] PiggybackBroadcast received. Types in piggyback:\n";
+                // for (const auto& piggyMsg : j["piggyback"]) {
+                //     if (piggyMsg.contains("type")) {
+                //         std::cout << "  - " << piggyMsg["type"].get<std::string>() << " seq -" << piggyMsg["sequence"] << "\n";
+                //     } else {
+                //         std::cout << "  - (no type field)\n";
+                //     }
+                // }
+                for (const auto& piggyMsg : j["piggyback"]) {
+                    Message protocolMsg(piggyMsg.dump());
+                    handleEvent(&protocolMsg, context);
+                }
+                return;
+            }
+            // --- End PiggybackBroadcast handling ---
+
             std::string phase = messageType;
             
-            
+            // std::cout << "[Node " << getNodeId() << "] Processing message of type: " << messageType << " for seq: " << seq << "\n";
             
             YAML::Node phaseConfig = getPhaseConfig(phase);
             if (phaseConfig && phaseConfig["actions"] && phaseConfig["actions"].IsSequence()) {

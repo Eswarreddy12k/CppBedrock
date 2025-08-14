@@ -70,6 +70,9 @@ public:
             for (const auto& msg : j["combinedMessages"]) {
                 // int seq = j["sequence"].get<int>(); // Use the outer sequence for all, or msg["sequence"] if each has its own
                 int seq = msg.value("sequence", j.value("sequence", 0));
+                if(seq>entity->entityInfo["sequence"].get<int>()) {
+                    entity->entityInfo["sequence"] = seq;
+                }
                 std::string operation = j["operation"].get<std::string>();
                 int senderId = msg.value("message_sender_id", j.value("message_sender_id", 0));
                 std::string currentPhase = j["type"];
@@ -87,7 +90,7 @@ public:
 
                 nlohmann::json toStore;
                 toStore["client_listen_port"] = msg.value("client_listen_port", j.value("client_listen_port", -1));
-                toStore["clientid"] = msg.value("clientid", j.value("clientid", ""));
+                toStore["clientid"] = msg.value("clientid", "");
                 toStore["digest"] = msg.value("digest", "");
                 toStore["message_sender_id"] = senderId;
                 toStore["operation"] = msg.value("operation", j.value("operation", ""));
@@ -173,6 +176,9 @@ public:
 
         // Fallback: single message storage (original logic)
         int seq = j["sequence"].get<int>();
+        if(seq>entity->entityInfo["sequence"].get<int>()) {
+            entity->entityInfo["sequence"] = seq;
+        }
         std::string operation = j["operation"].get<std::string>();
         int senderId = j["message_sender_id"].get<int>();
         std::string currentPhase = j["type"];
@@ -656,7 +662,7 @@ public:
                 outMsg["clientid"] = j["clientid"];
                 outMsg["timestamp"] = j["timestamp"];
                 Message protocolMsg(outMsg.dump());
-
+                
                 entity->sendToAll(protocolMsg);
             }
         } else {
@@ -946,6 +952,7 @@ class HandleClientRequestAsLeaderEvent : public BaseEvent {
 public:
     HandleClientRequestAsLeaderEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        std::cout << "[Node " << entity->getNodeId() << "] Handling client request as leader\n";
         int n = entity->peerPorts.size();
         int currentView = entity->entityInfo["view"].get<int>();
         int leaderId = (currentView + 1) % n;
@@ -998,9 +1005,34 @@ public:
             preprepareMsg["operation"] = operation;
             preprepareMsg["message_sender_id"] = entity->getNodeId();
             preprepareMsg["client_listen_port"] = j["client_listen_port"].get<int>();
-
-            Message protocolMsg(preprepareMsg.dump());
-            entity->sendToAll(protocolMsg);
+            // print entity->piggyback
+            // If protocol is ChainedHotstuff, store in piggyback instead of sending
+            if (entity->protocolConfig["protocol"].as<std::string>() == "ChainedHotstuff") {
+                
+                nlohmann::json piggybackCopy;
+                {
+                    std::lock_guard<std::mutex> lock(entity->piggybackMtx);
+                    entity->piggyback.push_back(preprepareMsg);
+                    if (entity->piggyback.is_array() && !entity->piggyback.empty()) {
+                        piggybackCopy = entity->piggyback;
+                        entity->piggyback.clear();
+                    }
+                }
+                if (!piggybackCopy.is_null() && piggybackCopy.is_array() && !piggybackCopy.empty()) {
+                    nlohmann::json outMsg;
+                    outMsg["type"] = "PiggybackBroadcast";
+                    outMsg["view"] = entity->entityInfo["view"];
+                    outMsg["message_sender_id"] = entity->getNodeId();
+                    outMsg["piggyback"] = piggybackCopy;
+                    Message protocolMsg(outMsg.dump());
+                    entity->sendToAll(protocolMsg);
+                    // std::cout << "[Node " << entity->getNodeId() << "] Periodically broadcasted piggyback: " << piggybackCopy.dump(2) << std::endl;
+                }
+                //std::cout << "[Node " << entity->getNodeId() << "] Added to piggyback array: " << preprepareMsg.dump(2) << std::endl;
+            } else {
+                Message protocolMsg(preprepareMsg.dump());
+                entity->sendToAll(protocolMsg);
+            }
         }
         else{
             // std::cout << "[Node " << entity->getNodeId() << "] Operation already processed or empty, skipping broadcast.\n";
@@ -1082,44 +1114,82 @@ public:
             nlohmann::json response;
             response["type"] = "BalancesReply";
             response["view"] = entity->entityInfo["view"];
-            response["balances"] = entity->balances; // or whatever your balances map is called
+            // If balances is empty, send speculativeBalances instead
+            if (entity->balances.empty()) {
+                response["balances"] = entity->speculativeBalances;
+            } else {
+                response["balances"] = entity->balances;
+            }
             response["message_sender_id"] = entity->getNodeId();
             Message BalancesReply(response.dump());
             entity->sendTo(clientPort-5000, BalancesReply);
-            //std::cout << "[Node " << entity->getNodeId() << "] Sent balances to client on port " << clientPort << std::endl;
         }
-        // connection using raw socket code
-        // if (j.contains("client_listen_port")) {
-        //     int clientPort = j["client_listen_port"].get<int>();
-        //     nlohmann::json response;
-        //     response["type"] = "BalancesReply";
-        //     response["view"] = entity->entityInfo["view"];
-        //     response["balances"] = entity->balances;
+        return true;
+    }
+};
 
-        //     // --- Send directly using raw sockets ---
-        //     int sock = socket(AF_INET, SOCK_STREAM, 0);
-        //     if (sock < 0) {
-        //         std::cerr << "[Node " << entity->getNodeId() << "] Failed to create socket\n";
-        //         return false;
-        //     }
-        //     sockaddr_in serv_addr{};
-        //     serv_addr.sin_family = AF_INET;
-        //     serv_addr.sin_port = htons(clientPort);
-        //     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-        //     if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
-        //         std::cerr << "[Node " << entity->getNodeId() << "] Failed to connect to client on port " << clientPort << std::endl;
-        //         close(sock);
-        //         return false;
-        //     }
-        //     std::string respStr = response.dump();
-        //     ssize_t sent = send(sock, respStr.c_str(), respStr.size(), 0);
-        //     if (sent < 0) {
-        //         std::cerr << "[Node " << entity->getNodeId() << "] Failed to send balances to client on port " << clientPort << std::endl;
-        //     } else {
-        //         std::cout << "[Node " << entity->getNodeId() << "] Sent balances to client on port " << clientPort << std::endl;
-        //     }
-        //     close(sock);
-        // }
+class StorePiggybackEvent : public BaseEvent {
+public:
+    StorePiggybackEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        int seq = j["sequence"].get<int>();
+
+        YAML::Node phaseConfig = entity->getPhaseConfig(j["type"]);
+        if (phaseConfig["next_state"]) {
+            std::string nextPhase = phaseConfig["next_state"].as<std::string>();
+            j["type"] = nextPhase;
+            j["qc"] = state->getLockedQC(); // Include QC if available
+            j["message_sender_id"] = entity->getNodeId(); // Add sender ID to the message
+
+            // Store in piggyback array
+            {
+                std::lock_guard<std::mutex> lock(entity->piggybackMtx);
+                entity->piggyback.push_back(j);
+            }
+
+            // Optionally print for debug
+            // std::cout << "[Node " << entity->getNodeId() << "] Stored message in piggyback: " << j.dump() << std::endl;
+        }
+        return true;
+    }
+};
+
+#include <thread>
+#include <chrono>
+
+class PeriodicPiggybackBroadcastEvent : public BaseEvent {
+public:
+    PeriodicPiggybackBroadcastEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
+
+    bool execute(Entity* entity, const Message*, EntityState* state) override {
+        // Only start one broadcast thread per entity
+        if (entity->piggybackBroadcastStarted) return true;
+        entity->piggybackBroadcastStarted = true;
+
+        std::thread([entity]() {
+            while (true) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                nlohmann::json piggybackCopy;
+                {
+                    std::lock_guard<std::mutex> lock(entity->piggybackMtx);
+                    if (entity->piggyback.is_array() && !entity->piggyback.empty()) {
+                        piggybackCopy = entity->piggyback;
+                        entity->piggyback.clear();
+                    }
+                }
+                if (!piggybackCopy.is_null() && piggybackCopy.is_array() && !piggybackCopy.empty()) {
+                    nlohmann::json outMsg;
+                    outMsg["type"] = "PiggybackBroadcast";
+                    outMsg["view"] = entity->entityInfo["view"];
+                    outMsg["message_sender_id"] = entity->getNodeId();
+                    outMsg["piggyback"] = piggybackCopy;
+                    Message protocolMsg(outMsg.dump());
+                    entity->sendToAll(protocolMsg);
+                    // std::cout << "[Node " << entity->getNodeId() << "] Periodically broadcasted piggyback: " << piggybackCopy.dump(2) << std::endl;
+                }
+            }
+        }).detach();
         return true;
     }
 };
@@ -1166,6 +1236,9 @@ void EventFactory::initialize() {
     this->registerEvent<HandleClientRequestAsLeaderEvent>("handleClientRequestAsLeader");
     this->registerEvent<VerifySignatureEvent>("verifySignature");
     this->registerEvent<QueryBalancesEvent>("queryBalances");
+    this->registerEvent<StorePiggybackEvent>("storePiggyback");
+    this->registerEvent<PeriodicPiggybackBroadcastEvent>("periodicPiggybackBroadcast");
+    
 
     registerUncommonEvents(*this);
 }
@@ -1195,6 +1268,9 @@ template void EventFactory::registerEvent<HandleViewChangeHotstuffEvent>(const s
 template void EventFactory::registerEvent<HandleClientRequestAsLeaderEvent>(const std::string&);
 template void EventFactory::registerEvent<VerifySignatureEvent>(const std::string&);
 template void EventFactory::registerEvent<QueryBalancesEvent>(const std::string&);
+template void EventFactory::registerEvent<StorePiggybackEvent>(const std::string&);
+template void EventFactory::registerEvent<PeriodicPiggybackBroadcastEvent>(const std::string&);
+
 
 #include "../../../include/core/Entity.h" // or the header where computeQuorumEventFactory is defined
 

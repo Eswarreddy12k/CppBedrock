@@ -1,0 +1,71 @@
+protocol: ChainedHotstuff
+phases:
+  Request: 
+    quorum: 1
+    next_state: Prepare
+    actions:
+      - verifySignature:
+          public_key: "../keys/${client_id}_public.pem"
+      - "checkNewViewQuorum"
+      - "handleClientRequestAsLeader"
+  Prepare:
+    quorum: 1
+    next_state: PreCommit
+    actions:
+      - "sendNewViewToNextLeader"
+      - "checkQC"
+      - "startTimer"
+      - "storeMessage"
+      - "storePiggyback"
+  PreCommit:
+    quorum: 2f+1
+    next_state: Commit
+    actions:
+      - "checkQC"
+      - "resetTimer"
+      - "storeMessage"
+      - "checkQuorum"
+      - "storePiggyback"
+  Commit:
+    quorum: 2f+1
+    next_state: Decide
+    actions:
+      - "checkQC"
+      - "resetTimer"
+      - "storeMessage"
+      - "checkQuorum"
+      - "UpdateLockedQC"
+      - "storePiggyback"
+  Decide:
+    quorum: 2f+1
+    next_state: Request
+    actions:
+      - "checkQC"
+      - "stopTimer"
+      - "storeMessage"
+      - "checkQuorum"
+      - "complete"
+      
+
+  ViewChange:
+    quorum: 2f+1
+    next_state: Request
+    actions:
+      - "handleViewChangeHotstuff"
+  NewView:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "handleNewView"
+
+  NewViewforHotstuff:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "storeNewViewMessage"
+
+  QueryBalances:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "queryBalances"

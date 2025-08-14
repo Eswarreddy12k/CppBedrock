@@ -98,13 +98,125 @@ public:
     }
 };
 
+
+class SpeculativeCompleteEvent : public BaseEvent {
+public:
+    SpeculativeCompleteEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
+    bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        std::string operation = j.value("operation", "");
+        int seq = j.value("sequence", -1);
+
+        // Use timestamp as unique transaction ID
+        std::string txnId = j.value("timestamp", "");
+        if (!txnId.empty() && !entity->hasExecutedSpeculativeTransaction(txnId)) {
+            if (j.contains("transaction")) {
+                auto tx = j["transaction"];
+                std::string from = tx.value("from", "");
+                std::string to = tx.value("to", "");
+                int amount = tx.value("amount", 0);
+
+                if (!from.empty() && !to.empty() && amount > 0) {
+                    entity->updateSpeculativeBalances(from, to, amount);
+                    entity->appendSpeculativeEntry(seq, txnId, from, to, amount); // NEW: log it
+                    entity->markSpeculativeTransactionExecuted(txnId);
+                    std::cout << "[Node " << entity->getNodeId() << "] SPECULATIVE Transaction: "
+                              << from << " -> " << to << " : " << amount
+                              << " Sequence: " << seq << std::endl;
+                }
+            }
+        }
+
+        entity->markOperationProcessed(seq);
+
+        // Send speculative response to client
+        if (j.contains("client_listen_port")) {
+            int clientPort = j.value("client_listen_port", -1);
+            nlohmann::json response;
+            response["type"] = "Response";
+            response["view"] = j.value("view", -1);
+            response["sequence"] = seq;
+            response["timestamp"] = j.value("timestamp", "");
+            response["message_sender_id"] = entity->getNodeId();
+            response["result"] = "speculative";
+            response["clientid"] = j.value("clientid", "");
+            Message BalancesReply(response.dump());
+            if (clientPort != -1) {
+                entity->sendTo(clientPort - 5000, BalancesReply);
+            }
+        }
+        return true;
+    }
+};
+
+// Commit-certificate handler for Zyzzyva slow-path
+class CommitCertificateEvent : public BaseEvent {
+public:
+    CommitCertificateEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
+    bool execute(Entity* entity, const Message* message, EntityState*) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        // Prefer explicit sequence; else derive from txnId (timestamp)
+        int s = j.value("sequence", -1);
+        std::string txnId = j.value("timestamp", "");
+        if (s < 0 && !txnId.empty()) {
+            s = entity->findSeqByTxnId(txnId);
+        }
+        if (s < 0) {
+            std::cout << "[Node " << entity->getNodeId() << "] CommitCertificateEvent: missing sequence, ignoring\n";
+            return false;
+        }
+
+        // 1) Commit all entries with seq ≤ s
+        std::vector<int> toErase;
+        {
+            std::lock_guard<std::mutex> g(entity->speculativeLogMtx);
+            for (const auto& [seq, e] : entity->speculativeLog) {
+                if (seq <= s) {
+                    entity->updateBalances(e.from, e.to, e.amount);        // durable
+                    toErase.push_back(seq);
+                }
+            }
+            for (int seq : toErase) {
+                auto it = entity->speculativeLog.find(seq);
+                if (it != entity->speculativeLog.end()) {
+                    entity->executedSpeculativeTransactions.erase(it->second.txnId);
+                    entity->speculativeLog.erase(it);
+                }
+            }
+        }
+        entity->committedSeq = std::max(entity->committedSeq, s);
+
+        // 2) Rebuild speculative balances from remaining suffix
+        entity->rebuildSpeculativeBalancesFromLog();
+
+        // Optional: ack client
+        if (j.contains("client_listen_port")) {
+            int clientPort = j.value("client_listen_port", -1);
+            if (clientPort != -1) {
+                nlohmann::json resp{
+                    {"type","Response"},
+                    {"sequence", s},
+                    {"timestamp", txnId},
+                    {"message_sender_id", entity->getNodeId()}
+                };
+                Message ack(resp.dump());
+                entity->sendTo(clientPort - 5000, ack);
+            }
+        }
+        std::cout << "[Node " << entity->getNodeId() << "] Committed up to seq " << s << " (slow-path)\n";
+        return true;
+    }
+};
+
 // Registration function for uncommon events
 void registerUncommonEvents(EventFactory& factory) {
     factory.registerEvent<UncommonEvent>("uncommonEvent");
     factory.registerEvent<VerifyPBFTConditionsEvent>("verifyPBFTConditions");
     factory.registerEvent<StoreNewViewMessageEvent>("storeNewViewMessage");
     factory.registerEvent<CheckNewViewQuorumEvent>("checkNewViewQuorum");
-    factory.registerEvent<SendNewViewToNextLeaderEvent>("sendNewViewToNextLeader"); // <-- Add this line
+    factory.registerEvent<SendNewViewToNextLeaderEvent>("sendNewViewToNextLeader");
+    factory.registerEvent<SpeculativeCompleteEvent>("speculativeComplete");
+    factory.registerEvent<CommitCertificateEvent>("commitCertificate"); // NEW
 }
 
 // Explicit template instantiation
@@ -113,3 +225,5 @@ template void EventFactory::registerEvent<VerifyPBFTConditionsEvent>(const std::
 template void EventFactory::registerEvent<StoreNewViewMessageEvent>(const std::string&);
 template void EventFactory::registerEvent<CheckNewViewQuorumEvent>(const std::string&);
 template void EventFactory::registerEvent<SendNewViewToNextLeaderEvent>(const std::string&);
+template void EventFactory::registerEvent<SpeculativeCompleteEvent>(const std::string&);
+template void EventFactory::registerEvent<CommitCertificateEvent>(const std::string&); // NEW

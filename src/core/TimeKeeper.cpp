@@ -9,6 +9,7 @@ TimeKeeper::~TimeKeeper() {
 }
 
 void TimeKeeper::start() {
+    // std::cout << "[TimeKeeper] Starting timer with timeout: " << timeoutMs << " ms" << std::endl;   
     std::lock_guard<std::mutex> lock(mtx);
     if (running) return;
     running = true;

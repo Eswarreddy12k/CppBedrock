@@ -1,0 +1,27 @@
+protocol: Zyzzyva
+phases:
+  Request: 
+    quorum: 1
+    next_state: SpeculativeExecute
+    actions:
+      - verifySignature:
+          public_key: "../keys/${client_id}_public.pem"
+      - "handleClientRequestAsLeader"
+  SpeculativeExecute:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "storeMessage"
+      - "speculativeComplete"
+  Commit:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "commitCertificate"
+
+  QueryBalances:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "queryBalances"
+

@@ -117,6 +117,81 @@ public:
         std::cout << "[Node " << getNodeId() << "] Updated balances: " << from << "=" << balances[from] << ", " << to << "=" << balances[to] << std::endl;
     }
 
+    // Update speculative balances (thread-safe)
+    void updateSpeculativeBalances(const std::string& from, const std::string& to, int amount) {
+        std::lock_guard<std::mutex> lock(speculativeBalancesMutex);
+        if (speculativeBalances.find(from) == speculativeBalances.end()) speculativeBalances[from] = 100;
+        if (speculativeBalances.find(to) == speculativeBalances.end()) speculativeBalances[to] = 100;
+        speculativeBalances[from] -= amount;
+        speculativeBalances[to] += amount;
+        std::cout << "[Node " << getNodeId() << "] Updated SPECULATIVE balances: " << from << "=" << speculativeBalances[from] << ", " << to << "=" << speculativeBalances[to] << std::endl;
+    }
+
+    // Get speculative balance for an account (thread-safe)
+    int getSpeculativeBalance(const std::string& account) {
+        std::lock_guard<std::mutex> lock(speculativeBalancesMutex);
+        auto it = speculativeBalances.find(account);
+        return (it != speculativeBalances.end()) ? it->second : 100;
+    }
+
+    // Mark a speculative transaction as executed
+    void markSpeculativeTransactionExecuted(const std::string& txnId) {
+        executedSpeculativeTransactions.insert(txnId);
+    }
+
+    // Check if a speculative transaction has been executed
+    bool hasExecutedSpeculativeTransaction(const std::string& txnId) const {
+        return executedSpeculativeTransactions.find(txnId) != executedSpeculativeTransactions.end();
+    }
+
+    // Optionally, clear all speculative balances (e.g., on commit/rollback)
+    void clearSpeculativeBalances() {
+        std::lock_guard<std::mutex> lock(speculativeBalancesMutex);
+        speculativeBalances.clear();
+        executedSpeculativeTransactions.clear();
+    }
+
+    // Speculative log entry
+    struct SpeculativeEntry {
+        int seq;
+        std::string txnId;
+        std::string from;
+        std::string to;
+        int amount;
+    };
+
+    // Append to speculative log
+    void appendSpeculativeEntry(int seq, const std::string& txnId,
+                                const std::string& from, const std::string& to, int amount) {
+        std::lock_guard<std::mutex> g(speculativeLogMtx);
+        if (speculativeLog.find(seq) == speculativeLog.end()) {
+            speculativeLog.emplace(seq, SpeculativeEntry{seq, txnId, from, to, amount});
+        }
+    }
+
+    // Find seq by txnId (timestamp). Returns -1 if not found.
+    int findSeqByTxnId(const std::string& txnId) {
+        std::lock_guard<std::mutex> g(speculativeLogMtx);
+        for (const auto& [k, e] : speculativeLog) {
+            if (e.txnId == txnId) return e.seq;
+        }
+        return -1;
+    }
+
+    // Rebuild speculative balances from current speculative log > committedSeq
+    void rebuildSpeculativeBalancesFromLog() {
+        {
+            std::lock_guard<std::mutex> lock(speculativeBalancesMutex);
+            speculativeBalances.clear();
+        }
+        std::lock_guard<std::mutex> g(speculativeLogMtx);
+        for (const auto& [k, e] : speculativeLog) {
+            if (e.seq > committedSeq) {
+                updateSpeculativeBalances(e.from, e.to, e.amount);
+            }
+        }
+    }
+
     std::vector<int> peerPorts;
     std::map<std::string, int> balances;
     std::mutex balancesMutex;
@@ -157,6 +232,21 @@ public:
     std::unordered_set<std::string> executedTransactions;
 
     std::map<int, std::set<int>> newViewHotstuffSenders;
+    nlohmann::json piggyback; // Stores the latest piggyback info
+    std::mutex piggybackMtx;
+    bool piggybackBroadcastStarted = false;
+
+    // For Zyzzyva and speculative execution
+    std::map<std::string, int> speculativeBalances;      // Speculative balances for speculative complete
+    std::mutex speculativeBalancesMutex;                 // Mutex for thread-safe access to speculativeBalances
+
+    // For tracking speculative transactions (optional, similar to executedTransactions)
+    std::unordered_set<std::string> executedSpeculativeTransactions;
+
+    // New: speculative log and commit index
+    std::map<int, SpeculativeEntry> speculativeLog; // key: seq
+    std::mutex speculativeLogMtx;
+    int committedSeq = 0;
 
 private:
     int nodeId;
