@@ -104,6 +104,19 @@ public:
     SpeculativeCompleteEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         auto j = nlohmann::json::parse(message->getContent());
+        std::string type = j.value("type","");
+        if (type == "PrePrepare" || type == "SpeculativePrePrepare") {
+            int seq = j.value("sequence",-1);
+            if (seq > 0) entity->cachePrePrepare(seq, j);
+            int maxSeq = entity->getMaxSpeculativeSeq();
+            if (seq > maxSeq + 1) {
+                // Gap detected, request missing range
+                entity->sendFillHole(maxSeq + 1, seq - 1, false);
+                // Do not process this out-of-order message yet
+                return true;
+            }
+        }
+
         std::string operation = j.value("operation", "");
         int seq = j.value("sequence", -1);
 
@@ -208,6 +221,172 @@ public:
     }
 };
 
+class ZyzzyvaViewChangeEvent : public BaseEvent {
+public:
+    ZyzzyvaViewChangeEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
+    bool execute(Entity* entity, const Message* message, EntityState*) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        if (j.value("type", "") != "ViewChange") return true;
+
+        int view = j.value("view", j.value("new_view", 0));
+        int sender = j.value("message_sender_id", -1);
+        // de-dupe sender per view
+        auto& arr = entity->viewChangeMessages[view];
+        bool seen = false;
+        for (const auto& m : arr) if (m.value("message_sender_id", -2) == sender) { seen = true; break; }
+        if (!seen) arr.push_back(j);
+
+        // if I'm new leader and have 2f+1 reports, compute safe log per Zyzzyva rules
+        int n = static_cast<int>(entity->peerPorts.size());
+        if (n == 0) return true;
+        int leaderId = entity->peerPorts[view % n];
+        if (entity->getNodeId() != leaderId) return true;
+
+        int f = entity->f;
+        if (static_cast<int>(arr.size()) < 2 * f + 1) return true;
+
+        // Step 1: safe committed prefix
+        int safeCommitted = entity->committedSeq;
+        for (const auto& r : arr) safeCommitted = std::max(safeCommitted, r.value("committed_seq", entity->committedSeq));
+
+        // Step 2: longest safe suffix: for each seq > safeCommitted, pick value with ≥ f+1 support
+        // support[seq][key] = count; keep a representative message for reconstruction
+        std::map<int, std::map<std::string, int>> support;
+        std::map<int, std::map<std::string, nlohmann::json>> rep;
+
+        for (const auto& r : arr) {
+            if (!r.contains("prepare_messages") || !r["prepare_messages"].is_array()) continue;
+            for (const auto& pm : r["prepare_messages"]) {
+                if (!pm.contains("sequence") || !pm["sequence"].is_number_integer()) continue;
+                int seq = pm["sequence"].get<int>();
+                if (seq <= safeCommitted) continue;
+                std::string ts = pm.value("timestamp", "");
+                // key by timestamp + transaction dump to ensure identical requests
+                std::string key = ts + "|" + pm.value("transaction", nlohmann::json{}).dump();
+                support[seq][key] += 1;
+                if (!rep[seq].count(key)) rep[seq][key] = pm;
+            }
+        }
+
+        // Build selected_log: consecutive from safeCommitted+1 while some key has ≥ f+1 support
+        nlohmann::json selectedLog = nlohmann::json::array();
+        for (int seq = safeCommitted + 1;; ++seq) {
+            if (!support.count(seq)) break;
+            const auto& counts = support[seq];
+            int best = 0; std::string bestKey;
+            for (const auto& [k, c] : counts) if (c > best) { best = c; bestKey = k; }
+            if (best >= f + 1) {
+                const auto& pm = rep[seq][bestKey];
+                nlohmann::json entry;
+                entry["sequence"] = seq;
+                entry["timestamp"] = pm.value("timestamp", "");
+                if (pm.contains("transaction")) entry["transaction"] = pm["transaction"];
+                entry["operation"] = pm.value("operation", "");
+                selectedLog.push_back(entry);
+            } else {
+                break; // stop at first gap without ≥ f+1 support
+            }
+        }
+
+        // Broadcast NewView with committed_seq and selected_log
+        nlohmann::json nv{
+            {"type","NewView"},
+            {"view", view},
+            {"message_sender_id", entity->getNodeId()},
+            {"committed_seq", safeCommitted},
+            {"selected_log", selectedLog}
+        };
+        Message out(nv.dump());
+        entity->sendToAll(out);
+        std::cout << "[Node " << entity->getNodeId() << "] NewView(view=" << view
+                  << ") committed_seq=" << safeCommitted
+                  << " selected_log_len=" << selectedLog.size() << std::endl;
+        return true;
+    }
+};
+
+class ZyzzyvaHandleNewViewEvent : public BaseEvent {
+public:
+    ZyzzyvaHandleNewViewEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
+    bool execute(Entity* entity, const Message* message, EntityState*) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        if (j.value("type", "") != "NewView") return true;
+
+        int view = j.value("view", entity->entityInfo.value("view", 0));
+        int s = j.value("committed_seq", entity->committedSeq);
+        entity->entityInfo["view"] = view;
+        entity->inViewChange = false;
+
+        // 1) Commit prefix ≤ s
+        std::vector<int> toErase;
+        {
+            std::lock_guard<std::mutex> g(entity->speculativeLogMtx);
+            for (const auto& [seq, e] : entity->speculativeLog) {
+                if (seq <= s) {
+                    entity->updateBalances(e.from, e.to, e.amount);
+                    toErase.push_back(seq);
+                }
+            }
+            for (int seq : toErase) {
+                auto it = entity->speculativeLog.find(seq);
+                if (it != entity->speculativeLog.end()) {
+                    entity->executedSpeculativeTransactions.erase(it->second.txnId);
+                    entity->speculativeLog.erase(it);
+                }
+            }
+        }
+        entity->committedSeq = std::max(entity->committedSeq, s);
+
+        // 2) Adopt leader's selected_log for sequences > s (truncate conflicts)
+        if (j.contains("selected_log") && j["selected_log"].is_array()) {
+            // Truncate all speculative entries > s
+            {
+                std::lock_guard<std::mutex> g(entity->speculativeLogMtx);
+                std::vector<int> rm;
+                for (const auto& [seq, _] : entity->speculativeLog) if (seq > s) rm.push_back(seq);
+                for (int seq : rm) entity->speculativeLog.erase(seq);
+            }
+            // Install selected entries
+            for (const auto& e : j["selected_log"]) {
+                int seq = e.value("sequence", -1);
+                if (seq <= s || seq < 0) continue;
+                std::string txnId = e.value("timestamp", "");
+                std::string from = e.value("transaction", nlohmann::json{}).value("from", "");
+                std::string to = e.value("transaction", nlohmann::json{}).value("to", "");
+                int amount = e.value("transaction", nlohmann::json{}).value("amount", 0);
+                std::lock_guard<std::mutex> g(entity->speculativeLogMtx);
+                entity->speculativeLog[seq] = Entity::SpeculativeEntry{seq, txnId, from, to, amount};
+                entity->executedSpeculativeTransactions.insert(txnId);
+            }
+        }
+
+        // 3) Rebuild speculative balances for suffix > committedSeq
+        entity->rebuildSpeculativeBalancesFromLog();
+
+        std::cout << "[Node " << entity->getNodeId() << "] Installed NewView " << view
+                  << ", committed up to " << s << ", speculative suffix rebuilt\n";
+        return true;
+    }
+};
+
+class FillHoleRequestEvent : public BaseEvent {
+public:
+    FillHoleRequestEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
+    bool execute(Entity* entity, const Message* message, EntityState*) override {
+        auto j = nlohmann::json::parse(message->getContent());
+        if (j.value("type","") != "FillHole") return true;
+        int view = j.value("view", -1);
+        if (view != entity->entityInfo["view"].get<int>()) return true; // ignore other views
+        int fromSeq = j.value("from_seq", -1);
+        int toSeq = j.value("to_seq", -1);
+        int requester = j.value("message_sender_id", -1);
+
+        // If we have cached entries, replay them to requester
+        entity->replayRangeTo(fromSeq, toSeq, requester);
+        return true;
+    }
+};
+
 // Registration function for uncommon events
 void registerUncommonEvents(EventFactory& factory) {
     factory.registerEvent<UncommonEvent>("uncommonEvent");
@@ -217,6 +396,23 @@ void registerUncommonEvents(EventFactory& factory) {
     factory.registerEvent<SendNewViewToNextLeaderEvent>("sendNewViewToNextLeader");
     factory.registerEvent<SpeculativeCompleteEvent>("speculativeComplete");
     factory.registerEvent<CommitCertificateEvent>("commitCertificate"); // NEW
+    factory.registerEvent<FillHoleRequestEvent>("fillHoleRequest");
+}
+
+// Static registrars to ensure event names are available
+namespace {
+struct ZyzzyvaVCRegistrar {
+    ZyzzyvaVCRegistrar() {
+        EventFactory::getInstance().registerEvent<ZyzzyvaViewChangeEvent>("zyzzyvaViewChange");
+        EventFactory::getInstance().registerEvent<ZyzzyvaHandleNewViewEvent>("zyzzyvaHandleNewView");
+    }
+} zyzzyva_vc_registrar;
+
+struct FillHoleRegistrar {
+    FillHoleRegistrar() {
+        EventFactory::getInstance().registerEvent<FillHoleRequestEvent>("fillHoleRequest");
+    }
+} fill_hole_registrar;
 }
 
 // Explicit template instantiation
@@ -227,3 +423,6 @@ template void EventFactory::registerEvent<CheckNewViewQuorumEvent>(const std::st
 template void EventFactory::registerEvent<SendNewViewToNextLeaderEvent>(const std::string&);
 template void EventFactory::registerEvent<SpeculativeCompleteEvent>(const std::string&);
 template void EventFactory::registerEvent<CommitCertificateEvent>(const std::string&); // NEW
+template void EventFactory::registerEvent<ZyzzyvaViewChangeEvent>(const std::string&);
+template void EventFactory::registerEvent<ZyzzyvaHandleNewViewEvent>(const std::string&);
+template void EventFactory::registerEvent<FillHoleRequestEvent>(const std::string&);

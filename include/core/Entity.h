@@ -81,6 +81,7 @@ public:
     void printDataStore();
     void printCommittedMessages();
     void loadOrInitDataset();
+    void initiateViewChange();
     void updateEntityInfoField(const std::string& key, const nlohmann::json& value);
     
     void saveEntityInfo();
@@ -245,12 +246,19 @@ public:
 
     // New: speculative log and commit index
     std::map<int, SpeculativeEntry> speculativeLog; // key: seq
-    std::mutex speculativeLogMtx;
+    mutable std::mutex speculativeLogMtx; // CHANGED: added mutable
     int committedSeq = 0;
+    int f;
+
+    void sendFillHole(int fromSeq, int toSeq, bool broadcast);
+    void tryHandleFillHoleTimeout();
+    int getMaxSpeculativeSeq() const;
+    void cachePrePrepare(int seq, const nlohmann::json& msg);
+    void replayRangeTo(int fromSeq, int toSeq, int targetNodeId);
 
 private:
     int nodeId;
-    int f;
+    
     EntityState _entityState;
     TcpConnection connection;
     std::thread processingThread;
@@ -263,6 +271,13 @@ private:
     int nextSequenceNumber = 0;
 
     
+
+    std::map<int, nlohmann::json> preprepareCache;
+    std::atomic<bool> fillHolePending{false};
+    int fillHoleFromSeq{0};
+    int fillHoleToSeq{0};
+    std::chrono::steady_clock::time_point fillHoleDeadline;
+    int fillHoleTimeoutMs{600}; // adjust as needed
 
     
 

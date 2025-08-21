@@ -60,23 +60,88 @@ Entity::~Entity() {
     //std::cout << "[Entity] Destructor called for role: " << _entityState.getRole() << std::endl;
 }
 
+int Entity::getMaxSpeculativeSeq() const {
+    int maxSeq = committedSeq;
+    std::lock_guard<std::mutex> g(speculativeLogMtx);
+    if (!speculativeLog.empty()) {
+        maxSeq = std::max(maxSeq, speculativeLog.rbegin()->first);
+    }
+    return maxSeq;
+}
+
+void Entity::cachePrePrepare(int seq, const nlohmann::json& msg) {
+    preprepareCache[seq] = msg;
+}
+
+void Entity::sendFillHole(int fromSeq, int toSeq, bool broadcast) {
+    nlohmann::json fh{
+        {"type","FillHole"},
+        {"view", entityInfo["view"]},
+        {"from_seq", fromSeq},
+        {"to_seq", toSeq},
+        {"message_sender_id", getNodeId()},
+        {"broadcast", broadcast}
+    };
+    Message m(fh.dump());
+    if (broadcast) {
+        sendToAll(m);
+        std::cout << "[Node " << getNodeId() << "] Broadcast FillHole request for [" << fromSeq << "," << toSeq << "]\n";
+    } else {
+        // current primary id determination: view % N mapping to peerPorts vector
+        if (!peerPorts.empty()) {
+            int n = (int)peerPorts.size();
+            int primaryId = peerPorts[entityInfo["view"].get<int>() % n];
+            sendTo(primaryId, m);
+            std::cout << "[Node " << getNodeId() << "] Sent FillHole to primary " << primaryId
+                      << " for [" << fromSeq << "," << toSeq << "]\n";
+        }
+    }
+    fillHolePending = true;
+    fillHoleFromSeq = fromSeq;
+    fillHoleToSeq = toSeq;
+    fillHoleDeadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(fillHoleTimeoutMs);
+}
+
+void Entity::replayRangeTo(int fromSeq, int toSeq, int targetNodeId) {
+    for (int s = fromSeq; s <= toSeq; ++s) {
+        auto it = preprepareCache.find(s);
+        if (it == preprepareCache.end()) continue;
+        Message resend(it->second.dump());
+        sendTo(targetNodeId, resend);
+        std::cout << "[Node " << getNodeId() << "] Replay seq " << s << " to node " << targetNodeId << "\n";
+    }
+}
+
+void Entity::tryHandleFillHoleTimeout() {
+    if (!fillHolePending) return;
+    if (std::chrono::steady_clock::now() < fillHoleDeadline) return;
+    // Escalate: broadcast fill-hole and start view change
+    sendFillHole(fillHoleFromSeq, fillHoleToSeq, true);
+    std::cout << "[Node " << getNodeId() << "] FillHole timeout -> initiating view change\n";
+    fillHolePending = false;
+    initiateViewChange();
+}
+
 void Entity::onTimeout() {
     if (!timeKeeper) return;
+    // First check pending fill-hole escalation
+    tryHandleFillHoleTimeout();
+    // If still pending we already escalated; optionally early return
+    if (fillHolePending) return;
+
     std::cout << "[Node " << getNodeId() << "] Timeout occurred! Initiating view change.\n";
-    // Update view number in entityInfo and persist it
     int newView = entityInfo["view"].get<int>() + 1;
     entityInfo["view"] = newView;
-    //saveEntityInfo();
 
     inViewChange = true;
     std::string protocol = protocolConfig["protocol"] ? protocolConfig["protocol"].as<std::string>() : "";
-    std::cout << "[Node " << getNodeId() << "] Initiating view change to view " << newView << " for protocol " << protocol << "\n";
     nlohmann::json viewChangeMsg;
     viewChangeMsg["type"] = "ViewChange";
     viewChangeMsg["new_view"] = newView;
+    viewChangeMsg["view"] = newView; // for Zyzzyva handlers
     viewChangeMsg["message_sender_id"] = getNodeId();
 
-    // --- Collect only one prepare message per sequence for the current view ---
+    // Collect one prepare/status per sequence (status report)
     std::unordered_map<int, nlohmann::json> preparePerSeq;
     std::string fileName = "messages_" + std::to_string(getNodeId()) + ".json";
     dataset.loadFromFile(fileName);
@@ -84,19 +149,15 @@ void Entity::onTimeout() {
 
     for (const auto& [key, record] : records) {
         try {
-            // std::cout << "[Node " << getNodeId() << "] Processing record: " << key << "\n";
-            // Defensive: skip if record is not valid JSON object
             if (!record.is_object()) continue;
-            if (record.contains("type") && record["type"] == "prepare" && record.contains("sequence")) {
+            std::string t = record.value("type", "");
+            if ((t == "prepare" || t == "Prepare") && record.contains("sequence") && record["sequence"].is_number_integer()) {
                 int seq = record["sequence"].get<int>();
-                // Only keep the first prepare message per sequence (or replace for the last)
-                // preparePerSeq[seq] = record; // last wins
-                if (preparePerSeq.find(seq) == preparePerSeq.end()) {
-                    preparePerSeq[seq] = record; // first wins
+                if (!preparePerSeq.count(seq)) {
+                    preparePerSeq[seq] = record;
                 }
             }
-        } catch (const nlohmann::json::exception& e) {
-            std::cerr << "[Node " << getNodeId() << "] Skipping invalid record: " << e.what() << "\n";
+        } catch (const nlohmann::json::exception&) {
             continue;
         }
     }
@@ -107,23 +168,34 @@ void Entity::onTimeout() {
         if (record.contains("timestamp"))         filtered["timestamp"]         = record["timestamp"];
         if (record.contains("transaction"))       filtered["transaction"]       = record["transaction"];
         if (record.contains("operation"))         filtered["operation"]         = record["operation"];
-        if (record.contains("sequence"))         filtered["sequence"]         = record["sequence"];
+        if (record.contains("sequence"))          filtered["sequence"]          = record["sequence"];
         prepareArray.push_back(filtered);
     }
     viewChangeMsg["prepare_messages"] = prepareArray;
-    // --- End Prepare collection ---
+
+    if (protocol == "Zyzzyva") {
+        viewChangeMsg["committed_seq"] = committedSeq;
+        Message msg(viewChangeMsg.dump());
+        if (!peerPorts.empty()) {
+            int idx = newView % static_cast<int>(peerPorts.size());
+            int nextLeaderPeerId = peerPorts[idx];
+            sendTo(nextLeaderPeerId, msg);
+        } else {
+            sendToAll(msg);
+        }
+        if (timeKeeper) timeKeeper->start();
+        return;
+    }
 
     if (protocol == "Hotstuff") {
         int lastSeq = -1;
         std::string lastOp;
         nlohmann::json lastQC;
-    
-        // Load messages from file
+
         std::string fileName = "messages_" + std::to_string(getNodeId()) + ".json";
         dataset.loadFromFile(fileName);
         auto records = dataset.getRecords();
-    
-        // Find the message with the highest sequence
+
         for (const auto& [key, record] : records) {
             if (record.contains("sequence") && record["sequence"].is_number_integer()) {
                 int seq = record["sequence"].get<int>();
@@ -138,7 +210,7 @@ void Entity::onTimeout() {
                 }
             }
         }
-    
+
         viewChangeMsg["last_sequence"] = lastSeq;
         viewChangeMsg["last_operation"] = lastOp;
         viewChangeMsg["locked_qc"] = (lastSeq != -1 && sequenceStates.count(lastSeq))
@@ -152,13 +224,9 @@ void Entity::onTimeout() {
         sendToAll(msg);
     }
 
-    if(true){
-        //std::lock_guard<std::mutex> lock(timerMtx);
-        if (timeKeeper) {
-            timeKeeper->start();
-        }
+    if (timeKeeper) {
+        timeKeeper->start();
     }
-    
 }
 
 void Entity::sendNewViewToNextLeader() {
@@ -266,6 +334,13 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
             json j = json::parse(message->getContent());
             std::string messageType = j["type"].get<std::string>();
 
+            // Handle TriggerViewChange from the client
+            if (messageType == "TriggerViewChange") {
+                std::cout << "[Node " << getNodeId() << "] Received TriggerViewChange from client.\n";
+                initiateViewChange();
+                return;
+            }
+
             if(j["type"]=="changeServerStatus"){
                 if(j.contains("server_status")) {
                     entityInfo["server_status"] = j["server_status"].get<int>();
@@ -279,7 +354,12 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                 // std::cout << "[Node " << getNodeId() << "] Ignoring message while server is down.\n";
                 return;
             }
-            
+
+            else if (messageType == "FillHole") {
+                auto ev = EventFactory::getInstance().createEvent("fillHoleRequest");
+                if (ev) ev->execute(this, message, &_entityState);
+                return;
+            }
 
             // // --- Special handling for QueryBalances ---
             // if (messageType == "QueryBalances" && j.contains("client_listen_port")) {
@@ -525,5 +605,66 @@ void Entity::saveEntityInfo() {
         out << entityInfo.dump(4) << std::endl;
     }
     std::filesystem::rename(tmpFilename, filename);
+}
+
+void Entity::initiateViewChange() {
+    std::cout << "[Node " << getNodeId() << "] Initiating view change.\n";
+
+    int newView = entityInfo["view"].get<int>() + 1;
+    entityInfo["view"] = newView;
+
+    inViewChange = true;
+    nlohmann::json viewChangeMsg;
+    viewChangeMsg["type"] = "ViewChange";
+    viewChangeMsg["view"] = newView;
+    viewChangeMsg["message_sender_id"] = getNodeId();
+    viewChangeMsg["committed_seq"] = committedSeq;
+
+    // Collect speculative log for sequences > committed_seq
+    nlohmann::json speculativeLogArray = nlohmann::json::array();
+    nlohmann::json prepareMsgs = nlohmann::json::array(); // NEW
+    {
+        std::lock_guard<std::mutex> lock(speculativeLogMtx);
+        for (const auto& [seq, entry] : speculativeLog) { // Use structured bindings for std::map
+            if (seq > committedSeq) {
+                nlohmann::json logEntry = {
+                    {"sequence", seq},
+                    {"txnId", entry.txnId},
+                    {"from", entry.from},
+                    {"to", entry.to},
+                    {"amount", entry.amount}
+                };
+                speculativeLogArray.push_back(logEntry);
+
+                // Zyzzyva VC status entry compatible with leader logic
+                nlohmann::json pm = {
+                    {"sequence", seq},
+                    {"timestamp", entry.txnId},
+                    {"transaction", {
+                        {"from", entry.from},
+                        {"to", entry.to},
+                        {"amount", entry.amount}
+                    }},
+                    {"operation", entry.txnId} // optional
+                };
+                prepareMsgs.push_back(pm);
+            }
+        }
+    }
+    viewChangeMsg["speculative_log"] = speculativeLogArray;
+    viewChangeMsg["prepare_messages"] = prepareMsgs; // NEW
+
+    // Send ViewChange to the next leader
+    if (!peerPorts.empty()) {
+        int nextLeader = newView % peerPorts.size();
+        Message msg(viewChangeMsg.dump());
+        sendTo(peerPorts[nextLeader], msg);
+        std::cout << "[Node " << getNodeId() << "] Sent ViewChange(view=" << newView
+                  << ", committed_seq=" << committedSeq << ") to next leader (Node " << peerPorts[nextLeader] << ").\n";
+    } else {
+        sendToAll(Message(viewChangeMsg.dump()));
+        std::cout << "[Node " << getNodeId() << "] Broadcasted ViewChange(view=" << newView
+                  << ", committed_seq=" << committedSeq << ").\n";
+    }
 }
 

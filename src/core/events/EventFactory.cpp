@@ -1109,8 +1109,31 @@ public:
     QueryBalancesEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         auto j = nlohmann::json::parse(message->getContent());
+        
         if (j.contains("client_listen_port")) {
             int clientPort = j["client_listen_port"].get<int>();
+
+            // // Debug: print current committed and speculative balances
+            // std::cout << "[Node " << entity->getNodeId() << "] Current balances:";
+            // if (entity->balances.empty()) {
+            //     std::cout << " <empty>";
+            // } else {
+            //     for (const auto& [k, v] : entity->balances) {
+            //         std::cout << " " << k << "=" << v;
+            //     }
+            // }
+            // std::cout << std::endl;
+
+            // std::cout << "[Node " << entity->getNodeId() << "] Current sbalances:";
+            // if (entity->speculativeBalances.empty()) {
+            //     std::cout << " <empty>";
+            // } else {
+            //     for (const auto& [k, v] : entity->speculativeBalances) {
+            //         std::cout << " " << k << "=" << v;
+            //     }
+            // }
+            // std::cout << std::endl;
+
             nlohmann::json response;
             response["type"] = "BalancesReply";
             response["view"] = entity->entityInfo["view"];

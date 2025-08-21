@@ -14,6 +14,7 @@
 #include <queue>
 #include <map>
 #include <set>
+#include <unordered_map>
 #include <arpa/inet.h>
 
 using json = nlohmann::json;
@@ -32,8 +33,8 @@ int main(int argc, char* argv[]) {
     // Parse scenario from command line argument if provided
     if (argc > 1) {
         scenario = std::stoi(argv[1]);
-        if (scenario < 1 || scenario > 7) {
-            std::cerr << "Invalid scenario. Use 1 (single), 2 (sequential), 3 (concurrent), 4 (randomized), 5 (failure test), 6 (HotStuff), or 7 (Zyzzyva)." << std::endl;
+        if (scenario < 1 || scenario > 8) {
+            std::cerr << "Invalid scenario. Use 1 (single), 2 (sequential), 3 (concurrent), 4 (randomized), 5 (failure test), 6 (HotStuff), 7 (Zyzzyva), or 8 (Client-triggered view change)." << std::endl;
             return 1;
         }
     }
@@ -46,6 +47,10 @@ int main(int argc, char* argv[]) {
     std::map<std::string, int> txnResponses;
     std::set<std::string> completedTxns;
     std::mutex txnMutex;
+
+    // Zyzzyva client-side tracking (NEW)
+    std::unordered_map<std::string, std::set<int>> txnResponders; // txnId -> unique replica ids
+    std::unordered_map<std::string, int> txnSeq;                  // txnId -> sequence
 
     std::vector<int> nodePorts = {5001, 5002, 5003, 5004, 5005, 5006, 5007};
     const int n = nodePorts.size();
@@ -102,14 +107,34 @@ int main(int argc, char* argv[]) {
                 try {
                     auto j = json::parse(response);
                     std::string op;
-                    if (j.contains("operation")) {
+                    if (j.contains("operation") && j["operation"].is_string()) {
                         op = j["operation"].get<std::string>();
-                    } else if (j.contains("timestamp")) {
+                    } else if (j.contains("timestamp") && j["timestamp"].is_string()) {
                         op = j["timestamp"].get<std::string>();
                     }
                     if (!op.empty()) {
+                        // Count distinct responder ids and capture sequence (NEW)
+                        int senderId = -1;
+                        if (j.contains("message_sender_id")) {
+                            if (j["message_sender_id"].is_number_integer()) {
+                                senderId = j["message_sender_id"].get<int>();
+                            } else if (j["message_sender_id"].is_string()) {
+                                try { senderId = std::stoi(j["message_sender_id"].get<std::string>()); } catch (...) {}
+                            }
+                        }
+                        int seq = -1;
+                        if (j.contains("sequence") && j["sequence"].is_number_integer()) {
+                            seq = j["sequence"].get<int>();
+                        }
                         std::lock_guard<std::mutex> txnLock(txnMutex);
-                        txnResponses[op]++;
+                        if (senderId != -1) {
+                            txnResponders[op].insert(senderId);
+                            txnResponses[op] = static_cast<int>(txnResponders[op].size());
+                        } else {
+                            // fallback if sender is missing
+                            txnResponses[op]++;
+                        }
+                        if (seq != -1) txnSeq[op] = seq;
                         if (txnResponses[op] >= requiredResponses) {
                             completedTxns.insert(op);
                         }
@@ -372,14 +397,18 @@ int main(int argc, char* argv[]) {
         }
     }
     else if (scenario == 7) {
-        // Zyzzyva scenario: send to all nodes, wait for 2f+1 speculative responses, send commit if needed
+        // Zyzzyva scenario: send only to the leader, wait for 2f+1 speculative responses, send commit if needed
         transactions = {
-            {"A", "B", 50}
+            {"A", "B", 50},
+            {"B", "C", 30},
+            {"C", "D", 20}
         };
+        // Zyzzyva scenario: send to all nodes, wait for 2f+1 speculative responses, send commit if needed
+        
         NUM_REQUESTS = transactions.size();
         int txnIdx = 0;
         for (const auto& [from, to, amount] : transactions) {
-            int leaderIdx = txnIdx % nodePorts.size(); // round robin leader
+            int leaderIdx = 0; // round robin leader
             int leaderPortForTxn = nodePorts[leaderIdx];
             json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
             auto now = std::chrono::system_clock::now();
@@ -439,15 +468,23 @@ int main(int argc, char* argv[]) {
 
                     // If between 2f+1 and 3f+1, send commit to all nodes
                     if (respCount >= requiredResponses && respCount < n) {
+                        int seqForCommit = -1;
+                        {
+                            std::lock_guard<std::mutex> lock(txnMutex);
+                            auto it = txnSeq.find(txnId);
+                            if (it != txnSeq.end()) seqForCommit = it->second;
+                        }
                         json commitMsg = {
                             {"type", "Commit"},
                             {"timestamp", txnId},
                             {"operation", txnId},
-                            {"view", 0},                    // ensure numeric view is present
-                            {"message_sender_id", -1},      // client as numeric sender id to satisfy get<int>()
+                            {"view", 0},
+                            {"message_sender_id", -1},
                             {"client_listen_port", clientListenPort}
-                            // No "sequence" here; replicas derive it from timestamp via speculative log
                         };
+                        if (seqForCommit != -1) {
+                            commitMsg["sequence"] = seqForCommit; // include explicit sequence (NEW)
+                        }
                         std::string commitStr = commitMsg.dump();
                         for (int port : nodePorts) {
                             try {
@@ -466,10 +503,121 @@ int main(int argc, char* argv[]) {
                 }
                 auto now = std::chrono::steady_clock::now();
                 if (std::chrono::duration_cast<std::chrono::seconds>(now - waitStart).count() > responseTimeoutSec) {
-                    std::cout << "[ZyzzyvaTest] Timeout waiting for txn " << txnId << " responses.\n";
+                    std::cout << "[ZyzzyvaTest] Timeout waiting for txn " << txnId << " responses. Triggering view change.\n";
+                    // Client-triggered view change (NEW): ask replicas to initiate VC
+                    json trig = {
+                        {"type", "TriggerViewChange"},
+                        {"reason", "ClientTimeout"},
+                        {"message_sender_id", -1}
+                    };
+                    std::string trigStr = trig.dump();
+                    for (int port : nodePorts) {
+                        try {
+                            TcpConnection nodeConn(port, false);
+                            nodeConn.send(trigStr);
+                            nodeConn.closeConnection();
+                        } catch (...) {
+                            std::cout << "[ZyzzyvaTest] Could not connect to node " << port << " to trigger view change.\n";
+                        }
+                    }
                     break;
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        }
+    }
+    else if (scenario == 8) {
+        // Scenario 8: Client-triggered view change
+        transactions = {
+            {"A", "B", 50},
+            {"B", "C", 30},
+            {"C", "D", 20}
+        };
+        NUM_REQUESTS = transactions.size();
+        int txnIdx = 0;
+
+        // Step 1: Send transactions to the leader
+        for (const auto& [from, to, amount] : transactions) {
+            int leaderIdx = 0; // Round-robin leader selection
+            int leaderPortForTxn = nodePorts[leaderIdx];
+            json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
+            auto now = std::chrono::system_clock::now();
+            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+            std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
+            std::string clientId = "client";
+            json j = {
+                {"type", "Request"},
+                {"message_sender_id", clientId},
+                {"timestamp", timestamp},
+                {"transaction", transaction},
+                {"view", 0},
+                {"operation", timestamp},
+                {"client_listen_port", clientListenPort}
+            };
+            std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
+            std::string signature = crypto.sign(msgToSign);
+            j["signature"] = signature;
+            std::string strtoSend = j.dump();
+
+            // Send transaction to the leader
+            try {
+                TcpConnection clientConn(leaderPortForTxn, false);
+                clientConn.send(strtoSend);
+                clientConn.closeConnection();
+                std::cout << "[Scenario 8] Sent txn " << txnIdx << " to leader on port " << leaderPortForTxn << "\n";
+            } catch (...) {
+                std::cout << "[Scenario 8] Could not connect to leader on port " << leaderPortForTxn << ".\n";
+            }
+            {
+                std::lock_guard<std::mutex> lock(txnMutex);
+                txnResponses[timestamp] = 0;
+            }
+            txnIdx++;
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        // Step 2: Trigger view change from the client
+        std::cout << "[Scenario 8] Triggering view change from the client.\n";
+        json triggerViewChangeMsg = {
+            {"type", "TriggerViewChange"},
+            {"reason", "ClientTestScenario"},
+            {"message_sender_id", -1} // Client ID
+        };
+        std::string triggerViewChangeStr = triggerViewChangeMsg.dump();
+
+        for (int port : nodePorts) {
+            try {
+                TcpConnection nodeConn(port, false);
+                nodeConn.send(triggerViewChangeStr);
+                nodeConn.closeConnection();
+                std::cout << "[Scenario 8] Sent TriggerViewChange to node on port " << port << "\n";
+            } catch (...) {
+                std::cout << "[Scenario 8] Could not connect to node " << port << " to trigger view change.\n";
+            }
+        }
+
+        // Step 3: Wait for the view change to complete
+        std::this_thread::sleep_for(std::chrono::seconds(5)); // Adjust as needed
+
+        // Step 4: Verify that the new leader is active
+        std::cout << "[Scenario 8] Verifying that the new leader is active.\n";
+        json query = {
+            {"type", "QueryBalances"},
+            {"message_sender_id", "client"},
+            {"timestamp", std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count())},
+            {"client_listen_port", clientListenPort}
+        };
+        std::string queryStr = query.dump();
+
+        for (int port : nodePorts) {
+            try {
+                TcpConnection nodeConn(port, false);
+                nodeConn.send(queryStr);
+                nodeConn.closeConnection();
+                std::cout << "[Scenario 8] Sent balance query to node on port " << port << "\n";
+            } catch (...) {
+                std::cout << "[Scenario 8] Could not connect to node " << port << ".\n";
             }
         }
     }

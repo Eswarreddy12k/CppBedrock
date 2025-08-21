@@ -19,6 +19,18 @@ phases:
     actions:
       - "commitCertificate"
 
+  ViewChange:
+    quorum: 2f+1
+    next_state: NewView
+    actions:
+      - "zyzzyvaViewChange"
+
+  NewView:
+    quorum: 1
+    next_state: Request
+    actions:
+      - "zyzzyvaHandleNewView"
+
   QueryBalances:
     quorum: 1
     next_state: Request
