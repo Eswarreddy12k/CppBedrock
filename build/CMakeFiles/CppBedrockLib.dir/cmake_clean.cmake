@@ -27,6 +27,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/CppBedrockLib.dir/src/core/state/StateMachine.cpp.o.d"
   "CMakeFiles/CppBedrockLib.dir/src/main.cpp.o"
   "CMakeFiles/CppBedrockLib.dir/src/main.cpp.o.d"
+  "CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o"
+  "CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o.d"
   "libCppBedrockLib.a"
   "libCppBedrockLib.pdb"
 )

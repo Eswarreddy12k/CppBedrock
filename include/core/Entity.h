@@ -256,6 +256,9 @@ public:
     void cachePrePrepare(int seq, const nlohmann::json& msg);
     void replayRangeTo(int fromSeq, int toSeq, int targetNodeId);
 
+    // Allocate a new monotonically increasing sequence (thread-safe, leader-side)
+    int allocateNextSequence();
+
 private:
     int nodeId;
     
@@ -265,10 +268,11 @@ private:
 
     
     
-
     
+    std::atomic<int> nextSequenceNumber{0}; // was plain int
+    std::mutex clientRequestMtx;            // NEW: serialize leader request handling
+
     std::atomic<bool> running = false;
-    int nextSequenceNumber = 0;
 
     
 

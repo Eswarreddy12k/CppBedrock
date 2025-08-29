@@ -984,10 +984,18 @@ public:
         // std::cout << "[Node " << entity->getNodeId() << "] Entity Info: " << entity->entityInfo.dump(4) << "\n";
 
         if (!operation.empty() && !entity->hasProcessedOperation(std::stoi(operation.substr(9)))) {
-            int seq = entity->entityInfo["sequence"].get<int>() + 1;
-            entity->entityInfo["sequence"] = seq; // Update sequence number
-            // std::cout << "[Node " << entity->getNodeId() << "] Entity Info: " << entity->entityInfo.dump(4) << "\n";
-            entity->sequenceStates.emplace(seq, EntityState(entity->getState().getRole(), currentPhase, entity->entityInfo["view"], seq));
+
+            int seq = entity->allocateNextSequence(); // NEW
+
+            // Create sequence state if absent
+            if (!entity->sequenceStates.count(seq)) {
+                entity->sequenceStates.emplace(
+                    seq,
+                    EntityState(entity->getState().getRole(),
+                                currentPhase,
+                                entity->entityInfo["view"],
+                                seq));
+            }
 
             std::string stringforDigest = j["transaction"].dump() + j["timestamp"].get<std::string>();
             std::string digest = computeSHA256(stringforDigest);

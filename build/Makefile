@@ -494,6 +494,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrock.dir/build.make CMakeFiles/CppBedrock.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/utils/Benchmark.o: src/utils/Benchmark.cpp.o
+.PHONY : src/utils/Benchmark.o
+
+# target to build an object file
+src/utils/Benchmark.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o
+.PHONY : src/utils/Benchmark.cpp.o
+
+src/utils/Benchmark.i: src/utils/Benchmark.cpp.i
+.PHONY : src/utils/Benchmark.i
+
+# target to preprocess a source file
+src/utils/Benchmark.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.i
+.PHONY : src/utils/Benchmark.cpp.i
+
+src/utils/Benchmark.s: src/utils/Benchmark.cpp.s
+.PHONY : src/utils/Benchmark.s
+
+# target to generate assembly for a file
+src/utils/Benchmark.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.s
+.PHONY : src/utils/Benchmark.cpp.s
+
 tests/integration_test.o: tests/integration_test.cpp.o
 .PHONY : tests/integration_test.o
 
@@ -571,6 +595,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/utils/Benchmark.o"
+	@echo "... src/utils/Benchmark.i"
+	@echo "... src/utils/Benchmark.s"
 	@echo "... tests/integration_test.o"
 	@echo "... tests/integration_test.i"
 	@echo "... tests/integration_test.s"

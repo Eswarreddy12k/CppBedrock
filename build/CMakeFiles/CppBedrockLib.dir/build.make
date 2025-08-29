@@ -268,6 +268,20 @@ CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.s:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/core/events/EventFactoryProtocolSpecific.cpp -o CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.s
 
+CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: CMakeFiles/CppBedrockLib.dir/flags.make
+CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/CppBedrock/src/utils/Benchmark.cpp
+CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: CMakeFiles/CppBedrockLib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o -MF CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o.d -o CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/utils/Benchmark.cpp
+
+CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/utils/Benchmark.cpp > CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.i
+
+CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/utils/Benchmark.cpp -o CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.s
+
 # Object files for target CppBedrockLib
 CppBedrockLib_OBJECTS = \
 "CMakeFiles/CppBedrockLib.dir/src/main.cpp.o" \
@@ -283,7 +297,8 @@ CppBedrockLib_OBJECTS = \
 "CMakeFiles/CppBedrockLib.dir/src/core/TimeKeeper.cpp.o" \
 "CMakeFiles/CppBedrockLib.dir/src/core/crypto/OpenSSLCryptoProvider.cpp.o" \
 "CMakeFiles/CppBedrockLib.dir/src/core/crypto/CryptoUtils.cpp.o" \
-"CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.o"
+"CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.o" \
+"CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o"
 
 # External object files for target CppBedrockLib
 CppBedrockLib_EXTERNAL_OBJECTS =
@@ -302,9 +317,10 @@ libCppBedrockLib.a: CMakeFiles/CppBedrockLib.dir/src/core/TimeKeeper.cpp.o
 libCppBedrockLib.a: CMakeFiles/CppBedrockLib.dir/src/core/crypto/OpenSSLCryptoProvider.cpp.o
 libCppBedrockLib.a: CMakeFiles/CppBedrockLib.dir/src/core/crypto/CryptoUtils.cpp.o
 libCppBedrockLib.a: CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.o
+libCppBedrockLib.a: CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o
 libCppBedrockLib.a: CMakeFiles/CppBedrockLib.dir/build.make
 libCppBedrockLib.a: CMakeFiles/CppBedrockLib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX static library libCppBedrockLib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX static library libCppBedrockLib.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/CppBedrockLib.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/CppBedrockLib.dir/link.txt --verbose=$(VERBOSE)
 

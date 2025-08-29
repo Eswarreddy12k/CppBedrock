@@ -16,14 +16,20 @@
 #include <set>
 #include <unordered_map>
 #include <arpa/inet.h>
+#include "utils/Benchmark.h" // NEW
+
 
 using json = nlohmann::json;
+
+
 
 struct Transaction {
     std::string id;      // timestamp
     std::string payload; // serialized json
     int retries = 0;
 };
+
+static Benchmark scenario4Bench("scenario4"); // NEW
 
 int main(int argc, char* argv[]) {
     int leaderPort = 5001;
@@ -37,6 +43,10 @@ int main(int argc, char* argv[]) {
             std::cerr << "Invalid scenario. Use 1 (single), 2 (sequential), 3 (concurrent), 4 (randomized), 5 (failure test), 6 (HotStuff), 7 (Zyzzyva), or 8 (Client-triggered view change)." << std::endl;
             return 1;
         }
+    }
+
+    if (scenario == 4) {
+        scenario4Bench.reset("scenario4"); // was: scenario4Bench = Benchmark("scenario4");
     }
 
     std::atomic<bool> running{true};
@@ -138,6 +148,7 @@ int main(int argc, char* argv[]) {
                         if (txnResponses[op] >= requiredResponses) {
                             completedTxns.insert(op);
                         }
+                        if (scenario == 4) scenario4Bench.end(op); // NEW
                     }
                 } catch (...) {}
                 // std::cout << "[Listener] Received response: " << response << std::endl;
@@ -282,6 +293,7 @@ int main(int argc, char* argv[]) {
                 auto now = std::chrono::system_clock::now();
                 auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
                 std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
+                if (scenario == 4) scenario4Bench.start(timestamp); // NEW
                 std::string clientId = "client";
                 json j = {
                     {"type", "Request"},
@@ -705,7 +717,7 @@ int main(int argc, char* argv[]) {
     
 
     // Wait for responses for up to maxWaitSeconds, but exit early if enough responses are received
-    const int maxWaitSeconds = 4;
+    const int maxWaitSeconds = 3;
     auto waitStart = std::chrono::steady_clock::now();
     while (true) {
         {
@@ -719,6 +731,7 @@ int main(int argc, char* argv[]) {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
     // Query balances from all nodes
     std::cout << "\n[IntegrationTest] Querying balances from all nodes...\n";
     for (int port : nodePorts) {
@@ -816,6 +829,13 @@ int main(int argc, char* argv[]) {
     auto endTime = std::chrono::high_resolution_clock::now();
     auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "[IntegrationTest] Time taken for " << NUM_REQUESTS << " requests: " << durationMs << " ms" << std::endl;
+
+    if (scenario == 4) {
+        scenario4Bench.finishRun();
+        scenario4Bench.printSummary();
+        // Uncomment to save raw latencies:
+        // scenario4Bench.exportCSV("scenario4_latencies.csv");
+    }
 
     std::cout << "Integration test complete.\n";
     return 0;

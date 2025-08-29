@@ -36,7 +36,7 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
       prePrepareBroadcasted()
 {
     EventFactory::getInstance().initialize();
-    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.zyzzyva.yaml");
+    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml");
     timeKeeper = std::make_unique<TimeKeeper>(1500, [this] {
         this->onTimeout();
     });
@@ -666,5 +666,13 @@ void Entity::initiateViewChange() {
         std::cout << "[Node " << getNodeId() << "] Broadcasted ViewChange(view=" << newView
                   << ", committed_seq=" << committedSeq << ").\n";
     }
+}
+
+int Entity::allocateNextSequence() {
+    std::lock_guard<std::mutex> g(clientRequestMtx);
+    int seq = nextSequenceNumber.fetch_add(1) + 1; // start at 1
+    int curr = entityInfo["sequence"].get<int>();
+    if (seq > curr) entityInfo["sequence"] = seq;
+    return seq;
 }
 

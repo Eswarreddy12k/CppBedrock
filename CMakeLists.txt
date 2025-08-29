@@ -31,6 +31,7 @@ set(SOURCES
     src/core/crypto/OpenSSLCryptoProvider.cpp
     src/core/crypto/CryptoUtils.cpp
     src/core/events/EventFactoryProtocolSpecific.cpp
+    src/utils/Benchmark.cpp
 )
 
 # Add the library and link libraries
