@@ -18,10 +18,74 @@
 #include <arpa/inet.h>
 #include "utils/Benchmark.h" // NEW
 
+// gRPC
+#include <grpcpp/grpcpp.h>
+#include "proto/bedrock.grpc.pb.h"
+#include "proto/bedrock.pb.h"
 
 using json = nlohmann::json;
 
+namespace {
+// Cache: port -> gRPC stub
+static std::unordered_map<int, std::unique_ptr<bedrock::Node::Stub>> g_stubs;
 
+static void initGrpcStubs(const std::vector<int>& ports) {
+    for (int port : ports) {
+        auto channel = grpc::CreateChannel("127.0.0.1:" + std::to_string(port),
+                                           grpc::InsecureChannelCredentials());
+        g_stubs.emplace(port, bedrock::Node::NewStub(channel));
+    }
+}
+
+static bool grpcSendRawJson(int port, const std::string& payloadJson, std::string& outResponseJson) {
+    auto it = g_stubs.find(port);
+    if (it == g_stubs.end()) return false;
+
+    bedrock::RawJson req;
+    req.set_json(payloadJson);
+    bedrock::RawJson resp;
+
+    grpc::ClientContext ctx;
+    auto status = it->second->SendRawJson(&ctx, req, &resp);
+    if (!status.ok()) {
+        std::cerr << "[gRPC] SendRawJson to " << port << " failed: "
+                  << status.error_code() << " " << status.error_message() << "\n";
+        return false;
+    }
+    outResponseJson = resp.json();
+    return true;
+}
+
+static bool grpcSubmitRequest(int port, const json& j) {
+    auto it = g_stubs.find(port);
+    if (it == g_stubs.end()) return false;
+
+    bedrock::ClientRequest req;
+    req.set_message_sender_id(j.at("message_sender_id").get<std::string>());
+    req.set_timestamp(j.at("timestamp").get<std::string>());
+
+    const auto& txj = j.at("transaction");
+    auto* tx = req.mutable_transaction();
+    tx->set_from(txj.at("from").get<std::string>());
+    tx->set_to(txj.at("to").get<std::string>());
+    tx->set_amount(txj.at("amount").get<int>());
+
+    req.set_view(j.at("view").get<int>());
+    req.set_operation(j.at("operation").get<std::string>());
+    req.set_client_listen_port(j.at("client_listen_port").get<int>());
+    req.set_signature(j.at("signature").get<std::string>());
+
+    bedrock::Ack ack;
+    grpc::ClientContext ctx;
+    auto status = it->second->SubmitRequest(&ctx, req, &ack);
+    if (!status.ok()) {
+        std::cerr << "[gRPC] SubmitRequest to " << port << " failed: "
+                  << status.error_code() << " " << status.error_message() << "\n";
+        return false;
+    }
+    return ack.ok();
+}
+} // namespace
 
 struct Transaction {
     std::string id;      // timestamp
@@ -69,6 +133,14 @@ int main(int argc, char* argv[]) {
     const int maxRetries = 5;
     const int responseTimeoutSec = 2;
     int NUM_REQUESTS = 3;
+
+    // Init gRPC only for scenario 4 (on ports +10000)
+    if (scenario == 4) {
+        std::vector<int> grpcPorts;
+        grpcPorts.reserve(nodePorts.size());
+        for (int p : nodePorts) grpcPorts.push_back(p + 10000);
+        initGrpcStubs(grpcPorts);
+    }
 
     std::map<std::string, int> initialBalances = {
         {"A", 100},
@@ -275,10 +347,9 @@ int main(int argc, char* argv[]) {
         for (auto& t : clientThreads) t.join();
     }
     else if (scenario == 4) {
-        NUM_REQUESTS = 20;
+        NUM_REQUESTS = 40;
         transactions.clear();
         for (int i = 0; i < NUM_REQUESTS; ++i) {
-            // Randomize or cycle through clients
             std::string from = (i % 4 == 0) ? "A" : (i % 4 == 1) ? "B" : (i % 4 == 2) ? "C" : "D";
             std::string to = (i % 4 == 0) ? "B" : (i % 4 == 1) ? "C" : (i % 4 == 2) ? "D" : "A";
             int amount = 5 + (i % 5) * 5;
@@ -293,7 +364,7 @@ int main(int argc, char* argv[]) {
                 auto now = std::chrono::system_clock::now();
                 auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
                 std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
-                if (scenario == 4) scenario4Bench.start(timestamp); // NEW
+                scenario4Bench.start(timestamp);
                 std::string clientId = "client";
                 json j = {
                     {"type", "Request"},
@@ -304,18 +375,17 @@ int main(int argc, char* argv[]) {
                     {"operation", timestamp},
                     {"client_listen_port", clientListenPort}
                 };
-                // std::cout << "[PBFTClient] Preparing transaction: " << timestamp << "\n";
                 std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
+                OpenSSLCryptoProvider crypto("../keys/client_private.pem");
                 std::string signature = crypto.sign(msgToSign);
                 j["signature"] = signature;
-                std::string strtoSend = j.dump();
-                try {
-                    TcpConnection clientConn(leaderPort, false);
-                    clientConn.send(strtoSend);
-                    clientConn.closeConnection();
-                } catch (...) {
-                    std::cout << "[PBFTClient] Could not connect to leader.\n";
+
+                // SEND VIA gRPC SubmitRequest (protobuf) to leader's gRPC port
+                int grpcLeaderPort = leaderPort + 10000; // 15001 for leader 5001
+                if (!grpcSubmitRequest(grpcLeaderPort, j)) {
+                    std::cout << "[PBFTClient] gRPC SubmitRequest to leader failed.\n";
                 }
+
                 {
                     std::lock_guard<std::mutex> lock(txnMutex);
                     txnResponses[timestamp] = 0;

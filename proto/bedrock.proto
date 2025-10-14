@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package bedrock;
+
+message RawJson {
+  string json = 1;
+}
+
+message Transaction {
+  string from = 1;
+  string to = 2;
+  int32 amount = 3;
+}
+
+message ClientRequest {
+  string message_sender_id = 1;
+  string timestamp = 2;
+  Transaction transaction = 3;
+  int32 view = 4;
+  string operation = 5;
+  int32 client_listen_port = 6;
+  string signature = 7;
+}
+
+message PrePrepare {
+  int32 view = 1;
+  int32 sequence = 2;
+  string timestamp = 3;
+  string operation = 4;
+  Transaction transaction = 5;
+  int32 client_listen_port = 6;
+  string signature = 7;
+  int32 message_sender_id = 8;
+}
+
+message Prepare {
+  int32 view = 1;
+  int32 sequence = 2;
+  string operation = 3;
+  int32 message_sender_id = 4;
+}
+
+message Commit {
+  int32 view = 1;
+  int32 sequence = 2;
+  string operation = 3;
+  int32 message_sender_id = 4;
+}
+
+message ProtocolEnvelope {
+  oneof kind {
+    PrePrepare pre_prepare = 1;
+    Prepare prepare = 2;
+    Commit commit = 3;
+  }
+}
+
+message Ack {
+  bool ok = 1;
+  string msg = 2;
+}
+
+service Node {
+  // Existing raw JSON endpoint (kept for other scenarios)
+  rpc SendRawJson (RawJson) returns (RawJson);
+
+  // New typed endpoint used by scenario 4
+  rpc SubmitRequest (ClientRequest) returns (Ack);
+
+  // New typed inter-node RPC for basic phases
+  rpc SendProtocol (ProtocolEnvelope) returns (Ack);
+}

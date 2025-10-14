@@ -25,6 +25,13 @@
 #include <string>
 #include <mutex>
 #include <iostream>
+#include <memory>
+#include <thread>
+#include <grpcpp/grpcpp.h>
+#include "proto/bedrock.grpc.pb.h"
+
+namespace grpc { class Server; }
+class NodeServiceImpl;
 
 class Event;
 class Message;
@@ -57,8 +64,8 @@ class Entity : public EventHandler<EntityState> {
 public:
     Entity(const std::string& role, int id, const std::vector<int>& peers, bool byzantine = false);
     ~Entity(); // <-- Add this line
-    void start();
-    void stop();
+    void start(); // ensure you call startGrpcServer() inside
+    void stop();  // ensure you call stopGrpcServer() inside
     void handleEvent(const Event* event, EntityState* context) override;
     EntityState& getState();
     void sendToAll(const Message& message);
@@ -259,6 +266,9 @@ public:
     // Allocate a new monotonically increasing sequence (thread-safe, leader-side)
     int allocateNextSequence();
 
+    // Accept a JSON message coming via gRPC and route it through the normal handler
+    bool processJsonFromGrpc(const std::string& json);
+
 private:
     int nodeId;
     
@@ -283,8 +293,21 @@ private:
     std::chrono::steady_clock::time_point fillHoleDeadline;
     int fillHoleTimeoutMs{600}; // adjust as needed
 
-    
+    // Serialize message handling across TCP and gRPC
+    std::mutex eventMtx;
 
-    
+    // gRPC server running inside this entity
+    std::unique_ptr<NodeServiceImpl> grpcSvc_;
+    std::unique_ptr<grpc::Server> grpcServer_;
+    std::thread grpcThread_;
+    void startGrpcServer();
+    void stopGrpcServer();
+
+    // gRPC clients for inter-node messaging (peerId -> stub to port 15000+peerId)
+    std::mutex grpcStubsMtx_;
+    std::unordered_map<int, std::unique_ptr<bedrock::Node::Stub>> grpcStubs_;
+    void initGrpcStubs();             // create stubs for all peers and self
+    bedrock::Node::Stub* getStub(int peerId);
+
 };
 

@@ -2,8 +2,9 @@
 #include "../include/coordination/CoordinationUnit.h"
 #include <iostream>
 #include <thread>
+#include <cstdlib>   // NEW for std::getenv
 
-int main() {
+int main(int argc, char** argv) {
     CoordinationServer server;
     CoordinationUnit unit;
 
@@ -16,7 +17,7 @@ int main() {
         unit.start();
     });
 
-    // Main thread continues to run
+    // Remove proxy bootstrap; Entities now host gRPC themselves
     std::cout << "Main thread continues execution while server is listening..." << std::endl;
     
     // Simulate some other task

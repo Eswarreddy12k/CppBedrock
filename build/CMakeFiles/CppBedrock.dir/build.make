@@ -76,15 +76,15 @@ CMakeFiles/CppBedrock.dir/src/main.cpp.o: CMakeFiles/CppBedrock.dir/flags.make
 CMakeFiles/CppBedrock.dir/src/main.cpp.o: /Users/eswar/Downloads/CppBedrock/src/main.cpp
 CMakeFiles/CppBedrock.dir/src/main.cpp.o: CMakeFiles/CppBedrock.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/CppBedrock.dir/src/main.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/main.cpp.o -MF CMakeFiles/CppBedrock.dir/src/main.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/main.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/main.cpp
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CppBedrock.dir/src/main.cpp.o -MF CMakeFiles/CppBedrock.dir/src/main.cpp.o.d -o CMakeFiles/CppBedrock.dir/src/main.cpp.o -c /Users/eswar/Downloads/CppBedrock/src/main.cpp
 
 CMakeFiles/CppBedrock.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/CppBedrock.dir/src/main.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/main.cpp > CMakeFiles/CppBedrock.dir/src/main.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/eswar/Downloads/CppBedrock/src/main.cpp > CMakeFiles/CppBedrock.dir/src/main.cpp.i
 
 CMakeFiles/CppBedrock.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/CppBedrock.dir/src/main.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/main.cpp -o CMakeFiles/CppBedrock.dir/src/main.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/eswar/Downloads/CppBedrock/src/main.cpp -o CMakeFiles/CppBedrock.dir/src/main.cpp.s
 
 # Object files for target CppBedrock
 CppBedrock_OBJECTS = \
@@ -96,7 +96,107 @@ CppBedrock_EXTERNAL_OBJECTS =
 CppBedrock: CMakeFiles/CppBedrock.dir/src/main.cpp.o
 CppBedrock: CMakeFiles/CppBedrock.dir/build.make
 CppBedrock: libCppBedrockLib.a
-CppBedrock: /opt/homebrew/Cellar/openssl@3/3.4.1/lib/libcrypto.dylib
+CppBedrock: libbedrock_proto.a
+CppBedrock: /opt/homebrew/lib/libgrpc++.1.75.0.dylib
+CppBedrock: /opt/homebrew/lib/libgrpc.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_json_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_textformat_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_lex_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_reflection_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_mini_descriptor_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_wire_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libutf8_range_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_message_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_mini_table_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_hash_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_base_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libupb_mem_lib.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libre2.11.0.0.dylib
+CppBedrock: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/libz.tbd
+CppBedrock: /opt/homebrew/lib/libcares.2.19.4.dylib
+CppBedrock: /opt/homebrew/lib/libgpr.50.0.0.dylib
+CppBedrock: /opt/homebrew/Cellar/openssl@3/3.5.2/lib/libssl.dylib
+CppBedrock: /opt/homebrew/Cellar/openssl@3/3.5.2/lib/libcrypto.dylib
+CppBedrock: /opt/homebrew/lib/libaddress_sorting.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libprotobuf.32.1.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_check_op.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_die_if_null.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_conditions.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_message.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_nullguard.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_examine_stack.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_format.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_structured_proto.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_log_sink_set.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_sink.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_entry.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_proto.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_flags_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_flags_marshalling.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_flags_reflection.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_flags_config.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_flags_program_name.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_flags_private_handle_accessor.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_flags_commandlineflag.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_flags_commandlineflag_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_initialize.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_globals.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_globals.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_vlog_config_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_internal_fnmatch.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_raw_hash_set.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_hashtablez_sampler.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_distributions.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_seed_sequences.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_internal_entropy_pool.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_internal_randen.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_internal_randen_hwaes.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_internal_randen_hwaes_impl.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_internal_randen_slow.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_internal_platform.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_internal_seed_material.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_random_seed_gen_exception.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_statusor.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_status.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_cord.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_cordz_info.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_cord_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_hash.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_city.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_cordz_functions.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_exponential_biased.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_cordz_handle.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_crc_cord_state.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_crc32c.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_crc_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_crc_cpu_detect.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_leak_check.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_strerror.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_str_format_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_synchronization.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_stacktrace.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_symbolize.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_debugging_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_demangle_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_demangle_rust.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_decode_rust_punycode.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_utf8_for_code_point.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_graphcycles_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_kernel_timeout_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_malloc_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_tracing_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_time.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_civil_time.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_time_zone.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_strings.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_strings_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_int128.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_string_view.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_base.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_spinlock_wait.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_throw_delegate.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_raw_logging_internal.2508.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libabsl_log_severity.2508.0.0.dylib
 CppBedrock: CMakeFiles/CppBedrock.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable CppBedrock"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/CppBedrock.dir/link.txt --verbose=$(VERBOSE)

@@ -117,6 +117,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named bedrock_proto
+
+# Build rule for target.
+bedrock_proto: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bedrock_proto
+.PHONY : bedrock_proto
+
+# fast build rule for target.
+bedrock_proto/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bedrock_proto.dir/build.make CMakeFiles/bedrock_proto.dir/build
+.PHONY : bedrock_proto/fast
+
+#=============================================================================
 # Target rules for targets named CppBedrockLib
 
 # Build rule for target.
@@ -154,6 +167,54 @@ integration_test: cmake_check_build_system
 integration_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/integration_test.dir/build.make CMakeFiles/integration_test.dir/build
 .PHONY : integration_test/fast
+
+proto/bedrock.grpc.pb.o: proto/bedrock.grpc.pb.cc.o
+.PHONY : proto/bedrock.grpc.pb.o
+
+# target to build an object file
+proto/bedrock.grpc.pb.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bedrock_proto.dir/build.make CMakeFiles/bedrock_proto.dir/proto/bedrock.grpc.pb.cc.o
+.PHONY : proto/bedrock.grpc.pb.cc.o
+
+proto/bedrock.grpc.pb.i: proto/bedrock.grpc.pb.cc.i
+.PHONY : proto/bedrock.grpc.pb.i
+
+# target to preprocess a source file
+proto/bedrock.grpc.pb.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bedrock_proto.dir/build.make CMakeFiles/bedrock_proto.dir/proto/bedrock.grpc.pb.cc.i
+.PHONY : proto/bedrock.grpc.pb.cc.i
+
+proto/bedrock.grpc.pb.s: proto/bedrock.grpc.pb.cc.s
+.PHONY : proto/bedrock.grpc.pb.s
+
+# target to generate assembly for a file
+proto/bedrock.grpc.pb.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bedrock_proto.dir/build.make CMakeFiles/bedrock_proto.dir/proto/bedrock.grpc.pb.cc.s
+.PHONY : proto/bedrock.grpc.pb.cc.s
+
+proto/bedrock.pb.o: proto/bedrock.pb.cc.o
+.PHONY : proto/bedrock.pb.o
+
+# target to build an object file
+proto/bedrock.pb.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bedrock_proto.dir/build.make CMakeFiles/bedrock_proto.dir/proto/bedrock.pb.cc.o
+.PHONY : proto/bedrock.pb.cc.o
+
+proto/bedrock.pb.i: proto/bedrock.pb.cc.i
+.PHONY : proto/bedrock.pb.i
+
+# target to preprocess a source file
+proto/bedrock.pb.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bedrock_proto.dir/build.make CMakeFiles/bedrock_proto.dir/proto/bedrock.pb.cc.i
+.PHONY : proto/bedrock.pb.cc.i
+
+proto/bedrock.pb.s: proto/bedrock.pb.cc.s
+.PHONY : proto/bedrock.pb.s
+
+# target to generate assembly for a file
+proto/bedrock.pb.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bedrock_proto.dir/build.make CMakeFiles/bedrock_proto.dir/proto/bedrock.pb.cc.s
+.PHONY : proto/bedrock.pb.cc.s
 
 src/coordination/CoordinationServer.o: src/coordination/CoordinationServer.cpp.o
 .PHONY : src/coordination/CoordinationServer.o
@@ -226,6 +287,54 @@ src/coordination/connections/TcpConnection.s: src/coordination/connections/TcpCo
 src/coordination/connections/TcpConnection.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/connections/TcpConnection.cpp.s
 .PHONY : src/coordination/connections/TcpConnection.cpp.s
+
+src/coordination/grpc/GrpcServer.o: src/coordination/grpc/GrpcServer.cpp.o
+.PHONY : src/coordination/grpc/GrpcServer.o
+
+# target to build an object file
+src/coordination/grpc/GrpcServer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/grpc/GrpcServer.cpp.o
+.PHONY : src/coordination/grpc/GrpcServer.cpp.o
+
+src/coordination/grpc/GrpcServer.i: src/coordination/grpc/GrpcServer.cpp.i
+.PHONY : src/coordination/grpc/GrpcServer.i
+
+# target to preprocess a source file
+src/coordination/grpc/GrpcServer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/grpc/GrpcServer.cpp.i
+.PHONY : src/coordination/grpc/GrpcServer.cpp.i
+
+src/coordination/grpc/GrpcServer.s: src/coordination/grpc/GrpcServer.cpp.s
+.PHONY : src/coordination/grpc/GrpcServer.s
+
+# target to generate assembly for a file
+src/coordination/grpc/GrpcServer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/grpc/GrpcServer.cpp.s
+.PHONY : src/coordination/grpc/GrpcServer.cpp.s
+
+src/coordination/grpc/NodeServiceImpl.o: src/coordination/grpc/NodeServiceImpl.cpp.o
+.PHONY : src/coordination/grpc/NodeServiceImpl.o
+
+# target to build an object file
+src/coordination/grpc/NodeServiceImpl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/grpc/NodeServiceImpl.cpp.o
+.PHONY : src/coordination/grpc/NodeServiceImpl.cpp.o
+
+src/coordination/grpc/NodeServiceImpl.i: src/coordination/grpc/NodeServiceImpl.cpp.i
+.PHONY : src/coordination/grpc/NodeServiceImpl.i
+
+# target to preprocess a source file
+src/coordination/grpc/NodeServiceImpl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/grpc/NodeServiceImpl.cpp.i
+.PHONY : src/coordination/grpc/NodeServiceImpl.cpp.i
+
+src/coordination/grpc/NodeServiceImpl.s: src/coordination/grpc/NodeServiceImpl.cpp.s
+.PHONY : src/coordination/grpc/NodeServiceImpl.s
+
+# target to generate assembly for a file
+src/coordination/grpc/NodeServiceImpl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CppBedrockLib.dir/build.make CMakeFiles/CppBedrockLib.dir/src/coordination/grpc/NodeServiceImpl.cpp.s
+.PHONY : src/coordination/grpc/NodeServiceImpl.cpp.s
 
 src/core/Entity.o: src/core/Entity.cpp.o
 .PHONY : src/core/Entity.o
@@ -552,7 +661,14 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... CppBedrock"
 	@echo "... CppBedrockLib"
+	@echo "... bedrock_proto"
 	@echo "... integration_test"
+	@echo "... proto/bedrock.grpc.pb.o"
+	@echo "... proto/bedrock.grpc.pb.i"
+	@echo "... proto/bedrock.grpc.pb.s"
+	@echo "... proto/bedrock.pb.o"
+	@echo "... proto/bedrock.pb.i"
+	@echo "... proto/bedrock.pb.s"
 	@echo "... src/coordination/CoordinationServer.o"
 	@echo "... src/coordination/CoordinationServer.i"
 	@echo "... src/coordination/CoordinationServer.s"
@@ -562,6 +678,12 @@ help:
 	@echo "... src/coordination/connections/TcpConnection.o"
 	@echo "... src/coordination/connections/TcpConnection.i"
 	@echo "... src/coordination/connections/TcpConnection.s"
+	@echo "... src/coordination/grpc/GrpcServer.o"
+	@echo "... src/coordination/grpc/GrpcServer.i"
+	@echo "... src/coordination/grpc/GrpcServer.s"
+	@echo "... src/coordination/grpc/NodeServiceImpl.o"
+	@echo "... src/coordination/grpc/NodeServiceImpl.i"
+	@echo "... src/coordination/grpc/NodeServiceImpl.s"
 	@echo "... src/core/Entity.o"
 	@echo "... src/core/Entity.i"
 	@echo "... src/core/Entity.s"

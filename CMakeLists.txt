@@ -10,6 +10,10 @@ include_directories("/opt/homebrew/Cellar/yaml-cpp/0.8.0/include")
 find_package(nlohmann_json REQUIRED)
 find_package(OpenSSL REQUIRED)
 
+# gRPC will pull protobuf, so don't call find_package(Protobuf) explicitly
+# find_package(Protobuf REQUIRED)
+find_package(gRPC CONFIG REQUIRED)
+
 # Manually specify the library path for yaml-cpp
 link_directories("/opt/homebrew/Cellar/yaml-cpp/0.8.0/lib")
 
@@ -32,11 +36,47 @@ set(SOURCES
     src/core/crypto/CryptoUtils.cpp
     src/core/events/EventFactoryProtocolSpecific.cpp
     src/utils/Benchmark.cpp
+    src/coordination/grpc/GrpcServer.cpp  # NEW
+    src/coordination/grpc/NodeServiceImpl.cpp   # NEW
 )
+
+# === gRPC/protobuf codegen ===
+set(PROTO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proto)
+set(PROTO_FILE ${PROTO_DIR}/bedrock.proto)
+set(GENERATED_PROTO_DIR ${CMAKE_BINARY_DIR}/proto)
+
+add_custom_command(
+  OUTPUT
+    ${GENERATED_PROTO_DIR}/bedrock.pb.cc
+    ${GENERATED_PROTO_DIR}/bedrock.pb.h
+    ${GENERATED_PROTO_DIR}/bedrock.grpc.pb.cc
+    ${GENERATED_PROTO_DIR}/bedrock.grpc.pb.h
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${GENERATED_PROTO_DIR}
+  COMMAND $<TARGET_FILE:protobuf::protoc>
+          --proto_path=${PROTO_DIR}
+          --cpp_out=${GENERATED_PROTO_DIR}
+          ${PROTO_FILE}
+  COMMAND $<TARGET_FILE:protobuf::protoc>
+          --proto_path=${PROTO_DIR}
+          --grpc_out=${GENERATED_PROTO_DIR}
+          --plugin=protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
+          ${PROTO_FILE}
+  DEPENDS ${PROTO_FILE}
+  COMMENT "Generating protobuf and gRPC sources from ${PROTO_FILE}"
+)
+
+add_library(bedrock_proto
+  ${GENERATED_PROTO_DIR}/bedrock.pb.cc
+  ${GENERATED_PROTO_DIR}/bedrock.grpc.pb.cc
+)
+target_link_libraries(bedrock_proto PUBLIC gRPC::grpc++ protobuf::libprotobuf)
+# Expose ${CMAKE_BINARY_DIR} so includes like "proto/bedrock.grpc.pb.h" resolve
+target_include_directories(bedrock_proto PUBLIC ${CMAKE_BINARY_DIR})
 
 # Add the library and link libraries
 add_library(CppBedrockLib ${SOURCES})
-target_link_libraries(CppBedrockLib PUBLIC OpenSSL::Crypto yaml-cpp nlohmann_json::nlohmann_json)
+add_dependencies(CppBedrockLib bedrock_proto)
+target_link_libraries(CppBedrockLib PUBLIC OpenSSL::Crypto yaml-cpp nlohmann_json::nlohmann_json bedrock_proto gRPC::grpc++ protobuf::libprotobuf)
 target_include_directories(CppBedrockLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Add the executable and link libraries
@@ -45,4 +85,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE CppBedrockLib)
 
 # Add integration test executable and link libraries
 add_executable(integration_test tests/integration_test.cpp)
-target_link_libraries(integration_test PRIVATE CppBedrockLib)
+add_dependencies(integration_test bedrock_proto)
+target_link_libraries(integration_test PRIVATE CppBedrockLib bedrock_proto gRPC::grpc++ protobuf::libprotobuf)
+target_include_directories(integration_test PRIVATE ${CMAKE_BINARY_DIR})

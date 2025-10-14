@@ -1,8 +1,13 @@
 #include "../../include/core/Entity.h"
+// RE-ENABLE TcpConnection for client replies
 #include "../../include/coordination/connections/TcpConnection.h"
 #include "../../include/core/events/EventFactory.h"
 #include "../../include/core/events/MessageHandler.h"
 #include "../../include/core/TimeKeeper.h"
+#include "coordination/grpc/NodeServiceImpl.h"
+#include "proto/bedrock.grpc.pb.h"
+#include "proto/bedrock.pb.h"
+#include <grpcpp/grpcpp.h>
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 #include <nlohmann/json.hpp>
@@ -17,12 +22,80 @@
 using json = nlohmann::json;
 
 // ===================== Utility =====================
-int computeQuorum(const std::string& quorumStr, int f) {
-    if (quorumStr == "2f") return 2 * f;
-    if (quorumStr == "2f+1") return 2 * f + 1;
-    try { return std::stoi(quorumStr); } catch (...) { return 1; }
+// Fix: don't map 1000 to gRPC; only map valid node ids or legacy TCP ports
+static inline int grpcPortForPeer(int peerEntry) {
+    if (peerEntry == 1000) return -1;                 // special client marker
+    if (peerEntry >= 5001 && peerEntry <= 5999) return peerEntry + 10000; // legacy TCP -> +10000
+    if (peerEntry > 0 && peerEntry < 1000) return 15000 + peerEntry;      // node id
+    return -1; // invalid
 }
 
+// Helper: send to client via TCP using client_listen_port in payload
+static bool sendToClientViaTcp(const std::string& jsonPayload) {
+    try {
+        nlohmann::json j = nlohmann::json::parse(jsonPayload);
+        int clientPort;
+        if (!j.contains("client_listen_port")) {
+            clientPort = 6000;
+        }
+        else{
+            clientPort= j["client_listen_port"].get<int>();
+        }
+        
+        TcpConnection clientConn(clientPort, /*isServer*/ false);
+        clientConn.send(jsonPayload);
+        clientConn.closeConnection();
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "[ClientSend] Exception: " << e.what() << "\n";
+        return false;
+    }
+}
+
+// Helper: build typed envelope from a protocol JSON message for basic phases
+static bool buildEnvelopeFromJson(const std::string& jsonStr, bedrock::ProtocolEnvelope& env) {
+    try {
+        nlohmann::json j = nlohmann::json::parse(jsonStr);
+        if (!j.contains("type") || !j["type"].is_string()) return false;
+        const std::string t = j["type"].get<std::string>();
+
+        if (t == "PrePrepare") {
+            auto* m = env.mutable_pre_prepare();
+            m->set_view(j.value("view", 0));
+            m->set_sequence(j.value("sequence", 0));
+            m->set_timestamp(j.value("timestamp", ""));
+            m->set_operation(j.value("operation", ""));
+            if (j.contains("transaction")) {
+                const auto& txj = j["transaction"];
+                auto* tx = m->mutable_transaction();
+                tx->set_from(txj.value("from",""));
+                tx->set_to(txj.value("to",""));
+                tx->set_amount(txj.value("amount", 0));
+            }
+            m->set_client_listen_port(j.value("client_listen_port", 0));
+            m->set_signature(j.value("signature", ""));
+            m->set_message_sender_id(j.value("message_sender_id", getpid())); // fallback
+            return true;
+        }
+        if (t == "Prepare") {
+            auto* m = env.mutable_prepare();
+            m->set_view(j.value("view", 0));
+            m->set_sequence(j.value("sequence", 0));
+            m->set_operation(j.value("operation", ""));
+            m->set_message_sender_id(j.value("message_sender_id", 0));
+            return true;
+        }
+        if (t == "Commit") {
+            auto* m = env.mutable_commit();
+            m->set_view(j.value("view", 0));
+            m->set_sequence(j.value("sequence", 0));
+            m->set_operation(j.value("operation", ""));
+            m->set_message_sender_id(j.value("message_sender_id", 0));
+            return true;
+        }
+    } catch (...) {}
+    return false;
+}
 
 // ===================== Entity Methods =====================
 Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, bool byzantine)
@@ -265,7 +338,14 @@ void Entity::printDataStore() {
 void Entity::start() {
     std::cout << "[Entity] Starting entity with role: " << _entityState.getRole() << "\n";
     running = true;
-    connection.startListening();
+
+    // No TCP listener
+    // connection.startListening();
+
+    // Start in-entity gRPC server and init client stubs
+    startGrpcServer();
+    initGrpcStubs();
+
     processingThread = std::thread(&Entity::processMessages, this);
     //std::this_thread::sleep_for(std::chrono::milliseconds(0)); 
     std::string protocol = protocolConfig["protocol"] ? protocolConfig["protocol"].as<std::string>() : "";
@@ -277,18 +357,19 @@ void Entity::start() {
 void Entity::stop() {
     std::cout << "[Entity] Stopping entity: " << _entityState.getRole() << "\n";
     running = false;
-    connection.stopListening();
+
+    // connection.stopListening();  // removed to avoid TCP use
+
+    stopGrpcServer();
+
     if (processingThread.joinable() && std::this_thread::get_id() != processingThread.get_id()) {
         processingThread.join();
     }
 }
 void Entity::processMessages() {
+    // No TCP receive loop anymore. Keep thread lightweight or remove if unused.
     while (running) {
-        std::string receivedData = connection.receive();
-        // std::cout << "[Node " << getNodeId() << "] Received data: " << receivedData << "\n";
-        if (!running || receivedData.empty()) break; // <-- Add this check
-        Message msg(receivedData);
-        handleEvent(&msg, &_entityState);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 void Entity::loadProtocolConfig(const std::string& configFile) {
@@ -480,20 +561,61 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
     }
 }
 void Entity::sendToAll(const Message& message) {
-    json j = json::parse(message.getContent());
-    std::string type = j.contains("type") ? j["type"].get<std::string>() : "";
-
+    // Broadcast to all peers (skip self)
     for (int peer : peerPorts) {
+        if (peer == nodeId || peer == (5000 + nodeId)) continue;
+        if (grpcPortForPeer(peer) < 0) continue;
         sendTo(peer, message);
     }
 }
-void Entity::sendTo(int peerId, const Message& message) {
+void Entity::sendTo(int peer, const Message& message) {
+    // Peer 1000 -> client via TCP
+    if (peer == 1000) {
+        if (!sendToClientViaTcp(message.getContent())) {
+            std::cerr << "[Node " << getNodeId() << "] Failed to send to client via TCP (peer==1000)\n";
+        }
+        return;
+    }
+    if (peer == nodeId || peer == (5000 + nodeId)) return;
+    if (grpcPortForPeer(peer) < 0) {
+        std::cerr << "[Node " << getNodeId() << "] Skipping invalid peer " << peer << "\n";
+        return;
+    }
+
+    // Prefer typed gRPC for basic phases
+    bedrock::ProtocolEnvelope env;
+    const bool isTyped = buildEnvelopeFromJson(message.getContent(), env);
+
     try {
-        TcpConnection client(5000 + peerId, false);
-        client.send(message.getContent());
-        //client.closeConnection(); // Close connection after sending
+        auto* stub = getStub(peer);
+        if (!stub) {
+            std::cerr << "[Node " << getNodeId() << "] No gRPC stub for peer " << peer << "\n";
+            return;
+        }
+        grpc::ClientContext ctx;
+        bedrock::Ack ack;
+
+        if (isTyped) {
+            auto status = stub->SendProtocol(&ctx, env, &ack);
+            if (!status.ok() || !ack.ok()) {
+                std::cerr << "[Node " << getNodeId() << "] gRPC SendProtocol to peer "
+                          << peer << " failed: " << status.error_code() << " "
+                          << status.error_message() << " | ack=" << ack.msg() << "\n";
+            }
+        } else {
+            bedrock::RawJson req;
+            req.set_json(message.getContent());
+            bedrock::RawJson resp;
+            auto status = stub->SendRawJson(&ctx, req, &resp);
+            if (!status.ok()) {
+                std::cerr << "[Node " << getNodeId() << "] gRPC SendRawJson to peer "
+                          << peer << " failed: " << status.error_code() << " "
+                          << status.error_message() << "\n";
+            }
+        }
     } catch (const std::exception& e) {
-        std::cerr << "[Node " << getNodeId() << "] Failed to connect & send to peer " << peerId << ": " << e.what() << std::endl;
+        std::cerr << "[Node " << getNodeId() << "] gRPC send exception to peer "
+                  << peer << ": " << e.what() << "\n";
     }
 }
 EntityState& Entity::getState() { return _entityState; }
@@ -674,5 +796,84 @@ int Entity::allocateNextSequence() {
     int curr = entityInfo["sequence"].get<int>();
     if (seq > curr) entityInfo["sequence"] = seq;
     return seq;
+}
+
+bool Entity::processJsonFromGrpc(const std::string& jsonPayload) {
+    try {
+        std::lock_guard<std::mutex> lk(eventMtx);
+        Message msg(jsonPayload);
+        handleEvent(&msg, &_entityState);
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+void Entity::startGrpcServer() {
+    int grpcPort = 15000 + nodeId;
+    grpcSvc_ = std::make_unique<NodeServiceImpl>(*this);  // changed to pass Entity&
+
+    grpc::ServerBuilder builder;
+    std::string addr = "0.0.0.0:" + std::to_string(grpcPort);
+    builder.AddListeningPort(addr, grpc::InsecureServerCredentials());
+    builder.RegisterService(grpcSvc_.get());
+    grpcServer_ = builder.BuildAndStart();
+    if (!grpcServer_) {
+        std::cerr << "[Node " << getNodeId() << "] Failed to start gRPC server on " << addr << "\n";
+        grpcSvc_.reset();
+        return;
+    }
+    grpcThread_ = std::thread([this, grpcPort]{
+        std::cout << "[Node " << getNodeId() << "] gRPC listening on " << grpcPort << "\n";
+        grpcServer_->Wait();
+    });
+}
+
+void Entity::stopGrpcServer() {
+    if (grpcServer_) grpcServer_->Shutdown();
+    if (grpcThread_.joinable()) grpcThread_.join();
+    grpcServer_.reset();
+    grpcSvc_.reset();
+}
+
+// Create gRPC stubs to peers (skip self and invalid entries)
+void Entity::initGrpcStubs() {
+    std::lock_guard<std::mutex> lk(grpcStubsMtx_);
+    grpcStubs_.clear();
+
+    auto makeStub = [&](int idOrPort) {
+        int port = grpcPortForPeer(idOrPort);
+        if (port < 0) {
+            std::cerr << "[Node " << getNodeId() << "] Skipping invalid peer entry " << idOrPort << "\n";
+            return;
+        }
+        const std::string address = "127.0.0.1:" + std::to_string(port);
+        auto channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
+        grpcStubs_[idOrPort] = bedrock::Node::NewStub(channel);
+    };
+
+    for (int peer : peerPorts) {
+        if (peer == nodeId) continue;            // skip self by nodeId form
+        if (peer == (5000 + nodeId)) continue;   // skip self by TCP form
+        if (grpcStubs_.find(peer) == grpcStubs_.end()) {
+            makeStub(peer);
+        }
+    }
+}
+
+bedrock::Node::Stub* Entity::getStub(int peer) {
+    std::lock_guard<std::mutex> lk(grpcStubsMtx_);
+    auto it = grpcStubs_.find(peer);
+    if (it != grpcStubs_.end()) return it->second.get();
+
+    int port = grpcPortForPeer(peer);
+    if (port < 0) {
+        std::cerr << "[Node " << getNodeId() << "] Invalid peer " << peer << " (no gRPC mapping)\n";
+        return nullptr;
+    }
+    const std::string address = "127.0.0.1:" + std::to_string(port);
+    auto channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
+    grpcStubs_[peer] = bedrock::Node::NewStub(channel);
+    return grpcStubs_[peer].get();
 }
 
