@@ -31,6 +31,7 @@ message PrePrepare {
   int32 client_listen_port = 6;
   string signature = 7;
   int32 message_sender_id = 8;
+  string client_id = 9; // NEW
 }
 
 message Prepare {

@@ -29,6 +29,7 @@
 #include <thread>
 #include <grpcpp/grpcpp.h>
 #include "proto/bedrock.grpc.pb.h"
+#include "proto/bedrock.pb.h"
 
 namespace grpc { class Server; }
 class NodeServiceImpl;
@@ -95,6 +96,7 @@ public:
     // Protocol config access
     //const YAML::Node& getPhaseConfig(const std::string& phase) const;
     YAML::Node getPhaseConfig(const std::string& phase) const;
+    YAML::Node getPhaseConfigInsensitive(const std::string& phase) const;
 
     // Protocol-agnostic verification
     bool runVerification(const std::string& verifyType, const nlohmann::json& msg, EntityState* context);
@@ -268,6 +270,11 @@ public:
 
     // Accept a JSON message coming via gRPC and route it through the normal handler
     bool processJsonFromGrpc(const std::string& json);
+
+    // Protobuf-only basic phases
+    void processProtocolEnvelope(const bedrock::ProtocolEnvelope& env);
+    void sendProtocolToAll(const bedrock::ProtocolEnvelope& env);
+    void sendProtocolTo(int peer, const bedrock::ProtocolEnvelope& env);
 
 private:
     int nodeId;

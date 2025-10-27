@@ -184,6 +184,9 @@ inline constexpr PrePrepare::Impl_::Impl_(
         signature_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
+        client_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
         transaction_{nullptr},
         view_{0},
         sequence_{0},
@@ -315,7 +318,7 @@ const ::uint32_t
         3,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_._has_bits_),
-        11, // hasbit index offset
+        12, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.view_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.sequence_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.timestamp_),
@@ -324,14 +327,16 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.client_listen_port_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.signature_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.message_sender_id_),
-        4,
+        PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.client_id_),
         5,
+        6,
         0,
         1,
-        3,
-        6,
-        2,
+        4,
         7,
+        2,
+        8,
+        3,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_._has_bits_),
         7, // hasbit index offset
@@ -375,10 +380,10 @@ static const ::_pbi::MigrationSchema
         {5, sizeof(::bedrock::Transaction)},
         {14, sizeof(::bedrock::ClientRequest)},
         {31, sizeof(::bedrock::PrePrepare)},
-        {50, sizeof(::bedrock::Prepare)},
-        {61, sizeof(::bedrock::Commit)},
-        {72, sizeof(::bedrock::ProtocolEnvelope)},
-        {78, sizeof(::bedrock::Ack)},
+        {52, sizeof(::bedrock::Prepare)},
+        {63, sizeof(::bedrock::Commit)},
+        {74, sizeof(::bedrock::ProtocolEnvelope)},
+        {80, sizeof(::bedrock::Ack)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::bedrock::_RawJson_default_instance_._instance,
@@ -399,31 +404,32 @@ const char descriptor_table_protodef_bedrock_2eproto[] ABSL_ATTRIBUTE_SECTION_VA
     "tamp\030\002 \001(\t\022)\n\013transaction\030\003 \001(\0132\024.bedroc"
     "k.Transaction\022\014\n\004view\030\004 \001(\005\022\021\n\toperation"
     "\030\005 \001(\t\022\032\n\022client_listen_port\030\006 \001(\005\022\021\n\tsi"
-    "gnature\030\007 \001(\t\"\307\001\n\nPrePrepare\022\014\n\004view\030\001 \001"
+    "gnature\030\007 \001(\t\"\332\001\n\nPrePrepare\022\014\n\004view\030\001 \001"
     "(\005\022\020\n\010sequence\030\002 \001(\005\022\021\n\ttimestamp\030\003 \001(\t\022"
     "\021\n\toperation\030\004 \001(\t\022)\n\013transaction\030\005 \001(\0132"
     "\024.bedrock.Transaction\022\032\n\022client_listen_p"
     "ort\030\006 \001(\005\022\021\n\tsignature\030\007 \001(\t\022\031\n\021message_"
-    "sender_id\030\010 \001(\005\"W\n\007Prepare\022\014\n\004view\030\001 \001(\005"
-    "\022\020\n\010sequence\030\002 \001(\005\022\021\n\toperation\030\003 \001(\t\022\031\n"
-    "\021message_sender_id\030\004 \001(\005\"V\n\006Commit\022\014\n\004vi"
-    "ew\030\001 \001(\005\022\020\n\010sequence\030\002 \001(\005\022\021\n\toperation\030"
-    "\003 \001(\t\022\031\n\021message_sender_id\030\004 \001(\005\"\216\001\n\020Pro"
-    "tocolEnvelope\022*\n\013pre_prepare\030\001 \001(\0132\023.bed"
-    "rock.PrePrepareH\000\022#\n\007prepare\030\002 \001(\0132\020.bed"
-    "rock.PrepareH\000\022!\n\006commit\030\003 \001(\0132\017.bedrock"
-    ".CommitH\000B\006\n\004kind\"\036\n\003Ack\022\n\n\002ok\030\001 \001(\010\022\013\n\003"
-    "msg\030\002 \001(\t2\251\001\n\004Node\0221\n\013SendRawJson\022\020.bedr"
-    "ock.RawJson\032\020.bedrock.RawJson\0225\n\rSubmitR"
-    "equest\022\026.bedrock.ClientRequest\032\014.bedrock"
-    ".Ack\0227\n\014SendProtocol\022\031.bedrock.ProtocolE"
-    "nvelope\032\014.bedrock.Ackb\006proto3"
+    "sender_id\030\010 \001(\005\022\021\n\tclient_id\030\t \001(\t\"W\n\007Pr"
+    "epare\022\014\n\004view\030\001 \001(\005\022\020\n\010sequence\030\002 \001(\005\022\021\n"
+    "\toperation\030\003 \001(\t\022\031\n\021message_sender_id\030\004 "
+    "\001(\005\"V\n\006Commit\022\014\n\004view\030\001 \001(\005\022\020\n\010sequence\030"
+    "\002 \001(\005\022\021\n\toperation\030\003 \001(\t\022\031\n\021message_send"
+    "er_id\030\004 \001(\005\"\216\001\n\020ProtocolEnvelope\022*\n\013pre_"
+    "prepare\030\001 \001(\0132\023.bedrock.PrePrepareH\000\022#\n\007"
+    "prepare\030\002 \001(\0132\020.bedrock.PrepareH\000\022!\n\006com"
+    "mit\030\003 \001(\0132\017.bedrock.CommitH\000B\006\n\004kind\"\036\n\003"
+    "Ack\022\n\n\002ok\030\001 \001(\010\022\013\n\003msg\030\002 \001(\t2\251\001\n\004Node\0221\n"
+    "\013SendRawJson\022\020.bedrock.RawJson\032\020.bedrock"
+    ".RawJson\0225\n\rSubmitRequest\022\026.bedrock.Clie"
+    "ntRequest\032\014.bedrock.Ack\0227\n\014SendProtocol\022"
+    "\031.bedrock.ProtocolEnvelope\032\014.bedrock.Ack"
+    "b\006proto3"
 };
 static ::absl::once_flag descriptor_table_bedrock_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_bedrock_2eproto = {
     false,
     false,
-    1029,
+    1048,
     descriptor_table_protodef_bedrock_2eproto,
     "bedrock.proto",
     &descriptor_table_bedrock_2eproto_once,
@@ -1586,7 +1592,8 @@ PROTOBUF_NDEBUG_INLINE PrePrepare::Impl_::Impl_(
         _cached_size_{0},
         timestamp_(arena, from.timestamp_),
         operation_(arena, from.operation_),
-        signature_(arena, from.signature_) {}
+        signature_(arena, from.signature_),
+        client_id_(arena, from.client_id_) {}
 
 PrePrepare::PrePrepare(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
@@ -1602,7 +1609,7 @@ PrePrepare::PrePrepare(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
   ::uint32_t cached_has_bits = _impl_._has_bits_[0];
-  _impl_.transaction_ = ((cached_has_bits & 0x00000008U) != 0)
+  _impl_.transaction_ = ((cached_has_bits & 0x00000010U) != 0)
                 ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.transaction_)
                 : nullptr;
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
@@ -1621,7 +1628,8 @@ PROTOBUF_NDEBUG_INLINE PrePrepare::Impl_::Impl_(
       : _cached_size_{0},
         timestamp_(arena),
         operation_(arena),
-        signature_(arena) {}
+        signature_(arena),
+        client_id_(arena) {}
 
 inline void PrePrepare::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -1646,6 +1654,7 @@ inline void PrePrepare::SharedDtor(MessageLite& self) {
   this_._impl_.timestamp_.Destroy();
   this_._impl_.operation_.Destroy();
   this_._impl_.signature_.Destroy();
+  this_._impl_.client_id_.Destroy();
   delete this_._impl_.transaction_;
   this_._impl_.~Impl_();
 }
@@ -1693,16 +1702,16 @@ PrePrepare::GetClassData() const {
   return PrePrepare_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 8, 1, 62, 2>
+const ::_pbi::TcParseTable<4, 9, 1, 71, 2>
 PrePrepare::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_._has_bits_),
     0, // no _extensions_
-    8, 56,  // max_field_number, fast_idx_mask
+    9, 120,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967040,  // skipmap
+    4294966784,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    8,  // num_field_entries
+    9,  // num_field_entries
     1,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     PrePrepare_class_data_.base(),
@@ -1712,15 +1721,13 @@ PrePrepare::_table_ = {
     ::_pbi::TcParser::GetTable<::bedrock::PrePrepare>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // int32 message_sender_id = 8;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.message_sender_id_), 7>(),
-     {64, 7, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // int32 view = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.view_), 4>(),
-     {8, 4, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.view_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.view_), 5>(),
+     {8, 5, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.view_)}},
     // int32 sequence = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.sequence_), 5>(),
-     {16, 5, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.sequence_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.sequence_), 6>(),
+     {16, 6, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.sequence_)}},
     // string timestamp = 3;
     {::_pbi::TcParser::FastUS1,
      {26, 0, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.timestamp_)}},
@@ -1729,42 +1736,57 @@ PrePrepare::_table_ = {
      {34, 1, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.operation_)}},
     // .bedrock.Transaction transaction = 5;
     {::_pbi::TcParser::FastMtS1,
-     {42, 3, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.transaction_)}},
+     {42, 4, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.transaction_)}},
     // int32 client_listen_port = 6;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.client_listen_port_), 6>(),
-     {48, 6, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_listen_port_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.client_listen_port_), 7>(),
+     {48, 7, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_listen_port_)}},
     // string signature = 7;
     {::_pbi::TcParser::FastUS1,
      {58, 2, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.signature_)}},
+    // int32 message_sender_id = 8;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.message_sender_id_), 8>(),
+     {64, 8, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_)}},
+    // string client_id = 9;
+    {::_pbi::TcParser::FastUS1,
+     {74, 3, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_id_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
   }}, {{
     // int32 view = 1;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.view_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.view_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 sequence = 2;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.sequence_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.sequence_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // string timestamp = 3;
     {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.timestamp_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string operation = 4;
     {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.operation_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // .bedrock.Transaction transaction = 5;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.transaction_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.transaction_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // int32 client_listen_port = 6;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_listen_port_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_listen_port_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // string signature = 7;
     {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.signature_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // int32 message_sender_id = 8;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // string client_id = 9;
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_id_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::bedrock::Transaction>()},
   }},
   {{
-    "\22\0\0\11\11\0\0\11\0\0\0\0\0\0\0\0"
+    "\22\0\0\11\11\0\0\11\0\11\0\0\0\0\0\0"
     "bedrock.PrePrepare"
     "timestamp"
     "operation"
     "signature"
+    "client_id"
   }},
 };
 PROTOBUF_NOINLINE void PrePrepare::Clear() {
@@ -1775,7 +1797,7 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if ((cached_has_bits & 0x0000000fU) != 0) {
+  if ((cached_has_bits & 0x0000001fU) != 0) {
     if ((cached_has_bits & 0x00000001U) != 0) {
       _impl_.timestamp_.ClearNonDefaultToEmpty();
     }
@@ -1786,15 +1808,19 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
       _impl_.signature_.ClearNonDefaultToEmpty();
     }
     if ((cached_has_bits & 0x00000008U) != 0) {
+      _impl_.client_id_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000010U) != 0) {
       ABSL_DCHECK(_impl_.transaction_ != nullptr);
       _impl_.transaction_->Clear();
     }
   }
-  if ((cached_has_bits & 0x000000f0U) != 0) {
+  if ((cached_has_bits & 0x000000e0U) != 0) {
     ::memset(&_impl_.view_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.message_sender_id_) -
-        reinterpret_cast<char*>(&_impl_.view_)) + sizeof(_impl_.message_sender_id_));
+        reinterpret_cast<char*>(&_impl_.client_listen_port_) -
+        reinterpret_cast<char*>(&_impl_.view_)) + sizeof(_impl_.client_listen_port_));
   }
+  _impl_.message_sender_id_ = 0;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -1818,7 +1844,7 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   (void)cached_has_bits;
 
   // int32 view = 1;
-  if ((this_._impl_._has_bits_[0] & 0x00000010U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000020U) != 0) {
     if (this_._internal_view() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<1>(
@@ -1827,7 +1853,7 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   }
 
   // int32 sequence = 2;
-  if ((this_._impl_._has_bits_[0] & 0x00000020U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000040U) != 0) {
     if (this_._internal_sequence() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<2>(
@@ -1857,14 +1883,14 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
 
   cached_has_bits = this_._impl_._has_bits_[0];
   // .bedrock.Transaction transaction = 5;
-  if ((cached_has_bits & 0x00000008U) != 0) {
+  if ((cached_has_bits & 0x00000010U) != 0) {
     target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
         5, *this_._impl_.transaction_, this_._impl_.transaction_->GetCachedSize(), target,
         stream);
   }
 
   // int32 client_listen_port = 6;
-  if ((cached_has_bits & 0x00000040U) != 0) {
+  if ((cached_has_bits & 0x00000080U) != 0) {
     if (this_._internal_client_listen_port() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<6>(
@@ -1883,11 +1909,21 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   }
 
   // int32 message_sender_id = 8;
-  if ((cached_has_bits & 0x00000080U) != 0) {
+  if ((cached_has_bits & 0x00000100U) != 0) {
     if (this_._internal_message_sender_id() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<8>(
               stream, this_._internal_message_sender_id(), target);
+    }
+  }
+
+  // string client_id = 9;
+  if ((cached_has_bits & 0x00000008U) != 0) {
+    if (!this_._internal_client_id().empty()) {
+      const ::std::string& _s = this_._internal_client_id();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.PrePrepare.client_id");
+      target = stream->WriteStringMaybeAliased(9, _s, target);
     }
   }
 
@@ -1938,34 +1974,43 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
                                         this_._internal_signature());
       }
     }
-    // .bedrock.Transaction transaction = 5;
+    // string client_id = 9;
     if ((cached_has_bits & 0x00000008U) != 0) {
+      if (!this_._internal_client_id().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_client_id());
+      }
+    }
+    // .bedrock.Transaction transaction = 5;
+    if ((cached_has_bits & 0x00000010U) != 0) {
       total_size += 1 +
                     ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.transaction_);
     }
     // int32 view = 1;
-    if ((cached_has_bits & 0x00000010U) != 0) {
+    if ((cached_has_bits & 0x00000020U) != 0) {
       if (this_._internal_view() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_view());
       }
     }
     // int32 sequence = 2;
-    if ((cached_has_bits & 0x00000020U) != 0) {
+    if ((cached_has_bits & 0x00000040U) != 0) {
       if (this_._internal_sequence() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_sequence());
       }
     }
     // int32 client_listen_port = 6;
-    if ((cached_has_bits & 0x00000040U) != 0) {
+    if ((cached_has_bits & 0x00000080U) != 0) {
       if (this_._internal_client_listen_port() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_client_listen_port());
       }
     }
+  }
+   {
     // int32 message_sender_id = 8;
-    if ((cached_has_bits & 0x00000080U) != 0) {
+    if ((cached_has_bits & 0x00000100U) != 0) {
       if (this_._internal_message_sender_id() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_message_sender_id());
@@ -2018,6 +2063,15 @@ void PrePrepare::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
       }
     }
     if ((cached_has_bits & 0x00000008U) != 0) {
+      if (!from._internal_client_id().empty()) {
+        _this->_internal_set_client_id(from._internal_client_id());
+      } else {
+        if (_this->_impl_.client_id_.IsDefault()) {
+          _this->_internal_set_client_id("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000010U) != 0) {
       ABSL_DCHECK(from._impl_.transaction_ != nullptr);
       if (_this->_impl_.transaction_ == nullptr) {
         _this->_impl_.transaction_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.transaction_);
@@ -2025,25 +2079,25 @@ void PrePrepare::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
         _this->_impl_.transaction_->MergeFrom(*from._impl_.transaction_);
       }
     }
-    if ((cached_has_bits & 0x00000010U) != 0) {
+    if ((cached_has_bits & 0x00000020U) != 0) {
       if (from._internal_view() != 0) {
         _this->_impl_.view_ = from._impl_.view_;
       }
     }
-    if ((cached_has_bits & 0x00000020U) != 0) {
+    if ((cached_has_bits & 0x00000040U) != 0) {
       if (from._internal_sequence() != 0) {
         _this->_impl_.sequence_ = from._impl_.sequence_;
       }
     }
-    if ((cached_has_bits & 0x00000040U) != 0) {
+    if ((cached_has_bits & 0x00000080U) != 0) {
       if (from._internal_client_listen_port() != 0) {
         _this->_impl_.client_listen_port_ = from._impl_.client_listen_port_;
       }
     }
-    if ((cached_has_bits & 0x00000080U) != 0) {
-      if (from._internal_message_sender_id() != 0) {
-        _this->_impl_.message_sender_id_ = from._impl_.message_sender_id_;
-      }
+  }
+  if ((cached_has_bits & 0x00000100U) != 0) {
+    if (from._internal_message_sender_id() != 0) {
+      _this->_impl_.message_sender_id_ = from._impl_.message_sender_id_;
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -2067,6 +2121,7 @@ void PrePrepare::InternalSwap(PrePrepare* PROTOBUF_RESTRICT PROTOBUF_NONNULL oth
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.timestamp_, &other->_impl_.timestamp_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.operation_, &other->_impl_.operation_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.signature_, &other->_impl_.signature_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.client_id_, &other->_impl_.client_id_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_)
       + sizeof(PrePrepare::_impl_.message_sender_id_)

@@ -10,17 +10,16 @@ public:
     explicit NodeServiceImpl(Entity& entity);
 
     grpc::Status SubmitRequest(grpc::ServerContext*,
-                               const bedrock::ClientRequest* request,
-                               bedrock::Ack* response) override;
+                               const bedrock::ClientRequest*,
+                               bedrock::Ack*) override;
 
     grpc::Status SendRawJson(grpc::ServerContext*,
-                             const bedrock::RawJson* request,
-                             bedrock::RawJson* response) override;
+                             const bedrock::RawJson*,
+                             bedrock::RawJson*) override;
 
-    // New typed handler
     grpc::Status SendProtocol(grpc::ServerContext*,
-                              const bedrock::ProtocolEnvelope* env,
-                              bedrock::Ack* ack) override;
+                              const bedrock::ProtocolEnvelope*,
+                              bedrock::Ack*) override;
 
 private:
     Entity& entity_;

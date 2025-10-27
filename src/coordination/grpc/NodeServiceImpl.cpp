@@ -2,6 +2,7 @@
 #include "core/Entity.h"
 #include <nlohmann/json.hpp>
 #include <thread>
+#include <iostream>
 
 using json = nlohmann::json;
 
@@ -51,54 +52,16 @@ grpc::Status NodeServiceImpl::SendRawJson(grpc::ServerContext*,
 grpc::Status NodeServiceImpl::SendProtocol(grpc::ServerContext*,
                                            const bedrock::ProtocolEnvelope* env,
                                            bedrock::Ack* ack) {
-    json j;
-    if (env->has_pre_prepare()) {
-        const auto& m = env->pre_prepare();
-        j = {
-            {"type","PrePrepare"},
-            {"view", m.view()},
-            {"sequence", m.sequence()},
-            {"timestamp", m.timestamp()},
-            {"operation", m.operation()},
-            {"transaction", {
-                {"from", m.transaction().from()},
-                {"to", m.transaction().to()},
-                {"amount", m.transaction().amount()}
-            }},
-            {"client_listen_port", m.client_listen_port()},
-            {"signature", m.signature()},
-            {"message_sender_id", m.message_sender_id()}
-        };
-    } else if (env->has_prepare()) {
-        const auto& m = env->prepare();
-        j = {
-            {"type","Prepare"},
-            {"view", m.view()},
-            {"sequence", m.sequence()},
-            {"operation", m.operation()},
-            {"message_sender_id", m.message_sender_id()}
-        };
-    } else if (env->has_commit()) {
-        const auto& m = env->commit();
-        j = {
-            {"type","Commit"},
-            {"view", m.view()},
-            {"sequence", m.sequence()},
-            {"operation", m.operation()},
-            {"message_sender_id", m.message_sender_id()}
-        };
-    } else {
-        ack->set_ok(false);
-        ack->set_msg("unknown envelope");
-        return grpc::Status::OK;
-    }
+    // Debug log
+    std::string kind = env->has_pre_prepare() ? "PrePrepare" :
+                       env->has_prepare()     ? "Prepare" :
+                       env->has_commit()      ? "Commit" : "Unknown";
+    // std::cout << "[Node " << entity_.getNodeId() << "] Received " << kind << " via gRPC\n";
 
-    // Async to avoid re-entrancy
-    std::string payload = j.dump();
-    std::thread([this, payload]{
-        (void)entity_.processJsonFromGrpc(payload);
+    bedrock::ProtocolEnvelope copy = *env;
+    std::thread([this, envCopy = std::move(copy)]() mutable {
+        entity_.processProtocolEnvelope(envCopy);
     }).detach();
-
     ack->set_ok(true);
     ack->set_msg("accepted");
     return grpc::Status::OK;

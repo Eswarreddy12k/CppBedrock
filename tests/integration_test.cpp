@@ -129,13 +129,15 @@ int main(int argc, char* argv[]) {
     std::vector<int> nodePorts = {5001, 5002, 5003, 5004, 5005, 5006, 5007};
     const int n = nodePorts.size();
     const int f = (n - 1) / 3;
-    const int requiredResponses = 2 * f + 1;
+    int requiredResponses = 2 * f + 1;
     const int maxRetries = 5;
     const int responseTimeoutSec = 2;
     int NUM_REQUESTS = 3;
 
     // Init gRPC only for scenario 4 (on ports +10000)
     if (scenario == 4) {
+        // For scenario 4, require n-1 unique replies per txn
+        requiredResponses = n - 1;
         std::vector<int> grpcPorts;
         grpcPorts.reserve(nodePorts.size());
         for (int p : nodePorts) grpcPorts.push_back(p + 10000);
@@ -347,7 +349,7 @@ int main(int argc, char* argv[]) {
         for (auto& t : clientThreads) t.join();
     }
     else if (scenario == 4) {
-        NUM_REQUESTS = 40;
+        NUM_REQUESTS = 50;
         transactions.clear();
         for (int i = 0; i < NUM_REQUESTS; ++i) {
             std::string from = (i % 4 == 0) ? "A" : (i % 4 == 1) ? "B" : (i % 4 == 2) ? "C" : "D";
@@ -392,9 +394,31 @@ int main(int argc, char* argv[]) {
                 }
             });
             txnIdx++;
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            //std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
         for (auto& t : clientThreads) t.join();
+
+        // Wait until NUM_REQUESTS - 1 operations are completed (e.g., 39 of 40)
+        {
+            const int targetDone = std::max(0, NUM_REQUESTS - 1);
+            const int maxWaitSec = 60;
+            auto start = std::chrono::steady_clock::now();
+            while (true) {
+                size_t done = 0;
+                {
+                    std::lock_guard<std::mutex> lock(txnMutex);
+                    done = completedTxns.size();
+                }
+                if (done >= static_cast<size_t>(targetDone)) break;
+                if (std::chrono::duration_cast<std::chrono::seconds>(
+                        std::chrono::steady_clock::now() - start).count() > maxWaitSec) {
+                    std::cout << "[Scenario 4] Timeout waiting: completed " << done
+                              << "/" << targetDone << " ops.\n";
+                    break;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
+        }
     }
     else if (scenario == 5) {
         // Example: A->B, B->C, C->D, D->A
@@ -794,7 +818,7 @@ int main(int argc, char* argv[]) {
             std::lock_guard<std::mutex> lock(responsesMutex);
             if (responses.size() >= 7*transactions.size()) break;
         }
-        auto now = std::chrono::steady_clock::now();
+        auto now = std::chrono::steady_clock::steady_clock::now();
         if (std::chrono::duration_cast<std::chrono::seconds>(now - waitStart).count() > maxWaitSeconds) {
             std::cout << "[IntegrationTest] Timeout waiting for responses.\n";
             break;

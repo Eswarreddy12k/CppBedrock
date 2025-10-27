@@ -18,6 +18,10 @@
 #include <set>
 #include <fstream>
 #include <filesystem> // C++17
+#include "../../include/core/events/ProtoMessage.h"
+#include <chrono>
+#include <iomanip>
+#include <ctime>
 
 using json = nlohmann::json;
 
@@ -409,7 +413,79 @@ void Entity::loadProtocolConfig(const std::string& configFile) {
         std::cerr << "Failed to load configuration: " << e.what() << std::endl;
     }
 }
+YAML::Node Entity::getPhaseConfigInsensitive(const std::string& phase) const {
+    auto phases = protocolConfig["phases"];
+    if (!phases || !phases.IsMap()) return YAML::Node();
+    auto toLower = [](std::string s){ std::transform(s.begin(), s.end(), s.begin(), ::tolower); return s; };
+    const std::string want = toLower(phase);
+    for (auto it = phases.begin(); it != phases.end(); ++it) {
+        std::string key = it->first.as<std::string>();
+        if (toLower(key) == want) return it->second;
+    }
+    return YAML::Node();
+}
+
 void Entity::handleEvent(const Event* event, EntityState* context) {
+    if (auto p = dynamic_cast<const ProtoMessage*>(event)) {
+        try {
+            std::string messageType = p->phase();
+            // std::cout << "[Node " << getNodeId() << "] Handling ProtoMessage of type: " << messageType << "\n";
+            if (messageType.empty()) return;
+
+            int seq = p->sequence();
+
+            // Ensure per-sequence state exists
+            if (sequenceStates.find(seq) == sequenceStates.end()) {
+                sequenceStates.emplace(
+                    seq,
+                    EntityState(getState().getRole(), "Request", getState().getViewNumber(), seq)
+                );
+            }
+
+            // IMPORTANT: align sequence state with actual incoming phase
+            sequenceStates[seq].setState(messageType);
+
+            YAML::Node phaseConfig = getPhaseConfigInsensitive(messageType);
+            if (phaseConfig && phaseConfig["actions"] && phaseConfig["actions"].IsSequence()) {
+                bool actionsSucceeded = true;
+
+                for (const auto& actionNode : phaseConfig["actions"]) {
+                    std::string actionName;
+                    nlohmann::json params;
+                    if (actionNode.IsScalar()) {
+                        actionName = actionNode.as<std::string>();
+                    } else if (actionNode.IsMap()) {
+                        auto it = actionNode.begin();
+                        actionName = it->first.as<std::string>();
+                        const YAML::Node& paramNode = it->second;
+                        for (auto pit = paramNode.begin(); pit != paramNode.end(); ++pit) {
+                            params[pit->first.as<std::string>()] = pit->second.as<std::string>();
+                        }
+                    }
+                    auto evt = EventFactory::getInstance().createEvent(actionName, params);
+                    if (evt) {
+                        const Message* msgPtr = dynamic_cast<const Message*>(event);
+                        //std::cout << "[Node " << getNodeId() << "] Preparing to execute " << actionName
+                                 // << " for ProtoMessage: " << std::flush;
+                        if (!evt->execute(this, msgPtr, &sequenceStates[seq])) {
+                            actionsSucceeded = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (actionsSucceeded && phaseConfig["next_state"] && context) {
+                    context->setState(phaseConfig["next_state"].as<std::string>());
+                }
+            } else {
+                std::cerr << "[Node " << getNodeId() << "] No phaseConfig for " << messageType << "\n";
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[Node " << getNodeId() << "] Typed handleEvent error: " << e.what() << "\n";
+        }
+        return;
+    }
+
     if (const Message* message = dynamic_cast<const Message*>(event)) {
         try {
             json j = json::parse(message->getContent());
@@ -520,9 +596,9 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                         for (auto paramIt = paramNode.begin(); paramIt != paramNode.end(); ++paramIt) {
                             params[paramIt->first.as<std::string>()] = paramIt->second.as<std::string>();
                         }
-                        // std::cout << "[Node " << getNodeId() << "] Executing action: "  << actionName << " with params: " << params.dump() << "\n";
+                        //std::cout << "[Node " << getNodeId() << "] Executing action: "  << actionName << " with params: " << params.dump() << "\n";
                     }
-                    // std::cout << "[Node " << getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "type: " << j["type"] << "\n";
+                    std::cout << "[Node " << getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "type: " << j["type"] << "\n";
                     auto eventPtr = EventFactory::getInstance().createEvent(actionName, params);
                     if (eventPtr) {
                         bool shouldContinue = eventPtr->execute(this, message, &sequenceStates[seq]);
@@ -571,9 +647,10 @@ void Entity::sendToAll(const Message& message) {
 void Entity::sendTo(int peer, const Message& message) {
     // Peer 1000 -> client via TCP
     if (peer == 1000) {
-        if (!sendToClientViaTcp(message.getContent())) {
-            std::cerr << "[Node " << getNodeId() << "] Failed to send to client via TCP (peer==1000)\n";
-        }
+
+        // if (!sendToClientViaTcp(message.getContent())) {
+        //     std::cerr << "[Node " << getNodeId() << "] Failed to send to client via TCP (peer==1000)\n";
+        // }
         return;
     }
     if (peer == nodeId || peer == (5000 + nodeId)) return;
@@ -629,34 +706,20 @@ void Entity::removeSequenceState(int seq) {
     prepareOperations.erase(seq);
     commitOperations.erase(seq);
 }
-void Entity::markOperationProcessed(const int operation) {
-    processedOperations.insert(operation);
-    std::cout << "[Node " << getNodeId() << "] Marked operation as processed: " << operation << "\n";
-    //printCommittedMessages();
+void Entity::markOperationProcessed(int seq) {
+    auto [it, inserted] = processedOperations.insert(seq);
+    if (inserted) {
+        auto now = std::chrono::system_clock::now();
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % std::chrono::seconds(1);
+        std::time_t tt = std::chrono::system_clock::to_time_t(now);
+        std::tm tm{};
+        localtime_r(&tt, &tm); // thread-safe on macOS
 
-    const int TOTAL_OPERATIONS = 50;
-    //std::lock_guard<std::mutex> lock(timerMtx);
-    if (processedOperations.size() >= TOTAL_OPERATIONS) {
-        if (timeKeeper) {
-            timeKeeper->stop();
-            timeKeeper.reset();
-        }
-        std::cout << "[Node " << getNodeId() << "] All operations processed. Timer stopped.\n";
+        std::cout << "[Node " << getNodeId() << "] Marked operation as processed: " << seq
+                  << " at " << std::put_time(&tm, "%F %T") << '.'
+                  << std::setw(3) << std::setfill('0') << ms.count()
+                  << "\n";
     }
-    // dataset.loadFromFile("test" + std::to_string(getNodeId()) + ".json");
-    // // Add or update a record
-    // nlohmann::json user;
-    // user["name"] = "Alice";
-    // user["balance"] = 100;
-    // user["active"] = true;
-    // dataset.update(std::to_string(operation), user);
-
-    // Save to file
-    // dataset.saveToFile("test" + std::to_string(getNodeId()) + ".json");
-
-    // Retrieve and print a record
-    // nlohmann::json loaded = dataset.get("user1");
-    // std::cout << loaded.dump(4) << std::endl;
 }
 void Entity::printCommittedMessages() {
     std::cout << "\n========== Committed Messages ==========\n";
@@ -875,5 +938,51 @@ bedrock::Node::Stub* Entity::getStub(int peer) {
     auto channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
     grpcStubs_[peer] = bedrock::Node::NewStub(channel);
     return grpcStubs_[peer].get();
+}
+
+void Entity::processProtocolEnvelope(const bedrock::ProtocolEnvelope& env) {
+    ProtoMessage pmsg(env);
+    handleEvent(&pmsg, &_entityState);
+}
+
+void Entity::sendProtocolToAll(const bedrock::ProtocolEnvelope& env) {
+    for (int peer : peerPorts) {
+        if (peer == nodeId || peer == (5000 + nodeId) || peer == 1000) continue;
+        if (grpcPortForPeer(peer) < 0) continue;
+        sendProtocolTo(peer, env);
+    }
+}
+
+void Entity::sendProtocolTo(int peer, const bedrock::ProtocolEnvelope& env) {
+    if (peer == nodeId || peer == (5000 + nodeId) || peer == 1000) return;
+    if (grpcPortForPeer(peer) < 0) {
+        std::cerr << "[Node " << getNodeId() << "] Skipping invalid peer " << peer << "\n";
+        return;
+    }
+    try {
+        auto* stub = getStub(peer); // assumes existing getStub(peers) method
+        if (!stub) {
+            std::cerr << "[Node " << getNodeId() << "] No gRPC stub for peer " << peer << "\n";
+            return;
+        }
+        grpc::ClientContext ctx;
+        bedrock::Ack ack;
+        auto status = stub->SendProtocol(&ctx, env, &ack);
+        if (!status.ok() || !ack.ok()) {
+            std::cerr << "[Node " << getNodeId() << "] gRPC SendProtocol to peer "
+                      << peer << " failed: " << status.error_code() << " "
+                      << status.error_message() << " | ack=" << ack.msg() << "\n";
+        }
+        else{
+            //std::cout << "[Node " << getNodeId() << "] gRPC SendProtocol to peer "
+            //          << peer << " succeeded.\n";
+            //print env
+            //  std::cout << "[Node " << getNodeId() << "] Sent ProtocolEnvelope to peer "
+            //            << peer << ": " << env.DebugString() << "\n";
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "[Node " << getNodeId() << "] gRPC send exception to peer "
+                  << peer << ": " << e.what() << "\n";
+    }
 }
 

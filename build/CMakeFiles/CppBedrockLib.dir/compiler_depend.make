@@ -6383,6 +6383,7 @@ CMakeFiles/CppBedrockLib.dir/src/core/Entity.cpp.o: /Users/eswar/Downloads/CppBe
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoProvider.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoUtils.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/OpenSSLCryptoProvider.h \
+  /Users/eswar/Downloads/CppBedrock/include/core/events/Message.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoUtils.h \
   /Users/eswar/Downloads/CppBedrock/include/core/state/EntityState.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/BaseEvent.h \
@@ -6390,6 +6391,7 @@ CMakeFiles/CppBedrockLib.dir/src/core/Entity.cpp.o: /Users/eswar/Downloads/CppBe
   /Users/eswar/Downloads/CppBedrock/include/core/events/EventFactory.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/EventHandler.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/MessageHandler.h \
+  /Users/eswar/Downloads/CppBedrock/include/core/events/ProtoMessage.h \
   /Users/eswar/Downloads/CppBedrock/include/core/pipeline/Pipeline.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/Event.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/Message.h \
@@ -10200,12 +10202,14 @@ CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactory.cpp.o: /Users/eswar/Do
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoProvider.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoUtils.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/OpenSSLCryptoProvider.h \
+  /Users/eswar/Downloads/CppBedrock/include/core/events/Message.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoUtils.h \
   /Users/eswar/Downloads/CppBedrock/include/core/state/EntityState.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/BaseEvent.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/Event.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/EventFactory.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/EventHandler.h \
+  /Users/eswar/Downloads/CppBedrock/include/core/events/ProtoMessage.h \
   /Users/eswar/Downloads/CppBedrock/include/core/pipeline/Pipeline.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/Event.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/Message.h \
@@ -18108,6 +18112,8 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_enum.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/destruct_n.h:
+
+/Users/eswar/Downloads/CppBedrock/include/core/events/ProtoMessage.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__concepts/different_from.h:
 

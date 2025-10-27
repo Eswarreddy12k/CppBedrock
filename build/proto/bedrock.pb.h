@@ -1337,6 +1337,7 @@ class PrePrepare final : public ::google::protobuf::Message
     kTimestampFieldNumber = 3,
     kOperationFieldNumber = 4,
     kSignatureFieldNumber = 7,
+    kClientIdFieldNumber = 9,
     kTransactionFieldNumber = 5,
     kViewFieldNumber = 1,
     kSequenceFieldNumber = 2,
@@ -1386,6 +1387,21 @@ class PrePrepare final : public ::google::protobuf::Message
   const ::std::string& _internal_signature() const;
   PROTOBUF_ALWAYS_INLINE void _internal_set_signature(const ::std::string& value);
   ::std::string* PROTOBUF_NONNULL _internal_mutable_signature();
+
+  public:
+  // string client_id = 9;
+  void clear_client_id() ;
+  const ::std::string& client_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_client_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_client_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_client_id();
+  void set_allocated_client_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_client_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_client_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_client_id();
 
   public:
   // .bedrock.Transaction transaction = 5;
@@ -1447,8 +1463,8 @@ class PrePrepare final : public ::google::protobuf::Message
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<3, 8,
-                                   1, 62,
+  static const ::google::protobuf::internal::TcParseTable<4, 9,
+                                   1, 71,
                                    2>
       _table_;
 
@@ -1472,6 +1488,7 @@ class PrePrepare final : public ::google::protobuf::Message
     ::google::protobuf::internal::ArenaStringPtr timestamp_;
     ::google::protobuf::internal::ArenaStringPtr operation_;
     ::google::protobuf::internal::ArenaStringPtr signature_;
+    ::google::protobuf::internal::ArenaStringPtr client_id_;
     ::bedrock::Transaction* PROTOBUF_NULLABLE transaction_;
     ::int32_t view_;
     ::int32_t sequence_;
@@ -2689,7 +2706,7 @@ inline void ClientRequest::set_allocated_signature(::std::string* PROTOBUF_NULLA
 inline void PrePrepare::clear_view() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.view_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000010U;
+  _impl_._has_bits_[0] &= ~0x00000020U;
 }
 inline ::int32_t PrePrepare::view() const {
   // @@protoc_insertion_point(field_get:bedrock.PrePrepare.view)
@@ -2697,7 +2714,7 @@ inline ::int32_t PrePrepare::view() const {
 }
 inline void PrePrepare::set_view(::int32_t value) {
   _internal_set_view(value);
-  _impl_._has_bits_[0] |= 0x00000010U;
+  _impl_._has_bits_[0] |= 0x00000020U;
   // @@protoc_insertion_point(field_set:bedrock.PrePrepare.view)
 }
 inline ::int32_t PrePrepare::_internal_view() const {
@@ -2713,7 +2730,7 @@ inline void PrePrepare::_internal_set_view(::int32_t value) {
 inline void PrePrepare::clear_sequence() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.sequence_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000020U;
+  _impl_._has_bits_[0] &= ~0x00000040U;
 }
 inline ::int32_t PrePrepare::sequence() const {
   // @@protoc_insertion_point(field_get:bedrock.PrePrepare.sequence)
@@ -2721,7 +2738,7 @@ inline ::int32_t PrePrepare::sequence() const {
 }
 inline void PrePrepare::set_sequence(::int32_t value) {
   _internal_set_sequence(value);
-  _impl_._has_bits_[0] |= 0x00000020U;
+  _impl_._has_bits_[0] |= 0x00000040U;
   // @@protoc_insertion_point(field_set:bedrock.PrePrepare.sequence)
 }
 inline ::int32_t PrePrepare::_internal_sequence() const {
@@ -2865,14 +2882,14 @@ inline void PrePrepare::set_allocated_operation(::std::string* PROTOBUF_NULLABLE
 
 // .bedrock.Transaction transaction = 5;
 inline bool PrePrepare::has_transaction() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000008U) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000010U) != 0;
   PROTOBUF_ASSUME(!value || _impl_.transaction_ != nullptr);
   return value;
 }
 inline void PrePrepare::clear_transaction() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.transaction_ != nullptr) _impl_.transaction_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000008U;
+  _impl_._has_bits_[0] &= ~0x00000010U;
 }
 inline const ::bedrock::Transaction& PrePrepare::_internal_transaction() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
@@ -2891,16 +2908,16 @@ inline void PrePrepare::unsafe_arena_set_allocated_transaction(
   }
   _impl_.transaction_ = reinterpret_cast<::bedrock::Transaction*>(value);
   if (value != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000008U;
+    _impl_._has_bits_[0] |= 0x00000010U;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000008U;
+    _impl_._has_bits_[0] &= ~0x00000010U;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bedrock.PrePrepare.transaction)
 }
 inline ::bedrock::Transaction* PROTOBUF_NULLABLE PrePrepare::release_transaction() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
 
-  _impl_._has_bits_[0] &= ~0x00000008U;
+  _impl_._has_bits_[0] &= ~0x00000010U;
   ::bedrock::Transaction* released = _impl_.transaction_;
   _impl_.transaction_ = nullptr;
   if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
@@ -2920,7 +2937,7 @@ inline ::bedrock::Transaction* PROTOBUF_NULLABLE PrePrepare::unsafe_arena_releas
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:bedrock.PrePrepare.transaction)
 
-  _impl_._has_bits_[0] &= ~0x00000008U;
+  _impl_._has_bits_[0] &= ~0x00000010U;
   ::bedrock::Transaction* temp = _impl_.transaction_;
   _impl_.transaction_ = nullptr;
   return temp;
@@ -2935,7 +2952,7 @@ inline ::bedrock::Transaction* PROTOBUF_NONNULL PrePrepare::_internal_mutable_tr
 }
 inline ::bedrock::Transaction* PROTOBUF_NONNULL PrePrepare::mutable_transaction()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  _impl_._has_bits_[0] |= 0x00000008U;
+  _impl_._has_bits_[0] |= 0x00000010U;
   ::bedrock::Transaction* _msg = _internal_mutable_transaction();
   // @@protoc_insertion_point(field_mutable:bedrock.PrePrepare.transaction)
   return _msg;
@@ -2952,9 +2969,9 @@ inline void PrePrepare::set_allocated_transaction(::bedrock::Transaction* PROTOB
     if (message_arena != submessage_arena) {
       value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000008U;
+    _impl_._has_bits_[0] |= 0x00000010U;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000008U;
+    _impl_._has_bits_[0] &= ~0x00000010U;
   }
 
   _impl_.transaction_ = reinterpret_cast<::bedrock::Transaction*>(value);
@@ -2965,7 +2982,7 @@ inline void PrePrepare::set_allocated_transaction(::bedrock::Transaction* PROTOB
 inline void PrePrepare::clear_client_listen_port() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.client_listen_port_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000040U;
+  _impl_._has_bits_[0] &= ~0x00000080U;
 }
 inline ::int32_t PrePrepare::client_listen_port() const {
   // @@protoc_insertion_point(field_get:bedrock.PrePrepare.client_listen_port)
@@ -2973,7 +2990,7 @@ inline ::int32_t PrePrepare::client_listen_port() const {
 }
 inline void PrePrepare::set_client_listen_port(::int32_t value) {
   _internal_set_client_listen_port(value);
-  _impl_._has_bits_[0] |= 0x00000040U;
+  _impl_._has_bits_[0] |= 0x00000080U;
   // @@protoc_insertion_point(field_set:bedrock.PrePrepare.client_listen_port)
 }
 inline ::int32_t PrePrepare::_internal_client_listen_port() const {
@@ -3054,7 +3071,7 @@ inline void PrePrepare::set_allocated_signature(::std::string* PROTOBUF_NULLABLE
 inline void PrePrepare::clear_message_sender_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_sender_id_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000080U;
+  _impl_._has_bits_[0] &= ~0x00000100U;
 }
 inline ::int32_t PrePrepare::message_sender_id() const {
   // @@protoc_insertion_point(field_get:bedrock.PrePrepare.message_sender_id)
@@ -3062,7 +3079,7 @@ inline ::int32_t PrePrepare::message_sender_id() const {
 }
 inline void PrePrepare::set_message_sender_id(::int32_t value) {
   _internal_set_message_sender_id(value);
-  _impl_._has_bits_[0] |= 0x00000080U;
+  _impl_._has_bits_[0] |= 0x00000100U;
   // @@protoc_insertion_point(field_set:bedrock.PrePrepare.message_sender_id)
 }
 inline ::int32_t PrePrepare::_internal_message_sender_id() const {
@@ -3072,6 +3089,71 @@ inline ::int32_t PrePrepare::_internal_message_sender_id() const {
 inline void PrePrepare::_internal_set_message_sender_id(::int32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_sender_id_ = value;
+}
+
+// string client_id = 9;
+inline void PrePrepare::clear_client_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.client_id_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000008U;
+}
+inline const ::std::string& PrePrepare::client_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.PrePrepare.client_id)
+  return _internal_client_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void PrePrepare::set_client_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000008U;
+  _impl_.client_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.PrePrepare.client_id)
+}
+inline ::std::string* PROTOBUF_NONNULL PrePrepare::mutable_client_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_client_id();
+  // @@protoc_insertion_point(field_mutable:bedrock.PrePrepare.client_id)
+  return _s;
+}
+inline const ::std::string& PrePrepare::_internal_client_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.client_id_.Get();
+}
+inline void PrePrepare::_internal_set_client_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000008U;
+  _impl_.client_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL PrePrepare::_internal_mutable_client_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000008U;
+  return _impl_.client_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE PrePrepare::release_client_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.PrePrepare.client_id)
+  if ((_impl_._has_bits_[0] & 0x00000008U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000008U;
+  auto* released = _impl_.client_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.client_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void PrePrepare::set_allocated_client_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000008U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000008U;
+  }
+  _impl_.client_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.client_id_.IsDefault()) {
+    _impl_.client_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.PrePrepare.client_id)
 }
 
 // -------------------------------------------------------------------
