@@ -276,6 +276,23 @@ public:
     void sendProtocolToAll(const bedrock::ProtocolEnvelope& env);
     void sendProtocolTo(int peer, const bedrock::ProtocolEnvelope& env);
 
+    struct PrePrepareInfo {
+        std::string timestamp;
+        std::string operation;
+        std::string from;
+        std::string to;
+        int amount{0};
+        int client_port{-1};
+    };
+
+    // Fast lookup for CompleteEvent; does not change existing dataset behavior
+    std::unordered_map<int, PrePrepareInfo> prePrepareIndex; // seq -> info
+
+    // Guards for concurrent access
+    mutable std::mutex senderIdsMtx;     // protects keyToSenderIds
+    mutable std::mutex prePrepareMtx;    // protects prePrepareIndex
+    mutable std::mutex processedMtx;     // protects processedOperations
+
 private:
     int nodeId;
     

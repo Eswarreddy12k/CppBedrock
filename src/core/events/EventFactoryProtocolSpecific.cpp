@@ -1,6 +1,7 @@
 #include "../../../include/core/events/EventFactory.h"
 #include "../../../include/core/events/BaseEvent.h"
 #include "../../../include/core/Entity.h"
+#include "../../../include/core/events/ProtoMessage.h"
 #include <nlohmann/json.hpp>
 #include <iostream>
 
@@ -25,7 +26,17 @@ class VerifyPBFTConditionsEvent : public BaseEvent {
 public:
     VerifyPBFTConditionsEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
-        
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            // Typed fast-path
+            if (p->view() != entity->entityInfo["view"].get<int>()) {
+                std::cout << "[Node " << entity->getNodeId()
+                          << "] View mismatch: expected " << entity->entityInfo["view"]
+                          << ", got " << p->view() << "\n";
+                return false;
+            }
+            entity->entityInfo["sequence"] = p->sequence();
+            return true;
+        }
         auto j = nlohmann::json::parse(message->getContent());
         if(j["view"].get<int>() != entity->entityInfo["view"].get<int>()) {
             std::cout << "[Node " << entity->getNodeId() << "] View mismatch: expected " << entity->entityInfo["view"]<< ", got " << j["view"].get<int>() << "\n";
@@ -41,6 +52,19 @@ class StoreNewViewMessageEvent : public BaseEvent {
 public:
     StoreNewViewMessageEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            // Use proto fields: treat p->view() as new_view; sender_id from proto
+            int view = p->view();
+            int sender = p->sender_id();
+            if (view != -1 && sender != -1) {
+                entity->newViewHotstuffSenders[view].insert(sender);
+                std::cout << "[Node " << entity->getNodeId() << "] Stored NewView sender "
+                          << sender << " for view " << view << std::endl;
+            } else {
+                std::cout << "[Node " << entity->getNodeId() << "] Invalid NewView (proto)\n";
+            }
+            return true;
+        }
         auto j = nlohmann::json::parse(message->getContent());
         int view = j.value("new_view", -1);
         int sender = j.value("message_sender_id", -1);
@@ -59,6 +83,14 @@ class CheckNewViewQuorumEvent : public BaseEvent {
 public:
     CheckNewViewQuorumEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        if (dynamic_cast<const ProtoMessage*>(message)) {
+            int view = entity->entityInfo["view"].get<int>();
+            int quorum = computeQuorumEventFactoryProtocolSpecific("2f+1", entity->getF());
+            size_t count = entity->newViewHotstuffSenders[view].size();
+            std::cout << "[Node " << entity->getNodeId() << "] NewView quorum check for view "
+                      << view << ": " << count << " / " << quorum << std::endl;
+            return count >= static_cast<size_t>(quorum);
+        }
         auto j = nlohmann::json::parse(message->getContent());
         int view = entity->entityInfo["view"].get<int>();
         int quorum = computeQuorumEventFactoryProtocolSpecific("2f+1", entity->getF()); // or use your config/quorum logic
@@ -86,11 +118,12 @@ public:
         currentView += 1;
         entity->entityInfo["view"] = currentView;
         int nextLeader = (currentView + 1) % entity->peerPorts.size();
-
-        nlohmann::json newViewMsg;
-        newViewMsg["type"] = "NewViewforHotstuff";
-        newViewMsg["new_view"] = currentView;
-        newViewMsg["message_sender_id"] = entity->getNodeId();
+        // For now, keep JSON send until you extend the proto schema for NewView
+        nlohmann::json newViewMsg{
+            {"type","NewViewforHotstuff"},
+            {"new_view", currentView},
+            {"message_sender_id", entity->getNodeId()}
+        };
         Message msg(newViewMsg.dump());
         entity->sendTo(nextLeader, msg);
         std::cout << "[Node " << entity->getNodeId() << "] Sent NewView message to node " << nextLeader << "\n";
@@ -103,6 +136,40 @@ class SpeculativeCompleteEvent : public BaseEvent {
 public:
     SpeculativeCompleteEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            // Typed fast-path
+            int seq = p->sequence();
+            std::string txnId = p->timestamp();
+            if (!txnId.empty() && !entity->hasExecutedSpeculativeTransaction(txnId)) {
+                std::string from = p->has_tx() ? p->tx_from() : "";
+                std::string to   = p->has_tx() ? p->tx_to()   : "";
+                int amount       = p->has_tx() ? p->tx_amount(): 0;
+                if (!from.empty() && !to.empty() && amount > 0) {
+                    entity->updateSpeculativeBalances(from, to, amount);
+                    entity->appendSpeculativeEntry(seq, txnId, from, to, amount);
+                    entity->markSpeculativeTransactionExecuted(txnId);
+                    std::cout << "[Node " << entity->getNodeId() << "] SPECULATIVE Transaction: "
+                              << from << " -> " << to << " : " << amount
+                              << " Sequence: " << seq << std::endl;
+                }
+            }
+            entity->markOperationProcessed(seq);
+            // Reply to client (JSON wire) for now
+            int clientPort = p->client_listen_port();
+            if (clientPort > 0) {
+                nlohmann::json response{
+                    {"type","Response"},
+                    {"view", p->view()},
+                    {"sequence", p->sequence()},
+                    {"timestamp", p->timestamp()},
+                    {"message_sender_id", entity->getNodeId()},
+                    {"result","speculative"}
+                };
+                Message BalancesReply(response.dump());
+                entity->sendTo(clientPort - 5000, BalancesReply);
+            }
+            return true;
+        }
         auto j = nlohmann::json::parse(message->getContent());
         std::string type = j.value("type","");
         if (type == "PrePrepare" || type == "SpeculativePrePrepare") {
@@ -167,6 +234,51 @@ class CommitCertificateEvent : public BaseEvent {
 public:
     CommitCertificateEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState*) override {
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            int s = p->sequence();
+            std::string txnId = p->timestamp();
+            if (s < 0 && !txnId.empty()) {
+                s = entity->findSeqByTxnId(txnId);
+            }
+            if (s < 0) {
+                std::cout << "[Node " << entity->getNodeId() << "] CommitCertificateEvent(proto): missing sequence, ignoring\n";
+                return false;
+            }
+            // Commit all entries with seq ≤ s
+            std::vector<int> toErase;
+            {
+                std::lock_guard<std::mutex> g(entity->speculativeLogMtx);
+                for (const auto& [seq, e] : entity->speculativeLog) {
+                    if (seq <= s) {
+                        entity->updateBalances(e.from, e.to, e.amount);
+                        toErase.push_back(seq);
+                    }
+                }
+                for (int seq : toErase) {
+                    auto it = entity->speculativeLog.find(seq);
+                    if (it != entity->speculativeLog.end()) {
+                        entity->executedSpeculativeTransactions.erase(it->second.txnId);
+                        entity->speculativeLog.erase(it);
+                    }
+                }
+            }
+            entity->committedSeq = std::max(entity->committedSeq, s);
+            entity->rebuildSpeculativeBalancesFromLog();
+            // Optional client ack (JSON wire)
+            int clientPort = p->client_listen_port();
+            if (clientPort > 0) {
+                nlohmann::json resp{
+                    {"type","Response"},
+                    {"sequence", s},
+                    {"timestamp", txnId},
+                    {"message_sender_id", entity->getNodeId()}
+                };
+                Message ack(resp.dump());
+                entity->sendTo(clientPort - 5000, ack);
+            }
+            std::cout << "[Node " << entity->getNodeId() << "] Committed up to seq " << s << " (slow-path)\n";
+            return true;
+        }
         auto j = nlohmann::json::parse(message->getContent());
         // Prefer explicit sequence; else derive from txnId (timestamp)
         int s = j.value("sequence", -1);
@@ -373,6 +485,7 @@ class FillHoleRequestEvent : public BaseEvent {
 public:
     FillHoleRequestEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState*) override {
+        // NOTE: remains JSON-only until from_seq/to_seq are added to your proto
         auto j = nlohmann::json::parse(message->getContent());
         if (j.value("type","") != "FillHole") return true;
         int view = j.value("view", -1);

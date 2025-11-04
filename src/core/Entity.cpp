@@ -707,6 +707,7 @@ void Entity::removeSequenceState(int seq) {
     commitOperations.erase(seq);
 }
 void Entity::markOperationProcessed(int seq) {
+    std::lock_guard<std::mutex> g(processedMtx);
     auto [it, inserted] = processedOperations.insert(seq);
     if (inserted) {
         auto now = std::chrono::system_clock::now();
