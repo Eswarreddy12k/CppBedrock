@@ -99,6 +99,8 @@ CppBedrock: libCppBedrockLib.a
 CppBedrock: libbedrock_proto.a
 CppBedrock: /opt/homebrew/lib/libgrpc++.1.75.0.dylib
 CppBedrock: /opt/homebrew/lib/libgrpc.50.0.0.dylib
+CppBedrock: /opt/homebrew/lib/libssl.dylib
+CppBedrock: /opt/homebrew/lib/libcrypto.dylib
 CppBedrock: /opt/homebrew/lib/libupb_json_lib.50.0.0.dylib
 CppBedrock: /opt/homebrew/lib/libupb_textformat_lib.50.0.0.dylib
 CppBedrock: /opt/homebrew/lib/libupb_lex_lib.50.0.0.dylib
@@ -113,10 +115,8 @@ CppBedrock: /opt/homebrew/lib/libupb_base_lib.50.0.0.dylib
 CppBedrock: /opt/homebrew/lib/libupb_mem_lib.50.0.0.dylib
 CppBedrock: /opt/homebrew/lib/libre2.11.0.0.dylib
 CppBedrock: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/libz.tbd
-CppBedrock: /opt/homebrew/lib/libcares.2.19.4.dylib
+CppBedrock: /opt/homebrew/lib/libcares.2.19.5.dylib
 CppBedrock: /opt/homebrew/lib/libgpr.50.0.0.dylib
-CppBedrock: /opt/homebrew/Cellar/openssl@3/3.5.2/lib/libssl.dylib
-CppBedrock: /opt/homebrew/Cellar/openssl@3/3.5.2/lib/libcrypto.dylib
 CppBedrock: /opt/homebrew/lib/libaddress_sorting.50.0.0.dylib
 CppBedrock: /opt/homebrew/lib/libprotobuf.32.1.0.dylib
 CppBedrock: /opt/homebrew/lib/libabsl_log_internal_check_op.2508.0.0.dylib

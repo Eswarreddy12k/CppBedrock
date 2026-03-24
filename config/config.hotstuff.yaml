@@ -15,29 +15,32 @@ phases:
       - "startTimer"
       - "storeMessage"
       - "unicastifParticipant"
+      - "broadcastifLeader"
   PreCommit:
-    quorum: 2f
+    quorum: 2f+1
     next_state: Commit
     actions:
       - "checkQC"
       - "resetTimer"
       - "storeMessage"
+      - "unicastifParticipant"
       - "checkQuorum"
       - "broadcastifLeader"
-      - "unicastifParticipant"
+
   Commit:
-    quorum: 2f
+    quorum: 2f+1
     next_state: Decide
     actions:
       - "checkQC"
       - "resetTimer"
       - "storeMessage"
+      - "unicastifParticipant"
       - "checkQuorum"
       - "UpdateLockedQC"
       - "broadcastifLeader"
-      - "unicastifParticipant"
+      
   Decide:
-    quorum: 2f
+    quorum: 1
     next_state: Request
     actions:
       - "checkQC"
@@ -46,6 +49,7 @@ phases:
       - "checkQuorum"
       - "broadcastifLeader"
       - "complete"
+
   ViewChange:
     quorum: 2f+1
     next_state: Request

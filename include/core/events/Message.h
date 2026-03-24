@@ -6,12 +6,12 @@
 
 class Message : public Event {
 public:
-    explicit Message(const std::string& content) : _content(content) {}
-    std::string getContent() const { return _content; }
-    void execute(EntityState& state) {
-        // For now, this can be an empty implementation or a simple action
-        std::cout << "[Message] Executing action for content: " << _content << "\n";
-    }
-private:
-    std::string _content;
+    explicit Message(std::string content) : content_(std::move(content)) {}
+    virtual ~Message() = default;
+
+    virtual std::string getContent() const { return content_; }
+
+    virtual bool execute(Entity*, const Message*, EntityState*) { return true; }
+protected:
+    std::string content_;
 };

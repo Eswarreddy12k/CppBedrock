@@ -53,7 +53,7 @@ void CoordinationUnit::receiveMessage() {
             int id = entityNode["id"].as<int>();
             std::string role = entityNode["role"].as<std::string>();
             std::vector<int> peers = entityNode["peers"].as<std::vector<int>>();
-            bool byzantine = entityNode["byzantine"].as<bool>(false); // default to false if missing
+            bool byzantine = entityNode["byzantine"].as<bool>(); // default to false if missing
             tempEntities.push_back(std::make_unique<Entity>(role, id, peers, byzantine));
         }
         // Start all entities

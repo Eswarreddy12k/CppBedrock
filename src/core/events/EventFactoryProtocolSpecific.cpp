@@ -58,8 +58,7 @@ public:
             int sender = p->sender_id();
             if (view != -1 && sender != -1) {
                 entity->newViewHotstuffSenders[view].insert(sender);
-                std::cout << "[Node " << entity->getNodeId() << "] Stored NewView sender "
-                          << sender << " for view " << view << std::endl;
+                
             } else {
                 std::cout << "[Node " << entity->getNodeId() << "] Invalid NewView (proto)\n";
             }
@@ -70,7 +69,7 @@ public:
         int sender = j.value("message_sender_id", -1);
         if (view != -1 && sender != -1) {
             entity->newViewHotstuffSenders[view].insert(sender);
-            std::cout << "[Node " << entity->getNodeId() << "] Stored NewView sender " << sender << " for view " << view << std::endl;
+            // std::cout << "[Node " << entity->getNodeId() << "] Stored NewView sender " << sender << " for view " << view << std::endl;
         } else {
             std::cout << "[Node " << entity->getNodeId() << "] Invalid NewView message: " << j.dump() << std::endl;
         }
@@ -118,15 +117,18 @@ public:
         currentView += 1;
         entity->entityInfo["view"] = currentView;
         int nextLeader = (currentView + 1) % entity->peerPorts.size();
-        // For now, keep JSON send until you extend the proto schema for NewView
-        nlohmann::json newViewMsg{
-            {"type","NewViewforHotstuff"},
-            {"new_view", currentView},
-            {"message_sender_id", entity->getNodeId()}
-        };
-        Message msg(newViewMsg.dump());
-        entity->sendTo(nextLeader, msg);
-        std::cout << "[Node " << entity->getNodeId() << "] Sent NewView message to node " << nextLeader << "\n";
+
+        // Fast path: proto envelope (PrePrepare used as carrier with type="NewViewforHotstuff")
+        bedrock::ProtocolEnvelope env;
+        auto* m = env.mutable_pre_prepare();
+        m->set_view(currentView);
+        m->set_sequence(currentView);                 // reuse view as sequence for routing
+        m->set_operation("NewViewforHotstuff");
+        m->set_message_sender_id(entity->getNodeId());
+        m->set_type("NewViewforHotstuff");            // requires 'type' field in proto
+
+        entity->sendProtocolTo(nextLeader, env);
+        // std::cout << "[Node " << entity->getNodeId() << "] Sent NewView (proto) to node " << nextLeader << "\n";
         return true;
     }
 };

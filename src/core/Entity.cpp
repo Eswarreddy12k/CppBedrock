@@ -22,6 +22,35 @@
 #include <chrono>
 #include <iomanip>
 #include <ctime>
+#include <tuple>           // for batching rows
+
+// Batch CSV buffers (per-process, keyed by node id)
+namespace {
+    using OpRow = std::tuple<int /*seq*/, long long /*ts_ms*/, std::string /*operation*/>;
+    std::mutex s_csvBatchMtx;
+    std::unordered_map<int, std::vector<OpRow>> s_csvBatches;
+    void flushCsvBatchUnlocked(int nodeId) {
+        auto it = s_csvBatches.find(nodeId);
+        if (it == s_csvBatches.end() || it->second.empty()) return;
+        const std::string csvPath = "logs/node_" + std::to_string(nodeId) + "_ops.csv";
+        const bool exists = std::filesystem::exists(csvPath);
+        std::ofstream out(csvPath, std::ios::app);
+        if (!out) {
+            std::cerr << "[Node " << nodeId << "] Failed to open CSV: " << csvPath << "\n";
+            return;
+        }
+        if (!exists) out << "sequence,timestamp_ms,operation\n";
+        for (const auto& row : it->second) {
+            int seq; long long ts; std::string op;
+            std::tie(seq, ts, op) = row;
+            // escape commas if any in op (very unlikely)
+            for (char& c : op) if (c == ',') c = ';';
+            out << seq << "," << ts << "," << op << "\n";
+        }
+        out.flush();
+        it->second.clear();
+    }
+}
 
 using json = nlohmann::json;
 
@@ -109,12 +138,29 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
       isByzantine(byzantine),
       connection(5000 + id, true),
       processingThread(),
-      f(2),
+      f(10),
       prePrepareBroadcasted()
 {
     EventFactory::getInstance().initialize();
-    loadProtocolConfig("/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml");
-    timeKeeper = std::make_unique<TimeKeeper>(1500, [this] {
+    // Load selected protocol from runtime.selection.yaml; fallback to Zyzzyva
+    std::string selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml";
+    try {
+        YAML::Node runtime = YAML::LoadFile("/Users/eswar/Downloads/CppBedrock/config/runtime.selection.yaml");
+        if (runtime && runtime["protocol"]) {
+            const std::string proto = runtime["protocol"].as<std::string>();
+            if (proto == "PBFT")              selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.pbft.yaml";
+            else if (proto == "LinearPBFT")   selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.linearpbft.yaml";
+            else if (proto == "Hotstuff")     selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.hotstuff.yaml";
+            else if (proto == "Hotstuff2")    selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.hotstuff2.yaml";
+            else if (proto == "SBFT")         selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.sbft.yaml";
+            else if (proto == "Zyzzyva")      selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.zyzzyva.yaml";
+            else if (proto == "ChainedHotstuff") selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.chained_hotstuff.yaml";
+        }
+    } catch (...) {}
+    selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.sbft.yaml";
+    loadProtocolConfig(selectedConfig);
+    std::cout << "[Node " << nodeId << "] Loaded protocol config: " << selectedConfig << "\n";
+    timeKeeper = std::make_unique<TimeKeeper>(15000, [this] {
         this->onTimeout();
     });
     entityInfo["server_name"] = getNodeId();
@@ -129,6 +175,8 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
         auto event = EventFactory::getInstance().createEvent("periodicPiggybackBroadcast");
         if (event) event->execute(this, nullptr, nullptr);
     }
+    
+    loadDelaysFromConfig("/Users/eswar/Downloads/CppBedrock/config/config.entities.yaml");
     
 }
 
@@ -298,6 +346,7 @@ void Entity::onTimeout() {
         sendTo(nextLeader, msg);
     } else {
         Message msg(viewChangeMsg.dump());
+        std::cout << "[Node " << getNodeId() << "] Broadcasting ViewChange for new view " << newView << "\n";
         sendToAll(msg);
     }
 
@@ -308,21 +357,23 @@ void Entity::onTimeout() {
 
 void Entity::sendNewViewToNextLeader() {
     int currentView = entityInfo["view"].get<int>();
-    if(currentView==0){
-        currentView-=1;
-    }
-    currentView+=1;
+    if (currentView == 0) currentView -= 1;
+    currentView += 1;
     entityInfo["view"] = currentView;
     int nextLeader = (currentView + 1) % peerPorts.size();
-    
-    nlohmann::json newViewMsg;
-    newViewMsg["type"] = "NewViewforHotstuff";
-    newViewMsg["new_view"] = currentView;
-    newViewMsg["message_sender_id"] = getNodeId();
-    Message msg(newViewMsg.dump());
-    sendTo(nextLeader, msg);
-    std::cout << "[Node " << getNodeId() << "] Sent NewView message to node " << nextLeader << "\n";
 
+    // Fast path: send typed ProtocolEnvelope over gRPC
+    // Use a lightweight PrePrepare envelope to carry NewView (type field set to "NewView")
+    bedrock::ProtocolEnvelope env;
+    auto* m = env.mutable_pre_prepare();
+    m->set_view(currentView);
+    m->set_sequence(currentView);                 // reuse view as sequence for routing
+    m->set_operation("NewViewforHotstuff");                 // operation marker
+    m->set_message_sender_id(getNodeId());
+    m->set_type("NewViewforHotstuff");                      // requires proto field 'type' on PrePrepare
+
+    sendProtocolTo(nextLeader, env);
+    std::cout << "[Node " << getNodeId() << "] Sent NewView (proto) to node " << nextLeader << "\n";
 }
 
 void Entity::printDataStore() {
@@ -353,13 +404,18 @@ void Entity::start() {
     processingThread = std::thread(&Entity::processMessages, this);
     //std::this_thread::sleep_for(std::chrono::milliseconds(0)); 
     std::string protocol = protocolConfig["protocol"] ? protocolConfig["protocol"].as<std::string>() : "";
-    if(protocol=="Hotstuff" || protocol=="ChainedHotstuff"){
+    if(protocol=="Hotstuff" || protocol=="ChainedHotstuff" || protocol=="Hotstuff2"){
         sendNewViewToNextLeader();
     }
     
 }
 void Entity::stop() {
     std::cout << "[Entity] Stopping entity: " << _entityState.getRole() << "\n";
+    // Flush any remaining batched rows for this node before shutdown
+    {
+        std::lock_guard<std::mutex> lk(s_csvBatchMtx);
+        flushCsvBatchUnlocked(getNodeId());
+    }
     running = false;
 
     // connection.stopListening();  // removed to avoid TCP use
@@ -429,7 +485,11 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
     if (auto p = dynamic_cast<const ProtoMessage*>(event)) {
         try {
             std::string messageType = p->phase();
-            // std::cout << "[Node " << getNodeId() << "] Handling ProtoMessage of type: " << messageType << "\n";
+            messageType = p->explicit_type();
+            if(getNodeId()==2){
+                std::cout << "[Node " << getNodeId() << "] Handling ProtoMessage of type: " << messageType << "\n";
+            }
+            //std::cout << "[Node " << getNodeId() << "] Handling ProtoMessage of type: " << messageType << "\n";
             if (messageType.empty()) return;
 
             int seq = p->sequence();
@@ -465,8 +525,9 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                     auto evt = EventFactory::getInstance().createEvent(actionName, params);
                     if (evt) {
                         const Message* msgPtr = dynamic_cast<const Message*>(event);
-                        //std::cout << "[Node " << getNodeId() << "] Preparing to execute " << actionName
-                                 // << " for ProtoMessage: " << std::flush;
+                        if(getNodeId()==2){
+                        std::cout << "[Node " << getNodeId() << "] Preparing to execute " << actionName << " for ProtoMessage: " << messageType << std::endl;
+                        }
                         if (!evt->execute(this, msgPtr, &sequenceStates[seq])) {
                             actionsSucceeded = false;
                             break;
@@ -598,7 +659,7 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                         }
                         //std::cout << "[Node " << getNodeId() << "] Executing action: "  << actionName << " with params: " << params.dump() << "\n";
                     }
-                    std::cout << "[Node " << getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "type: " << j["type"] << "\n";
+                    // std::cout << "[Node " << getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "type: " << j["type"] << "\n";
                     auto eventPtr = EventFactory::getInstance().createEvent(actionName, params);
                     if (eventPtr) {
                         bool shouldContinue = eventPtr->execute(this, message, &sequenceStates[seq]);
@@ -645,55 +706,55 @@ void Entity::sendToAll(const Message& message) {
     }
 }
 void Entity::sendTo(int peer, const Message& message) {
-    // Peer 1000 -> client via TCP
-    if (peer == 1000) {
-
-        // if (!sendToClientViaTcp(message.getContent())) {
-        //     std::cerr << "[Node " << getNodeId() << "] Failed to send to client via TCP (peer==1000)\n";
-        // }
-        return;
-    }
+    if (peer == 1000) return;
     if (peer == nodeId || peer == (5000 + nodeId)) return;
-    if (grpcPortForPeer(peer) < 0) {
-        std::cerr << "[Node " << getNodeId() << "] Skipping invalid peer " << peer << "\n";
-        return;
-    }
+    if (grpcPortForPeer(peer) < 0) return;
 
-    // Prefer typed gRPC for basic phases
-    bedrock::ProtocolEnvelope env;
-    const bool isTyped = buildEnvelopeFromJson(message.getContent(), env);
+    // Capture message content by value for the async thread
+    std::string content = message.getContent();
 
-    try {
-        auto* stub = getStub(peer);
-        if (!stub) {
-            std::cerr << "[Node " << getNodeId() << "] No gRPC stub for peer " << peer << "\n";
-            return;
+    std::thread([this, peer, content]() {
+        // Apply delay between nodes
+        auto delayIt = nodeDelays.find({nodeId, peer});
+        if (delayIt != nodeDelays.end() && delayIt->second > 0) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(delayIt->second));
         }
-        grpc::ClientContext ctx;
-        bedrock::Ack ack;
 
-        if (isTyped) {
-            auto status = stub->SendProtocol(&ctx, env, &ack);
-            if (!status.ok() || !ack.ok()) {
-                std::cerr << "[Node " << getNodeId() << "] gRPC SendProtocol to peer "
-                          << peer << " failed: " << status.error_code() << " "
-                          << status.error_message() << " | ack=" << ack.msg() << "\n";
+        bedrock::ProtocolEnvelope env;
+        const bool isTyped = buildEnvelopeFromJson(content, env);
+
+        try {
+            auto* stub = getStub(peer);
+            if (!stub) {
+                std::cerr << "[Node " << getNodeId() << "] No gRPC stub for peer " << peer << "\n";
+                return;
             }
-        } else {
-            bedrock::RawJson req;
-            req.set_json(message.getContent());
-            bedrock::RawJson resp;
-            auto status = stub->SendRawJson(&ctx, req, &resp);
-            if (!status.ok()) {
-                std::cerr << "[Node " << getNodeId() << "] gRPC SendRawJson to peer "
-                          << peer << " failed: " << status.error_code() << " "
-                          << status.error_message() << "\n";
+            grpc::ClientContext ctx;
+            bedrock::Ack ack;
+
+            if (isTyped) {
+                auto status = stub->SendProtocol(&ctx, env, &ack);
+                if (!status.ok() || !ack.ok()) {
+                    std::cerr << "[Node " << getNodeId() << "] gRPC SendProtocol to peer "
+                              << peer << " failed: " << status.error_code() << " "
+                              << status.error_message() << " | ack=" << ack.msg() << "\n";
+                }
+            } else {
+                bedrock::RawJson req;
+                req.set_json(content);
+                bedrock::RawJson resp;
+                auto status = stub->SendRawJson(&ctx, req, &resp);
+                if (!status.ok()) {
+                    std::cerr << "[Node " << getNodeId() << "] gRPC SendRawJson to peer "
+                              << peer << " failed: " << status.error_code() << " "
+                              << status.error_message() << "\n";
+                }
             }
+        } catch (const std::exception& e) {
+            std::cerr << "[Node " << getNodeId() << "] gRPC send exception to peer "
+                      << peer << ": " << e.what() << "\n";
         }
-    } catch (const std::exception& e) {
-        std::cerr << "[Node " << getNodeId() << "] gRPC send exception to peer "
-                  << peer << ": " << e.what() << "\n";
-    }
+    }).detach();
 }
 EntityState& Entity::getState() { return _entityState; }
 YAML::Node Entity::getPhaseConfig(const std::string& phase) const { return protocolConfig["phases"][phase]; }
@@ -709,7 +770,7 @@ void Entity::removeSequenceState(int seq) {
 void Entity::markOperationProcessed(int seq) {
     std::lock_guard<std::mutex> g(processedMtx);
     auto [it, inserted] = processedOperations.insert(seq);
-    if (inserted) {
+    if (inserted && seq%1==0) {
         auto now = std::chrono::system_clock::now();
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % std::chrono::seconds(1);
         std::time_t tt = std::chrono::system_clock::to_time_t(now);
@@ -720,6 +781,26 @@ void Entity::markOperationProcessed(int seq) {
                   << " at " << std::put_time(&tm, "%F %T") << '.'
                   << std::setw(3) << std::setfill('0') << ms.count()
                   << "\n";
+
+        // Store every operation; flush to CSV when (seq % 99) == 0
+        try {
+            const auto ts_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                   std::chrono::system_clock::now().time_since_epoch()).count();
+            std::string opStr;
+            // If you track committed operation per-seq, include it
+            if (commitOperations.count(seq)) {
+                opStr = commitOperations.at(seq);
+            }
+            {
+                std::lock_guard<std::mutex> lk(s_csvBatchMtx);
+                s_csvBatches[getNodeId()].emplace_back(seq, ts_ms, opStr);
+                if (seq % 99 == 0) {
+                    flushCsvBatchUnlocked(getNodeId());
+                }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[Node " << getNodeId() << "] CSV batch error: " << e.what() << "\n";
+        }
     }
 }
 void Entity::printCommittedMessages() {
@@ -957,33 +1038,51 @@ void Entity::sendProtocolToAll(const bedrock::ProtocolEnvelope& env) {
 void Entity::sendProtocolTo(int peer, const bedrock::ProtocolEnvelope& env) {
     if (peer == nodeId || peer == (5000 + nodeId) || peer == 1000) return;
     if (grpcPortForPeer(peer) < 0) {
-        std::cerr << "[Node " << getNodeId() << "] Skipping invalid peer " << peer << "\n";
         return;
     }
+
+    // Launch async so delays don't block the sender sequentially
+    std::thread([this, peer, env]() {
+        // Apply delay between nodes
+        auto delayIt = nodeDelays.find({nodeId, peer});
+        if (delayIt != nodeDelays.end() && delayIt->second > 0) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(delayIt->second));
+        }
+
+        try {
+            auto* stub = getStub(peer);
+            if (!stub) {
+                std::cerr << "[Node " << getNodeId() << "] No gRPC stub for peer " << peer << "\n";
+                return;
+            }
+            grpc::ClientContext ctx;
+            bedrock::Ack ack;
+            auto status = stub->SendProtocol(&ctx, env, &ack);
+            if (!status.ok() || !ack.ok()) {
+                std::cerr << "[Node " << getNodeId() << "] gRPC SendProtocol to peer "
+                          << peer << " failed: " << status.error_code() << " "
+                          << status.error_message() << " | ack=" << ack.msg() << "\n";
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[Node " << getNodeId() << "] gRPC send exception to peer "
+                      << peer << ": " << e.what() << "\n";
+        }
+    }).detach();
+}
+
+void Entity::loadDelaysFromConfig(const std::string& configFile) {
     try {
-        auto* stub = getStub(peer); // assumes existing getStub(peers) method
-        if (!stub) {
-            std::cerr << "[Node " << getNodeId() << "] No gRPC stub for peer " << peer << "\n";
-            return;
-        }
-        grpc::ClientContext ctx;
-        bedrock::Ack ack;
-        auto status = stub->SendProtocol(&ctx, env, &ack);
-        if (!status.ok() || !ack.ok()) {
-            std::cerr << "[Node " << getNodeId() << "] gRPC SendProtocol to peer "
-                      << peer << " failed: " << status.error_code() << " "
-                      << status.error_message() << " | ack=" << ack.msg() << "\n";
-        }
-        else{
-            //std::cout << "[Node " << getNodeId() << "] gRPC SendProtocol to peer "
-            //          << peer << " succeeded.\n";
-            //print env
-            //  std::cout << "[Node " << getNodeId() << "] Sent ProtocolEnvelope to peer "
-            //            << peer << ": " << env.DebugString() << "\n";
+        YAML::Node config = YAML::LoadFile(configFile);
+        if (config["delays"]) {
+            for (const auto& delayEntry : config["delays"]) {
+                int from = delayEntry["from"].as<int>();
+                int to = delayEntry["to"].as<int>();
+                int delay = delayEntry["delay"].as<int>();
+                nodeDelays[{from, to}] = delay;
+            }
         }
     } catch (const std::exception& e) {
-        std::cerr << "[Node " << getNodeId() << "] gRPC send exception to peer "
-                  << peer << ": " << e.what() << "\n";
+        std::cerr << "[Node " << getNodeId() << "] Failed to load delays from config: " << e.what() << "\n";
     }
 }
 

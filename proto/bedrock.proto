@@ -12,6 +12,19 @@ message Transaction {
   int32 amount = 3;
 }
 
+// New lightweight aggregated message for quorum piggyback
+message AggregatedMessage {
+  int32 view = 1;
+  int32 sequence = 2;
+  string digest = 3;
+  int32 message_sender_id = 4;
+  string signature = 5;
+  int32 client_listen_port = 6;
+  string clientid = 7;
+  string timestamp = 8;
+  Transaction transaction = 9;
+}
+
 message ClientRequest {
   string message_sender_id = 1;
   string timestamp = 2;
@@ -23,33 +36,42 @@ message ClientRequest {
 }
 
 message PrePrepare {
-  int32 view = 1;
-  int32 sequence = 2;
-  string timestamp = 3;
-  string operation = 4;
-  Transaction transaction = 5;
-  int32 client_listen_port = 6;
-  string signature = 7;
-  int32 message_sender_id = 8;
-  string client_id = 9; // NEW
+  int32  view               = 1;
+  int32  sequence           = 2;
+  string operation          = 3;
+  string timestamp          = 4;
+  int32  client_listen_port = 5;
+  Transaction transaction   = 6;
+  string signature          = 7;
+  int32  message_sender_id  = 8;
+  string client_id          = 9;
+  repeated AggregatedMessage combined_messages = 10;
+  string qc = 11;
+  string type = 12; // NEW: mirrors JSON "type" (e.g., "PrePrepare")
 }
 
 message Prepare {
-  int32 view = 1;
-  int32 sequence = 2;
-  string operation = 3;
-  int32 message_sender_id = 4;
+  int32  view               = 1;
+  int32  sequence           = 2;
+  string operation          = 3;
+  int32  message_sender_id  = 4;
+  repeated AggregatedMessage combined_messages = 5;
+  string qc = 6;
+  string type = 7; // NEW
 }
 
 message Commit {
-  int32 view = 1;
-  int32 sequence = 2;
-  string operation = 3;
-  int32 message_sender_id = 4;
+  int32  view               = 1;
+  int32  sequence           = 2;
+  string operation          = 3;
+  int32  message_sender_id  = 4;
+  repeated AggregatedMessage combined_messages = 5;
+  string qc = 6;
+  string type = 7; // NEW
 }
 
 message ProtocolEnvelope {
-  oneof kind {
+  oneof payload {
     PrePrepare pre_prepare = 1;
     Prepare prepare = 2;
     Commit commit = 3;

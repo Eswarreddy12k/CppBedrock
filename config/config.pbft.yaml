@@ -11,7 +11,7 @@ phases:
     quorum: 1
     next_state: prepare
     actions:
-      #- "startTimer"
+      - "startTimer"
       - "storeMessage"
       - verifySignature:
           public_key: "../keys/server_${client_id}_public.pem"
@@ -21,17 +21,21 @@ phases:
     quorum: 2f+1
     next_state: commit
     actions:
+      - verifySignature:
+          public_key: "../keys/server_${client_id}_public.pem"
       - "storeMessage"
       - "checkQuorum"
-      #- "resetTimer"
+      - "resetTimer"
       - "broadcast"
   commit:
     quorum: 2f+1
     next_state: Request
     actions:
+      - verifySignature:
+          public_key: "../keys/server_${client_id}_public.pem"
       - "storeMessage"
       - "checkQuorum"
-      #- "stopTimer"
+      - "stopTimer"
       - "complete"
   ViewChange:
     quorum: 2f+1

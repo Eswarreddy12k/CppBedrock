@@ -16,6 +16,7 @@ phases:
       - "startTimer"
       - "storeMessage"
       - "unicastifParticipant"
+      - "broadcastifLeader"
   Commit:
     quorum: 2f+1
     next_state: Decide
@@ -23,12 +24,13 @@ phases:
       - "checkQC"
       - "resetTimer"
       - "storeMessage"
+      - "unicastifParticipant"
       - "checkQuorum"
       - "UpdateLockedQC"
       - "broadcastifLeader"
-      - "unicastifParticipant"
+      
   Decide:
-    quorum: 2f+1
+    quorum: 1
     next_state: Request
     actions:
       - "checkQC"

@@ -57,6 +57,10 @@ class Ack;
 struct AckDefaultTypeInternal;
 extern AckDefaultTypeInternal _Ack_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull Ack_class_data_;
+class AggregatedMessage;
+struct AggregatedMessageDefaultTypeInternal;
+extern AggregatedMessageDefaultTypeInternal _AggregatedMessage_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull AggregatedMessage_class_data_;
 class ClientRequest;
 struct ClientRequestDefaultTypeInternal;
 extern ClientRequestDefaultTypeInternal _ClientRequest_default_instance_;
@@ -519,470 +523,6 @@ class RawJson final : public ::google::protobuf::Message
 extern const ::google::protobuf::internal::ClassDataFull RawJson_class_data_;
 // -------------------------------------------------------------------
 
-class Prepare final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:bedrock.Prepare) */ {
- public:
-  inline Prepare() : Prepare(nullptr) {}
-  ~Prepare() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(Prepare* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(Prepare));
-  }
-#endif
-
-  template <typename = void>
-  explicit PROTOBUF_CONSTEXPR Prepare(::google::protobuf::internal::ConstantInitialized);
-
-  inline Prepare(const Prepare& from) : Prepare(nullptr, from) {}
-  inline Prepare(Prepare&& from) noexcept
-      : Prepare(nullptr, ::std::move(from)) {}
-  inline Prepare& operator=(const Prepare& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline Prepare& operator=(Prepare&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const Prepare& default_instance() {
-    return *reinterpret_cast<const Prepare*>(
-        &_Prepare_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 4;
-  friend void swap(Prepare& a, Prepare& b) { a.Swap(&b); }
-  inline void Swap(Prepare* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(Prepare* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  Prepare* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<Prepare>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const Prepare& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const Prepare& from) { Prepare::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  ::size_t ByteSizeLong() const final;
-  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(Prepare* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "bedrock.Prepare"; }
-
- protected:
-  explicit Prepare(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  Prepare(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Prepare& from);
-  Prepare(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, Prepare&& from) noexcept
-      : Prepare(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kOperationFieldNumber = 3,
-    kViewFieldNumber = 1,
-    kSequenceFieldNumber = 2,
-    kMessageSenderIdFieldNumber = 4,
-  };
-  // string operation = 3;
-  void clear_operation() ;
-  const ::std::string& operation() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_operation(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_operation();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_operation();
-  void set_allocated_operation(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_operation() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_operation(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_operation();
-
-  public:
-  // int32 view = 1;
-  void clear_view() ;
-  ::int32_t view() const;
-  void set_view(::int32_t value);
-
-  private:
-  ::int32_t _internal_view() const;
-  void _internal_set_view(::int32_t value);
-
-  public:
-  // int32 sequence = 2;
-  void clear_sequence() ;
-  ::int32_t sequence() const;
-  void set_sequence(::int32_t value);
-
-  private:
-  ::int32_t _internal_sequence() const;
-  void _internal_set_sequence(::int32_t value);
-
-  public:
-  // int32 message_sender_id = 4;
-  void clear_message_sender_id() ;
-  ::int32_t message_sender_id() const;
-  void set_message_sender_id(::int32_t value);
-
-  private:
-  ::int32_t _internal_message_sender_id() const;
-  void _internal_set_message_sender_id(::int32_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:bedrock.Prepare)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<2, 4,
-                                   0, 33,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const Prepare& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::ArenaStringPtr operation_;
-    ::int32_t view_;
-    ::int32_t sequence_;
-    ::int32_t message_sender_id_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_bedrock_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull Prepare_class_data_;
-// -------------------------------------------------------------------
-
-class Commit final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:bedrock.Commit) */ {
- public:
-  inline Commit() : Commit(nullptr) {}
-  ~Commit() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(Commit* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(Commit));
-  }
-#endif
-
-  template <typename = void>
-  explicit PROTOBUF_CONSTEXPR Commit(::google::protobuf::internal::ConstantInitialized);
-
-  inline Commit(const Commit& from) : Commit(nullptr, from) {}
-  inline Commit(Commit&& from) noexcept
-      : Commit(nullptr, ::std::move(from)) {}
-  inline Commit& operator=(const Commit& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline Commit& operator=(Commit&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const Commit& default_instance() {
-    return *reinterpret_cast<const Commit*>(
-        &_Commit_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 5;
-  friend void swap(Commit& a, Commit& b) { a.Swap(&b); }
-  inline void Swap(Commit* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(Commit* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  Commit* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<Commit>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const Commit& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const Commit& from) { Commit::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  ::size_t ByteSizeLong() const final;
-  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(Commit* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "bedrock.Commit"; }
-
- protected:
-  explicit Commit(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  Commit(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Commit& from);
-  Commit(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, Commit&& from) noexcept
-      : Commit(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kOperationFieldNumber = 3,
-    kViewFieldNumber = 1,
-    kSequenceFieldNumber = 2,
-    kMessageSenderIdFieldNumber = 4,
-  };
-  // string operation = 3;
-  void clear_operation() ;
-  const ::std::string& operation() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_operation(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_operation();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_operation();
-  void set_allocated_operation(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_operation() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_operation(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_operation();
-
-  public:
-  // int32 view = 1;
-  void clear_view() ;
-  ::int32_t view() const;
-  void set_view(::int32_t value);
-
-  private:
-  ::int32_t _internal_view() const;
-  void _internal_set_view(::int32_t value);
-
-  public:
-  // int32 sequence = 2;
-  void clear_sequence() ;
-  ::int32_t sequence() const;
-  void set_sequence(::int32_t value);
-
-  private:
-  ::int32_t _internal_sequence() const;
-  void _internal_set_sequence(::int32_t value);
-
-  public:
-  // int32 message_sender_id = 4;
-  void clear_message_sender_id() ;
-  ::int32_t message_sender_id() const;
-  void set_message_sender_id(::int32_t value);
-
-  private:
-  ::int32_t _internal_message_sender_id() const;
-  void _internal_set_message_sender_id(::int32_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:bedrock.Commit)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<2, 4,
-                                   0, 32,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const Commit& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::ArenaStringPtr operation_;
-    ::int32_t view_;
-    ::int32_t sequence_;
-    ::int32_t message_sender_id_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_bedrock_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull Commit_class_data_;
-// -------------------------------------------------------------------
-
 class Ack final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:bedrock.Ack) */ {
  public:
@@ -1038,7 +578,7 @@ class Ack final : public ::google::protobuf::Message
     return *reinterpret_cast<const Ack*>(
         &_Ack_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 7;
+  static constexpr int kIndexInFileMessages = 8;
   friend void swap(Ack& a, Ack& b) { a.Swap(&b); }
   inline void Swap(Ack* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1191,318 +731,6 @@ class Ack final : public ::google::protobuf::Message
 extern const ::google::protobuf::internal::ClassDataFull Ack_class_data_;
 // -------------------------------------------------------------------
 
-class PrePrepare final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:bedrock.PrePrepare) */ {
- public:
-  inline PrePrepare() : PrePrepare(nullptr) {}
-  ~PrePrepare() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(PrePrepare* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(PrePrepare));
-  }
-#endif
-
-  template <typename = void>
-  explicit PROTOBUF_CONSTEXPR PrePrepare(::google::protobuf::internal::ConstantInitialized);
-
-  inline PrePrepare(const PrePrepare& from) : PrePrepare(nullptr, from) {}
-  inline PrePrepare(PrePrepare&& from) noexcept
-      : PrePrepare(nullptr, ::std::move(from)) {}
-  inline PrePrepare& operator=(const PrePrepare& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline PrePrepare& operator=(PrePrepare&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const PrePrepare& default_instance() {
-    return *reinterpret_cast<const PrePrepare*>(
-        &_PrePrepare_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 3;
-  friend void swap(PrePrepare& a, PrePrepare& b) { a.Swap(&b); }
-  inline void Swap(PrePrepare* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(PrePrepare* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  PrePrepare* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<PrePrepare>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const PrePrepare& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const PrePrepare& from) { PrePrepare::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  ::size_t ByteSizeLong() const final;
-  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(PrePrepare* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "bedrock.PrePrepare"; }
-
- protected:
-  explicit PrePrepare(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  PrePrepare(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const PrePrepare& from);
-  PrePrepare(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, PrePrepare&& from) noexcept
-      : PrePrepare(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kTimestampFieldNumber = 3,
-    kOperationFieldNumber = 4,
-    kSignatureFieldNumber = 7,
-    kClientIdFieldNumber = 9,
-    kTransactionFieldNumber = 5,
-    kViewFieldNumber = 1,
-    kSequenceFieldNumber = 2,
-    kClientListenPortFieldNumber = 6,
-    kMessageSenderIdFieldNumber = 8,
-  };
-  // string timestamp = 3;
-  void clear_timestamp() ;
-  const ::std::string& timestamp() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_timestamp(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_timestamp();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_timestamp();
-  void set_allocated_timestamp(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_timestamp() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_timestamp(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_timestamp();
-
-  public:
-  // string operation = 4;
-  void clear_operation() ;
-  const ::std::string& operation() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_operation(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_operation();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_operation();
-  void set_allocated_operation(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_operation() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_operation(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_operation();
-
-  public:
-  // string signature = 7;
-  void clear_signature() ;
-  const ::std::string& signature() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_signature(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_signature();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_signature();
-  void set_allocated_signature(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_signature() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_signature(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_signature();
-
-  public:
-  // string client_id = 9;
-  void clear_client_id() ;
-  const ::std::string& client_id() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_client_id(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_client_id();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_client_id();
-  void set_allocated_client_id(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_client_id() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_client_id(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_client_id();
-
-  public:
-  // .bedrock.Transaction transaction = 5;
-  bool has_transaction() const;
-  void clear_transaction() ;
-  const ::bedrock::Transaction& transaction() const;
-  [[nodiscard]] ::bedrock::Transaction* PROTOBUF_NULLABLE release_transaction();
-  ::bedrock::Transaction* PROTOBUF_NONNULL mutable_transaction();
-  void set_allocated_transaction(::bedrock::Transaction* PROTOBUF_NULLABLE value);
-  void unsafe_arena_set_allocated_transaction(::bedrock::Transaction* PROTOBUF_NULLABLE value);
-  ::bedrock::Transaction* PROTOBUF_NULLABLE unsafe_arena_release_transaction();
-
-  private:
-  const ::bedrock::Transaction& _internal_transaction() const;
-  ::bedrock::Transaction* PROTOBUF_NONNULL _internal_mutable_transaction();
-
-  public:
-  // int32 view = 1;
-  void clear_view() ;
-  ::int32_t view() const;
-  void set_view(::int32_t value);
-
-  private:
-  ::int32_t _internal_view() const;
-  void _internal_set_view(::int32_t value);
-
-  public:
-  // int32 sequence = 2;
-  void clear_sequence() ;
-  ::int32_t sequence() const;
-  void set_sequence(::int32_t value);
-
-  private:
-  ::int32_t _internal_sequence() const;
-  void _internal_set_sequence(::int32_t value);
-
-  public:
-  // int32 client_listen_port = 6;
-  void clear_client_listen_port() ;
-  ::int32_t client_listen_port() const;
-  void set_client_listen_port(::int32_t value);
-
-  private:
-  ::int32_t _internal_client_listen_port() const;
-  void _internal_set_client_listen_port(::int32_t value);
-
-  public:
-  // int32 message_sender_id = 8;
-  void clear_message_sender_id() ;
-  ::int32_t message_sender_id() const;
-  void set_message_sender_id(::int32_t value);
-
-  private:
-  ::int32_t _internal_message_sender_id() const;
-  void _internal_set_message_sender_id(::int32_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:bedrock.PrePrepare)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<4, 9,
-                                   1, 71,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const PrePrepare& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::ArenaStringPtr timestamp_;
-    ::google::protobuf::internal::ArenaStringPtr operation_;
-    ::google::protobuf::internal::ArenaStringPtr signature_;
-    ::google::protobuf::internal::ArenaStringPtr client_id_;
-    ::bedrock::Transaction* PROTOBUF_NULLABLE transaction_;
-    ::int32_t view_;
-    ::int32_t sequence_;
-    ::int32_t client_listen_port_;
-    ::int32_t message_sender_id_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_bedrock_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull PrePrepare_class_data_;
-// -------------------------------------------------------------------
-
 class ClientRequest final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:bedrock.ClientRequest) */ {
  public:
@@ -1558,7 +786,7 @@ class ClientRequest final : public ::google::protobuf::Message
     return *reinterpret_cast<const ClientRequest*>(
         &_ClientRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 2;
+  static constexpr int kIndexInFileMessages = 3;
   friend void swap(ClientRequest& a, ClientRequest& b) { a.Swap(&b); }
   inline void Swap(ClientRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1791,6 +1019,1253 @@ class ClientRequest final : public ::google::protobuf::Message
 extern const ::google::protobuf::internal::ClassDataFull ClientRequest_class_data_;
 // -------------------------------------------------------------------
 
+class AggregatedMessage final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:bedrock.AggregatedMessage) */ {
+ public:
+  inline AggregatedMessage() : AggregatedMessage(nullptr) {}
+  ~AggregatedMessage() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(AggregatedMessage* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(AggregatedMessage));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR AggregatedMessage(::google::protobuf::internal::ConstantInitialized);
+
+  inline AggregatedMessage(const AggregatedMessage& from) : AggregatedMessage(nullptr, from) {}
+  inline AggregatedMessage(AggregatedMessage&& from) noexcept
+      : AggregatedMessage(nullptr, ::std::move(from)) {}
+  inline AggregatedMessage& operator=(const AggregatedMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline AggregatedMessage& operator=(AggregatedMessage&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const AggregatedMessage& default_instance() {
+    return *reinterpret_cast<const AggregatedMessage*>(
+        &_AggregatedMessage_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 2;
+  friend void swap(AggregatedMessage& a, AggregatedMessage& b) { a.Swap(&b); }
+  inline void Swap(AggregatedMessage* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(AggregatedMessage* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  AggregatedMessage* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<AggregatedMessage>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const AggregatedMessage& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const AggregatedMessage& from) { AggregatedMessage::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(AggregatedMessage* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "bedrock.AggregatedMessage"; }
+
+ protected:
+  explicit AggregatedMessage(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  AggregatedMessage(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const AggregatedMessage& from);
+  AggregatedMessage(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, AggregatedMessage&& from) noexcept
+      : AggregatedMessage(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kDigestFieldNumber = 3,
+    kSignatureFieldNumber = 5,
+    kClientidFieldNumber = 7,
+    kTimestampFieldNumber = 8,
+    kTransactionFieldNumber = 9,
+    kViewFieldNumber = 1,
+    kSequenceFieldNumber = 2,
+    kMessageSenderIdFieldNumber = 4,
+    kClientListenPortFieldNumber = 6,
+  };
+  // string digest = 3;
+  void clear_digest() ;
+  const ::std::string& digest() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_digest(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_digest();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_digest();
+  void set_allocated_digest(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_digest() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_digest(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_digest();
+
+  public:
+  // string signature = 5;
+  void clear_signature() ;
+  const ::std::string& signature() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_signature(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_signature();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_signature();
+  void set_allocated_signature(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_signature() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_signature(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_signature();
+
+  public:
+  // string clientid = 7;
+  void clear_clientid() ;
+  const ::std::string& clientid() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_clientid(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_clientid();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_clientid();
+  void set_allocated_clientid(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_clientid() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_clientid(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_clientid();
+
+  public:
+  // string timestamp = 8;
+  void clear_timestamp() ;
+  const ::std::string& timestamp() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_timestamp(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_timestamp();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_timestamp();
+  void set_allocated_timestamp(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_timestamp() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_timestamp(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_timestamp();
+
+  public:
+  // .bedrock.Transaction transaction = 9;
+  bool has_transaction() const;
+  void clear_transaction() ;
+  const ::bedrock::Transaction& transaction() const;
+  [[nodiscard]] ::bedrock::Transaction* PROTOBUF_NULLABLE release_transaction();
+  ::bedrock::Transaction* PROTOBUF_NONNULL mutable_transaction();
+  void set_allocated_transaction(::bedrock::Transaction* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_transaction(::bedrock::Transaction* PROTOBUF_NULLABLE value);
+  ::bedrock::Transaction* PROTOBUF_NULLABLE unsafe_arena_release_transaction();
+
+  private:
+  const ::bedrock::Transaction& _internal_transaction() const;
+  ::bedrock::Transaction* PROTOBUF_NONNULL _internal_mutable_transaction();
+
+  public:
+  // int32 view = 1;
+  void clear_view() ;
+  ::int32_t view() const;
+  void set_view(::int32_t value);
+
+  private:
+  ::int32_t _internal_view() const;
+  void _internal_set_view(::int32_t value);
+
+  public:
+  // int32 sequence = 2;
+  void clear_sequence() ;
+  ::int32_t sequence() const;
+  void set_sequence(::int32_t value);
+
+  private:
+  ::int32_t _internal_sequence() const;
+  void _internal_set_sequence(::int32_t value);
+
+  public:
+  // int32 message_sender_id = 4;
+  void clear_message_sender_id() ;
+  ::int32_t message_sender_id() const;
+  void set_message_sender_id(::int32_t value);
+
+  private:
+  ::int32_t _internal_message_sender_id() const;
+  void _internal_set_message_sender_id(::int32_t value);
+
+  public:
+  // int32 client_listen_port = 6;
+  void clear_client_listen_port() ;
+  ::int32_t client_listen_port() const;
+  void set_client_listen_port(::int32_t value);
+
+  private:
+  ::int32_t _internal_client_listen_port() const;
+  void _internal_set_client_listen_port(::int32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:bedrock.AggregatedMessage)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<4, 9,
+                                   1, 74,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const AggregatedMessage& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr digest_;
+    ::google::protobuf::internal::ArenaStringPtr signature_;
+    ::google::protobuf::internal::ArenaStringPtr clientid_;
+    ::google::protobuf::internal::ArenaStringPtr timestamp_;
+    ::bedrock::Transaction* PROTOBUF_NULLABLE transaction_;
+    ::int32_t view_;
+    ::int32_t sequence_;
+    ::int32_t message_sender_id_;
+    ::int32_t client_listen_port_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_bedrock_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull AggregatedMessage_class_data_;
+// -------------------------------------------------------------------
+
+class Prepare final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:bedrock.Prepare) */ {
+ public:
+  inline Prepare() : Prepare(nullptr) {}
+  ~Prepare() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(Prepare* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(Prepare));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR Prepare(::google::protobuf::internal::ConstantInitialized);
+
+  inline Prepare(const Prepare& from) : Prepare(nullptr, from) {}
+  inline Prepare(Prepare&& from) noexcept
+      : Prepare(nullptr, ::std::move(from)) {}
+  inline Prepare& operator=(const Prepare& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Prepare& operator=(Prepare&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Prepare& default_instance() {
+    return *reinterpret_cast<const Prepare*>(
+        &_Prepare_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 5;
+  friend void swap(Prepare& a, Prepare& b) { a.Swap(&b); }
+  inline void Swap(Prepare* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Prepare* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  Prepare* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<Prepare>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const Prepare& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const Prepare& from) { Prepare::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(Prepare* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "bedrock.Prepare"; }
+
+ protected:
+  explicit Prepare(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  Prepare(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Prepare& from);
+  Prepare(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, Prepare&& from) noexcept
+      : Prepare(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kCombinedMessagesFieldNumber = 5,
+    kOperationFieldNumber = 3,
+    kQcFieldNumber = 6,
+    kTypeFieldNumber = 7,
+    kViewFieldNumber = 1,
+    kSequenceFieldNumber = 2,
+    kMessageSenderIdFieldNumber = 4,
+  };
+  // repeated .bedrock.AggregatedMessage combined_messages = 5;
+  int combined_messages_size() const;
+  private:
+  int _internal_combined_messages_size() const;
+
+  public:
+  void clear_combined_messages() ;
+  ::bedrock::AggregatedMessage* PROTOBUF_NONNULL mutable_combined_messages(int index);
+  ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL mutable_combined_messages();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& _internal_combined_messages() const;
+  ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL _internal_mutable_combined_messages();
+  public:
+  const ::bedrock::AggregatedMessage& combined_messages(int index) const;
+  ::bedrock::AggregatedMessage* PROTOBUF_NONNULL add_combined_messages();
+  const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& combined_messages() const;
+  // string operation = 3;
+  void clear_operation() ;
+  const ::std::string& operation() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_operation(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_operation();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_operation();
+  void set_allocated_operation(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_operation() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_operation(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_operation();
+
+  public:
+  // string qc = 6;
+  void clear_qc() ;
+  const ::std::string& qc() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_qc(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_qc();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_qc();
+  void set_allocated_qc(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_qc() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_qc(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_qc();
+
+  public:
+  // string type = 7;
+  void clear_type() ;
+  const ::std::string& type() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_type(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_type();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_type();
+  void set_allocated_type(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_type() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_type(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_type();
+
+  public:
+  // int32 view = 1;
+  void clear_view() ;
+  ::int32_t view() const;
+  void set_view(::int32_t value);
+
+  private:
+  ::int32_t _internal_view() const;
+  void _internal_set_view(::int32_t value);
+
+  public:
+  // int32 sequence = 2;
+  void clear_sequence() ;
+  ::int32_t sequence() const;
+  void set_sequence(::int32_t value);
+
+  private:
+  ::int32_t _internal_sequence() const;
+  void _internal_set_sequence(::int32_t value);
+
+  public:
+  // int32 message_sender_id = 4;
+  void clear_message_sender_id() ;
+  ::int32_t message_sender_id() const;
+  void set_message_sender_id(::int32_t value);
+
+  private:
+  ::int32_t _internal_message_sender_id() const;
+  void _internal_set_message_sender_id(::int32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:bedrock.Prepare)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<3, 7,
+                                   1, 39,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const Prepare& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::bedrock::AggregatedMessage > combined_messages_;
+    ::google::protobuf::internal::ArenaStringPtr operation_;
+    ::google::protobuf::internal::ArenaStringPtr qc_;
+    ::google::protobuf::internal::ArenaStringPtr type_;
+    ::int32_t view_;
+    ::int32_t sequence_;
+    ::int32_t message_sender_id_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_bedrock_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull Prepare_class_data_;
+// -------------------------------------------------------------------
+
+class PrePrepare final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:bedrock.PrePrepare) */ {
+ public:
+  inline PrePrepare() : PrePrepare(nullptr) {}
+  ~PrePrepare() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(PrePrepare* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(PrePrepare));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR PrePrepare(::google::protobuf::internal::ConstantInitialized);
+
+  inline PrePrepare(const PrePrepare& from) : PrePrepare(nullptr, from) {}
+  inline PrePrepare(PrePrepare&& from) noexcept
+      : PrePrepare(nullptr, ::std::move(from)) {}
+  inline PrePrepare& operator=(const PrePrepare& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PrePrepare& operator=(PrePrepare&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const PrePrepare& default_instance() {
+    return *reinterpret_cast<const PrePrepare*>(
+        &_PrePrepare_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 4;
+  friend void swap(PrePrepare& a, PrePrepare& b) { a.Swap(&b); }
+  inline void Swap(PrePrepare* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(PrePrepare* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  PrePrepare* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<PrePrepare>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const PrePrepare& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const PrePrepare& from) { PrePrepare::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(PrePrepare* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "bedrock.PrePrepare"; }
+
+ protected:
+  explicit PrePrepare(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  PrePrepare(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const PrePrepare& from);
+  PrePrepare(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, PrePrepare&& from) noexcept
+      : PrePrepare(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kCombinedMessagesFieldNumber = 10,
+    kOperationFieldNumber = 3,
+    kTimestampFieldNumber = 4,
+    kSignatureFieldNumber = 7,
+    kClientIdFieldNumber = 9,
+    kQcFieldNumber = 11,
+    kTypeFieldNumber = 12,
+    kTransactionFieldNumber = 6,
+    kViewFieldNumber = 1,
+    kSequenceFieldNumber = 2,
+    kClientListenPortFieldNumber = 5,
+    kMessageSenderIdFieldNumber = 8,
+  };
+  // repeated .bedrock.AggregatedMessage combined_messages = 10;
+  int combined_messages_size() const;
+  private:
+  int _internal_combined_messages_size() const;
+
+  public:
+  void clear_combined_messages() ;
+  ::bedrock::AggregatedMessage* PROTOBUF_NONNULL mutable_combined_messages(int index);
+  ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL mutable_combined_messages();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& _internal_combined_messages() const;
+  ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL _internal_mutable_combined_messages();
+  public:
+  const ::bedrock::AggregatedMessage& combined_messages(int index) const;
+  ::bedrock::AggregatedMessage* PROTOBUF_NONNULL add_combined_messages();
+  const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& combined_messages() const;
+  // string operation = 3;
+  void clear_operation() ;
+  const ::std::string& operation() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_operation(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_operation();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_operation();
+  void set_allocated_operation(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_operation() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_operation(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_operation();
+
+  public:
+  // string timestamp = 4;
+  void clear_timestamp() ;
+  const ::std::string& timestamp() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_timestamp(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_timestamp();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_timestamp();
+  void set_allocated_timestamp(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_timestamp() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_timestamp(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_timestamp();
+
+  public:
+  // string signature = 7;
+  void clear_signature() ;
+  const ::std::string& signature() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_signature(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_signature();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_signature();
+  void set_allocated_signature(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_signature() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_signature(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_signature();
+
+  public:
+  // string client_id = 9;
+  void clear_client_id() ;
+  const ::std::string& client_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_client_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_client_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_client_id();
+  void set_allocated_client_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_client_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_client_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_client_id();
+
+  public:
+  // string qc = 11;
+  void clear_qc() ;
+  const ::std::string& qc() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_qc(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_qc();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_qc();
+  void set_allocated_qc(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_qc() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_qc(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_qc();
+
+  public:
+  // string type = 12;
+  void clear_type() ;
+  const ::std::string& type() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_type(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_type();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_type();
+  void set_allocated_type(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_type() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_type(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_type();
+
+  public:
+  // .bedrock.Transaction transaction = 6;
+  bool has_transaction() const;
+  void clear_transaction() ;
+  const ::bedrock::Transaction& transaction() const;
+  [[nodiscard]] ::bedrock::Transaction* PROTOBUF_NULLABLE release_transaction();
+  ::bedrock::Transaction* PROTOBUF_NONNULL mutable_transaction();
+  void set_allocated_transaction(::bedrock::Transaction* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_transaction(::bedrock::Transaction* PROTOBUF_NULLABLE value);
+  ::bedrock::Transaction* PROTOBUF_NULLABLE unsafe_arena_release_transaction();
+
+  private:
+  const ::bedrock::Transaction& _internal_transaction() const;
+  ::bedrock::Transaction* PROTOBUF_NONNULL _internal_mutable_transaction();
+
+  public:
+  // int32 view = 1;
+  void clear_view() ;
+  ::int32_t view() const;
+  void set_view(::int32_t value);
+
+  private:
+  ::int32_t _internal_view() const;
+  void _internal_set_view(::int32_t value);
+
+  public:
+  // int32 sequence = 2;
+  void clear_sequence() ;
+  ::int32_t sequence() const;
+  void set_sequence(::int32_t value);
+
+  private:
+  ::int32_t _internal_sequence() const;
+  void _internal_set_sequence(::int32_t value);
+
+  public:
+  // int32 client_listen_port = 5;
+  void clear_client_listen_port() ;
+  ::int32_t client_listen_port() const;
+  void set_client_listen_port(::int32_t value);
+
+  private:
+  ::int32_t _internal_client_listen_port() const;
+  void _internal_set_client_listen_port(::int32_t value);
+
+  public:
+  // int32 message_sender_id = 8;
+  void clear_message_sender_id() ;
+  ::int32_t message_sender_id() const;
+  void set_message_sender_id(::int32_t value);
+
+  private:
+  ::int32_t _internal_message_sender_id() const;
+  void _internal_set_message_sender_id(::int32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:bedrock.PrePrepare)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<4, 12,
+                                   2, 77,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const PrePrepare& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::bedrock::AggregatedMessage > combined_messages_;
+    ::google::protobuf::internal::ArenaStringPtr operation_;
+    ::google::protobuf::internal::ArenaStringPtr timestamp_;
+    ::google::protobuf::internal::ArenaStringPtr signature_;
+    ::google::protobuf::internal::ArenaStringPtr client_id_;
+    ::google::protobuf::internal::ArenaStringPtr qc_;
+    ::google::protobuf::internal::ArenaStringPtr type_;
+    ::bedrock::Transaction* PROTOBUF_NULLABLE transaction_;
+    ::int32_t view_;
+    ::int32_t sequence_;
+    ::int32_t client_listen_port_;
+    ::int32_t message_sender_id_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_bedrock_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull PrePrepare_class_data_;
+// -------------------------------------------------------------------
+
+class Commit final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:bedrock.Commit) */ {
+ public:
+  inline Commit() : Commit(nullptr) {}
+  ~Commit() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(Commit* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(Commit));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR Commit(::google::protobuf::internal::ConstantInitialized);
+
+  inline Commit(const Commit& from) : Commit(nullptr, from) {}
+  inline Commit(Commit&& from) noexcept
+      : Commit(nullptr, ::std::move(from)) {}
+  inline Commit& operator=(const Commit& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Commit& operator=(Commit&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Commit& default_instance() {
+    return *reinterpret_cast<const Commit*>(
+        &_Commit_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 6;
+  friend void swap(Commit& a, Commit& b) { a.Swap(&b); }
+  inline void Swap(Commit* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Commit* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  Commit* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<Commit>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const Commit& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const Commit& from) { Commit::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(Commit* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "bedrock.Commit"; }
+
+ protected:
+  explicit Commit(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  Commit(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Commit& from);
+  Commit(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, Commit&& from) noexcept
+      : Commit(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kCombinedMessagesFieldNumber = 5,
+    kOperationFieldNumber = 3,
+    kQcFieldNumber = 6,
+    kTypeFieldNumber = 7,
+    kViewFieldNumber = 1,
+    kSequenceFieldNumber = 2,
+    kMessageSenderIdFieldNumber = 4,
+  };
+  // repeated .bedrock.AggregatedMessage combined_messages = 5;
+  int combined_messages_size() const;
+  private:
+  int _internal_combined_messages_size() const;
+
+  public:
+  void clear_combined_messages() ;
+  ::bedrock::AggregatedMessage* PROTOBUF_NONNULL mutable_combined_messages(int index);
+  ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL mutable_combined_messages();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& _internal_combined_messages() const;
+  ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL _internal_mutable_combined_messages();
+  public:
+  const ::bedrock::AggregatedMessage& combined_messages(int index) const;
+  ::bedrock::AggregatedMessage* PROTOBUF_NONNULL add_combined_messages();
+  const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& combined_messages() const;
+  // string operation = 3;
+  void clear_operation() ;
+  const ::std::string& operation() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_operation(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_operation();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_operation();
+  void set_allocated_operation(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_operation() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_operation(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_operation();
+
+  public:
+  // string qc = 6;
+  void clear_qc() ;
+  const ::std::string& qc() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_qc(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_qc();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_qc();
+  void set_allocated_qc(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_qc() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_qc(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_qc();
+
+  public:
+  // string type = 7;
+  void clear_type() ;
+  const ::std::string& type() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_type(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_type();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_type();
+  void set_allocated_type(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_type() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_type(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_type();
+
+  public:
+  // int32 view = 1;
+  void clear_view() ;
+  ::int32_t view() const;
+  void set_view(::int32_t value);
+
+  private:
+  ::int32_t _internal_view() const;
+  void _internal_set_view(::int32_t value);
+
+  public:
+  // int32 sequence = 2;
+  void clear_sequence() ;
+  ::int32_t sequence() const;
+  void set_sequence(::int32_t value);
+
+  private:
+  ::int32_t _internal_sequence() const;
+  void _internal_set_sequence(::int32_t value);
+
+  public:
+  // int32 message_sender_id = 4;
+  void clear_message_sender_id() ;
+  ::int32_t message_sender_id() const;
+  void set_message_sender_id(::int32_t value);
+
+  private:
+  ::int32_t _internal_message_sender_id() const;
+  void _internal_set_message_sender_id(::int32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:bedrock.Commit)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<3, 7,
+                                   1, 38,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const Commit& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::bedrock::AggregatedMessage > combined_messages_;
+    ::google::protobuf::internal::ArenaStringPtr operation_;
+    ::google::protobuf::internal::ArenaStringPtr qc_;
+    ::google::protobuf::internal::ArenaStringPtr type_;
+    ::int32_t view_;
+    ::int32_t sequence_;
+    ::int32_t message_sender_id_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_bedrock_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull Commit_class_data_;
+// -------------------------------------------------------------------
+
 class ProtocolEnvelope final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:bedrock.ProtocolEnvelope) */ {
  public:
@@ -1846,13 +2321,13 @@ class ProtocolEnvelope final : public ::google::protobuf::Message
     return *reinterpret_cast<const ProtocolEnvelope*>(
         &_ProtocolEnvelope_default_instance_);
   }
-  enum KindCase {
+  enum PayloadCase {
     kPrePrepare = 1,
     kPrepare = 2,
     kCommit = 3,
-    KIND_NOT_SET = 0,
+    PAYLOAD_NOT_SET = 0,
   };
-  static constexpr int kIndexInFileMessages = 6;
+  static constexpr int kIndexInFileMessages = 7;
   friend void swap(ProtocolEnvelope& a, ProtocolEnvelope& b) { a.Swap(&b); }
   inline void Swap(ProtocolEnvelope* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2001,16 +2476,16 @@ class ProtocolEnvelope final : public ::google::protobuf::Message
   ::bedrock::Commit* PROTOBUF_NONNULL _internal_mutable_commit();
 
   public:
-  void clear_kind();
-  KindCase kind_case() const;
+  void clear_payload();
+  PayloadCase payload_case() const;
   // @@protoc_insertion_point(class_scope:bedrock.ProtocolEnvelope)
  private:
   class _Internal;
   void set_has_pre_prepare();
   void set_has_prepare();
   void set_has_commit();
-  inline bool has_kind() const;
-  inline void clear_has_kind();
+  inline bool has_payload() const;
+  inline void clear_has_payload();
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<0, 3,
                                    3, 0,
@@ -2032,13 +2507,13 @@ class ProtocolEnvelope final : public ::google::protobuf::Message
         ::google::protobuf::internal::InternalVisibility visibility,
         ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
         const ProtocolEnvelope& from_msg);
-    union KindUnion {
-      constexpr KindUnion() : _constinit_{} {}
+    union PayloadUnion {
+      constexpr PayloadUnion() : _constinit_{} {}
       ::google::protobuf::internal::ConstantInitialized _constinit_;
       ::google::protobuf::Message* PROTOBUF_NULLABLE pre_prepare_;
       ::google::protobuf::Message* PROTOBUF_NULLABLE prepare_;
       ::google::protobuf::Message* PROTOBUF_NULLABLE commit_;
-    } kind_;
+    } payload_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     ::uint32_t _oneof_case_[1];
     PROTOBUF_TSAN_DECLARE_MEMBER
@@ -2286,6 +2761,464 @@ inline ::int32_t Transaction::_internal_amount() const {
 inline void Transaction::_internal_set_amount(::int32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.amount_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// AggregatedMessage
+
+// int32 view = 1;
+inline void AggregatedMessage::clear_view() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.view_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000020U;
+}
+inline ::int32_t AggregatedMessage::view() const {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.view)
+  return _internal_view();
+}
+inline void AggregatedMessage::set_view(::int32_t value) {
+  _internal_set_view(value);
+  _impl_._has_bits_[0] |= 0x00000020U;
+  // @@protoc_insertion_point(field_set:bedrock.AggregatedMessage.view)
+}
+inline ::int32_t AggregatedMessage::_internal_view() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.view_;
+}
+inline void AggregatedMessage::_internal_set_view(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.view_ = value;
+}
+
+// int32 sequence = 2;
+inline void AggregatedMessage::clear_sequence() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.sequence_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000040U;
+}
+inline ::int32_t AggregatedMessage::sequence() const {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.sequence)
+  return _internal_sequence();
+}
+inline void AggregatedMessage::set_sequence(::int32_t value) {
+  _internal_set_sequence(value);
+  _impl_._has_bits_[0] |= 0x00000040U;
+  // @@protoc_insertion_point(field_set:bedrock.AggregatedMessage.sequence)
+}
+inline ::int32_t AggregatedMessage::_internal_sequence() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.sequence_;
+}
+inline void AggregatedMessage::_internal_set_sequence(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.sequence_ = value;
+}
+
+// string digest = 3;
+inline void AggregatedMessage::clear_digest() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.digest_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001U;
+}
+inline const ::std::string& AggregatedMessage::digest() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.digest)
+  return _internal_digest();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void AggregatedMessage::set_digest(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000001U;
+  _impl_.digest_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.AggregatedMessage.digest)
+}
+inline ::std::string* PROTOBUF_NONNULL AggregatedMessage::mutable_digest()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_digest();
+  // @@protoc_insertion_point(field_mutable:bedrock.AggregatedMessage.digest)
+  return _s;
+}
+inline const ::std::string& AggregatedMessage::_internal_digest() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.digest_.Get();
+}
+inline void AggregatedMessage::_internal_set_digest(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000001U;
+  _impl_.digest_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL AggregatedMessage::_internal_mutable_digest() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000001U;
+  return _impl_.digest_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE AggregatedMessage::release_digest() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.AggregatedMessage.digest)
+  if ((_impl_._has_bits_[0] & 0x00000001U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001U;
+  auto* released = _impl_.digest_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.digest_.Set("", GetArena());
+  }
+  return released;
+}
+inline void AggregatedMessage::set_allocated_digest(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001U;
+  }
+  _impl_.digest_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.digest_.IsDefault()) {
+    _impl_.digest_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.AggregatedMessage.digest)
+}
+
+// int32 message_sender_id = 4;
+inline void AggregatedMessage::clear_message_sender_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.message_sender_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000080U;
+}
+inline ::int32_t AggregatedMessage::message_sender_id() const {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.message_sender_id)
+  return _internal_message_sender_id();
+}
+inline void AggregatedMessage::set_message_sender_id(::int32_t value) {
+  _internal_set_message_sender_id(value);
+  _impl_._has_bits_[0] |= 0x00000080U;
+  // @@protoc_insertion_point(field_set:bedrock.AggregatedMessage.message_sender_id)
+}
+inline ::int32_t AggregatedMessage::_internal_message_sender_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.message_sender_id_;
+}
+inline void AggregatedMessage::_internal_set_message_sender_id(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.message_sender_id_ = value;
+}
+
+// string signature = 5;
+inline void AggregatedMessage::clear_signature() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.signature_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002U;
+}
+inline const ::std::string& AggregatedMessage::signature() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.signature)
+  return _internal_signature();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void AggregatedMessage::set_signature(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_.signature_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.AggregatedMessage.signature)
+}
+inline ::std::string* PROTOBUF_NONNULL AggregatedMessage::mutable_signature()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_signature();
+  // @@protoc_insertion_point(field_mutable:bedrock.AggregatedMessage.signature)
+  return _s;
+}
+inline const ::std::string& AggregatedMessage::_internal_signature() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.signature_.Get();
+}
+inline void AggregatedMessage::_internal_set_signature(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_.signature_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL AggregatedMessage::_internal_mutable_signature() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  return _impl_.signature_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE AggregatedMessage::release_signature() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.AggregatedMessage.signature)
+  if ((_impl_._has_bits_[0] & 0x00000002U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002U;
+  auto* released = _impl_.signature_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.signature_.Set("", GetArena());
+  }
+  return released;
+}
+inline void AggregatedMessage::set_allocated_signature(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002U;
+  }
+  _impl_.signature_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.signature_.IsDefault()) {
+    _impl_.signature_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.AggregatedMessage.signature)
+}
+
+// int32 client_listen_port = 6;
+inline void AggregatedMessage::clear_client_listen_port() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.client_listen_port_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000100U;
+}
+inline ::int32_t AggregatedMessage::client_listen_port() const {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.client_listen_port)
+  return _internal_client_listen_port();
+}
+inline void AggregatedMessage::set_client_listen_port(::int32_t value) {
+  _internal_set_client_listen_port(value);
+  _impl_._has_bits_[0] |= 0x00000100U;
+  // @@protoc_insertion_point(field_set:bedrock.AggregatedMessage.client_listen_port)
+}
+inline ::int32_t AggregatedMessage::_internal_client_listen_port() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.client_listen_port_;
+}
+inline void AggregatedMessage::_internal_set_client_listen_port(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.client_listen_port_ = value;
+}
+
+// string clientid = 7;
+inline void AggregatedMessage::clear_clientid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clientid_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000004U;
+}
+inline const ::std::string& AggregatedMessage::clientid() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.clientid)
+  return _internal_clientid();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void AggregatedMessage::set_clientid(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  _impl_.clientid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.AggregatedMessage.clientid)
+}
+inline ::std::string* PROTOBUF_NONNULL AggregatedMessage::mutable_clientid()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_clientid();
+  // @@protoc_insertion_point(field_mutable:bedrock.AggregatedMessage.clientid)
+  return _s;
+}
+inline const ::std::string& AggregatedMessage::_internal_clientid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.clientid_.Get();
+}
+inline void AggregatedMessage::_internal_set_clientid(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  _impl_.clientid_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL AggregatedMessage::_internal_mutable_clientid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  return _impl_.clientid_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE AggregatedMessage::release_clientid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.AggregatedMessage.clientid)
+  if ((_impl_._has_bits_[0] & 0x00000004U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000004U;
+  auto* released = _impl_.clientid_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.clientid_.Set("", GetArena());
+  }
+  return released;
+}
+inline void AggregatedMessage::set_allocated_clientid(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000004U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000004U;
+  }
+  _impl_.clientid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.clientid_.IsDefault()) {
+    _impl_.clientid_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.AggregatedMessage.clientid)
+}
+
+// string timestamp = 8;
+inline void AggregatedMessage::clear_timestamp() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.timestamp_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000008U;
+}
+inline const ::std::string& AggregatedMessage::timestamp() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.timestamp)
+  return _internal_timestamp();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void AggregatedMessage::set_timestamp(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000008U;
+  _impl_.timestamp_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.AggregatedMessage.timestamp)
+}
+inline ::std::string* PROTOBUF_NONNULL AggregatedMessage::mutable_timestamp()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_timestamp();
+  // @@protoc_insertion_point(field_mutable:bedrock.AggregatedMessage.timestamp)
+  return _s;
+}
+inline const ::std::string& AggregatedMessage::_internal_timestamp() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.timestamp_.Get();
+}
+inline void AggregatedMessage::_internal_set_timestamp(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000008U;
+  _impl_.timestamp_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL AggregatedMessage::_internal_mutable_timestamp() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000008U;
+  return _impl_.timestamp_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE AggregatedMessage::release_timestamp() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.AggregatedMessage.timestamp)
+  if ((_impl_._has_bits_[0] & 0x00000008U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000008U;
+  auto* released = _impl_.timestamp_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.timestamp_.Set("", GetArena());
+  }
+  return released;
+}
+inline void AggregatedMessage::set_allocated_timestamp(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000008U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000008U;
+  }
+  _impl_.timestamp_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.timestamp_.IsDefault()) {
+    _impl_.timestamp_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.AggregatedMessage.timestamp)
+}
+
+// .bedrock.Transaction transaction = 9;
+inline bool AggregatedMessage::has_transaction() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000010U) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.transaction_ != nullptr);
+  return value;
+}
+inline void AggregatedMessage::clear_transaction() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.transaction_ != nullptr) _impl_.transaction_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000010U;
+}
+inline const ::bedrock::Transaction& AggregatedMessage::_internal_transaction() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  const ::bedrock::Transaction* p = _impl_.transaction_;
+  return p != nullptr ? *p : reinterpret_cast<const ::bedrock::Transaction&>(::bedrock::_Transaction_default_instance_);
+}
+inline const ::bedrock::Transaction& AggregatedMessage::transaction() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.AggregatedMessage.transaction)
+  return _internal_transaction();
+}
+inline void AggregatedMessage::unsafe_arena_set_allocated_transaction(
+    ::bedrock::Transaction* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.transaction_);
+  }
+  _impl_.transaction_ = reinterpret_cast<::bedrock::Transaction*>(value);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000010U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000010U;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bedrock.AggregatedMessage.transaction)
+}
+inline ::bedrock::Transaction* PROTOBUF_NULLABLE AggregatedMessage::release_transaction() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+
+  _impl_._has_bits_[0] &= ~0x00000010U;
+  ::bedrock::Transaction* released = _impl_.transaction_;
+  _impl_.transaction_ = nullptr;
+  if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
+    auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    if (GetArena() == nullptr) {
+      delete old;
+    }
+  } else {
+    if (GetArena() != nullptr) {
+      released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    }
+  }
+  return released;
+}
+inline ::bedrock::Transaction* PROTOBUF_NULLABLE AggregatedMessage::unsafe_arena_release_transaction() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.AggregatedMessage.transaction)
+
+  _impl_._has_bits_[0] &= ~0x00000010U;
+  ::bedrock::Transaction* temp = _impl_.transaction_;
+  _impl_.transaction_ = nullptr;
+  return temp;
+}
+inline ::bedrock::Transaction* PROTOBUF_NONNULL AggregatedMessage::_internal_mutable_transaction() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.transaction_ == nullptr) {
+    auto* p = ::google::protobuf::Message::DefaultConstruct<::bedrock::Transaction>(GetArena());
+    _impl_.transaction_ = reinterpret_cast<::bedrock::Transaction*>(p);
+  }
+  return _impl_.transaction_;
+}
+inline ::bedrock::Transaction* PROTOBUF_NONNULL AggregatedMessage::mutable_transaction()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  _impl_._has_bits_[0] |= 0x00000010U;
+  ::bedrock::Transaction* _msg = _internal_mutable_transaction();
+  // @@protoc_insertion_point(field_mutable:bedrock.AggregatedMessage.transaction)
+  return _msg;
+}
+inline void AggregatedMessage::set_allocated_transaction(::bedrock::Transaction* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.transaction_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena = value->GetArena();
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000010U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000010U;
+  }
+
+  _impl_.transaction_ = reinterpret_cast<::bedrock::Transaction*>(value);
+  // @@protoc_insertion_point(field_set_allocated:bedrock.AggregatedMessage.transaction)
 }
 
 // -------------------------------------------------------------------
@@ -2706,7 +3639,7 @@ inline void ClientRequest::set_allocated_signature(::std::string* PROTOBUF_NULLA
 inline void PrePrepare::clear_view() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.view_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000020U;
+  _impl_._has_bits_[0] &= ~0x00000080U;
 }
 inline ::int32_t PrePrepare::view() const {
   // @@protoc_insertion_point(field_get:bedrock.PrePrepare.view)
@@ -2714,7 +3647,7 @@ inline ::int32_t PrePrepare::view() const {
 }
 inline void PrePrepare::set_view(::int32_t value) {
   _internal_set_view(value);
-  _impl_._has_bits_[0] |= 0x00000020U;
+  _impl_._has_bits_[0] |= 0x00000080U;
   // @@protoc_insertion_point(field_set:bedrock.PrePrepare.view)
 }
 inline ::int32_t PrePrepare::_internal_view() const {
@@ -2730,7 +3663,7 @@ inline void PrePrepare::_internal_set_view(::int32_t value) {
 inline void PrePrepare::clear_sequence() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.sequence_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000040U;
+  _impl_._has_bits_[0] &= ~0x00000100U;
 }
 inline ::int32_t PrePrepare::sequence() const {
   // @@protoc_insertion_point(field_get:bedrock.PrePrepare.sequence)
@@ -2738,7 +3671,7 @@ inline ::int32_t PrePrepare::sequence() const {
 }
 inline void PrePrepare::set_sequence(::int32_t value) {
   _internal_set_sequence(value);
-  _impl_._has_bits_[0] |= 0x00000040U;
+  _impl_._has_bits_[0] |= 0x00000100U;
   // @@protoc_insertion_point(field_set:bedrock.PrePrepare.sequence)
 }
 inline ::int32_t PrePrepare::_internal_sequence() const {
@@ -2750,76 +3683,11 @@ inline void PrePrepare::_internal_set_sequence(::int32_t value) {
   _impl_.sequence_ = value;
 }
 
-// string timestamp = 3;
-inline void PrePrepare::clear_timestamp() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.timestamp_.ClearToEmpty();
-  _impl_._has_bits_[0] &= ~0x00000001U;
-}
-inline const ::std::string& PrePrepare::timestamp() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:bedrock.PrePrepare.timestamp)
-  return _internal_timestamp();
-}
-template <typename Arg_, typename... Args_>
-PROTOBUF_ALWAYS_INLINE void PrePrepare::set_timestamp(Arg_&& arg, Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_._has_bits_[0] |= 0x00000001U;
-  _impl_.timestamp_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:bedrock.PrePrepare.timestamp)
-}
-inline ::std::string* PROTOBUF_NONNULL PrePrepare::mutable_timestamp()
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::std::string* _s = _internal_mutable_timestamp();
-  // @@protoc_insertion_point(field_mutable:bedrock.PrePrepare.timestamp)
-  return _s;
-}
-inline const ::std::string& PrePrepare::_internal_timestamp() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.timestamp_.Get();
-}
-inline void PrePrepare::_internal_set_timestamp(const ::std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_._has_bits_[0] |= 0x00000001U;
-  _impl_.timestamp_.Set(value, GetArena());
-}
-inline ::std::string* PROTOBUF_NONNULL PrePrepare::_internal_mutable_timestamp() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_._has_bits_[0] |= 0x00000001U;
-  return _impl_.timestamp_.Mutable( GetArena());
-}
-inline ::std::string* PROTOBUF_NULLABLE PrePrepare::release_timestamp() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:bedrock.PrePrepare.timestamp)
-  if ((_impl_._has_bits_[0] & 0x00000001U) == 0) {
-    return nullptr;
-  }
-  _impl_._has_bits_[0] &= ~0x00000001U;
-  auto* released = _impl_.timestamp_.Release();
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
-    _impl_.timestamp_.Set("", GetArena());
-  }
-  return released;
-}
-inline void PrePrepare::set_allocated_timestamp(::std::string* PROTOBUF_NULLABLE value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  if (value != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000001U;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001U;
-  }
-  _impl_.timestamp_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.timestamp_.IsDefault()) {
-    _impl_.timestamp_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:bedrock.PrePrepare.timestamp)
-}
-
-// string operation = 4;
+// string operation = 3;
 inline void PrePrepare::clear_operation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.operation_.ClearToEmpty();
-  _impl_._has_bits_[0] &= ~0x00000002U;
+  _impl_._has_bits_[0] &= ~0x00000001U;
 }
 inline const ::std::string& PrePrepare::operation() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -2829,7 +3697,7 @@ inline const ::std::string& PrePrepare::operation() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void PrePrepare::set_operation(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_._has_bits_[0] |= 0x00000001U;
   _impl_.operation_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:bedrock.PrePrepare.operation)
 }
@@ -2845,21 +3713,21 @@ inline const ::std::string& PrePrepare::_internal_operation() const {
 }
 inline void PrePrepare::_internal_set_operation(const ::std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_._has_bits_[0] |= 0x00000001U;
   _impl_.operation_.Set(value, GetArena());
 }
 inline ::std::string* PROTOBUF_NONNULL PrePrepare::_internal_mutable_operation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_._has_bits_[0] |= 0x00000001U;
   return _impl_.operation_.Mutable( GetArena());
 }
 inline ::std::string* PROTOBUF_NULLABLE PrePrepare::release_operation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:bedrock.PrePrepare.operation)
-  if ((_impl_._has_bits_[0] & 0x00000002U) == 0) {
+  if ((_impl_._has_bits_[0] & 0x00000001U) == 0) {
     return nullptr;
   }
-  _impl_._has_bits_[0] &= ~0x00000002U;
+  _impl_._has_bits_[0] &= ~0x00000001U;
   auto* released = _impl_.operation_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.operation_.Set("", GetArena());
@@ -2869,9 +3737,9 @@ inline ::std::string* PROTOBUF_NULLABLE PrePrepare::release_operation() {
 inline void PrePrepare::set_allocated_operation(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000002U;
+    _impl_._has_bits_[0] |= 0x00000001U;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000002U;
+    _impl_._has_bits_[0] &= ~0x00000001U;
   }
   _impl_.operation_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.operation_.IsDefault()) {
@@ -2880,16 +3748,105 @@ inline void PrePrepare::set_allocated_operation(::std::string* PROTOBUF_NULLABLE
   // @@protoc_insertion_point(field_set_allocated:bedrock.PrePrepare.operation)
 }
 
-// .bedrock.Transaction transaction = 5;
+// string timestamp = 4;
+inline void PrePrepare::clear_timestamp() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.timestamp_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002U;
+}
+inline const ::std::string& PrePrepare::timestamp() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.PrePrepare.timestamp)
+  return _internal_timestamp();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void PrePrepare::set_timestamp(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_.timestamp_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.PrePrepare.timestamp)
+}
+inline ::std::string* PROTOBUF_NONNULL PrePrepare::mutable_timestamp()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_timestamp();
+  // @@protoc_insertion_point(field_mutable:bedrock.PrePrepare.timestamp)
+  return _s;
+}
+inline const ::std::string& PrePrepare::_internal_timestamp() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.timestamp_.Get();
+}
+inline void PrePrepare::_internal_set_timestamp(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_.timestamp_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL PrePrepare::_internal_mutable_timestamp() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  return _impl_.timestamp_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE PrePrepare::release_timestamp() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.PrePrepare.timestamp)
+  if ((_impl_._has_bits_[0] & 0x00000002U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002U;
+  auto* released = _impl_.timestamp_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.timestamp_.Set("", GetArena());
+  }
+  return released;
+}
+inline void PrePrepare::set_allocated_timestamp(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002U;
+  }
+  _impl_.timestamp_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.timestamp_.IsDefault()) {
+    _impl_.timestamp_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.PrePrepare.timestamp)
+}
+
+// int32 client_listen_port = 5;
+inline void PrePrepare::clear_client_listen_port() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.client_listen_port_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000200U;
+}
+inline ::int32_t PrePrepare::client_listen_port() const {
+  // @@protoc_insertion_point(field_get:bedrock.PrePrepare.client_listen_port)
+  return _internal_client_listen_port();
+}
+inline void PrePrepare::set_client_listen_port(::int32_t value) {
+  _internal_set_client_listen_port(value);
+  _impl_._has_bits_[0] |= 0x00000200U;
+  // @@protoc_insertion_point(field_set:bedrock.PrePrepare.client_listen_port)
+}
+inline ::int32_t PrePrepare::_internal_client_listen_port() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.client_listen_port_;
+}
+inline void PrePrepare::_internal_set_client_listen_port(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.client_listen_port_ = value;
+}
+
+// .bedrock.Transaction transaction = 6;
 inline bool PrePrepare::has_transaction() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000010U) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000040U) != 0;
   PROTOBUF_ASSUME(!value || _impl_.transaction_ != nullptr);
   return value;
 }
 inline void PrePrepare::clear_transaction() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.transaction_ != nullptr) _impl_.transaction_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000010U;
+  _impl_._has_bits_[0] &= ~0x00000040U;
 }
 inline const ::bedrock::Transaction& PrePrepare::_internal_transaction() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
@@ -2908,16 +3865,16 @@ inline void PrePrepare::unsafe_arena_set_allocated_transaction(
   }
   _impl_.transaction_ = reinterpret_cast<::bedrock::Transaction*>(value);
   if (value != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000010U;
+    _impl_._has_bits_[0] |= 0x00000040U;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000010U;
+    _impl_._has_bits_[0] &= ~0x00000040U;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bedrock.PrePrepare.transaction)
 }
 inline ::bedrock::Transaction* PROTOBUF_NULLABLE PrePrepare::release_transaction() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
 
-  _impl_._has_bits_[0] &= ~0x00000010U;
+  _impl_._has_bits_[0] &= ~0x00000040U;
   ::bedrock::Transaction* released = _impl_.transaction_;
   _impl_.transaction_ = nullptr;
   if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
@@ -2937,7 +3894,7 @@ inline ::bedrock::Transaction* PROTOBUF_NULLABLE PrePrepare::unsafe_arena_releas
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:bedrock.PrePrepare.transaction)
 
-  _impl_._has_bits_[0] &= ~0x00000010U;
+  _impl_._has_bits_[0] &= ~0x00000040U;
   ::bedrock::Transaction* temp = _impl_.transaction_;
   _impl_.transaction_ = nullptr;
   return temp;
@@ -2952,7 +3909,7 @@ inline ::bedrock::Transaction* PROTOBUF_NONNULL PrePrepare::_internal_mutable_tr
 }
 inline ::bedrock::Transaction* PROTOBUF_NONNULL PrePrepare::mutable_transaction()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  _impl_._has_bits_[0] |= 0x00000010U;
+  _impl_._has_bits_[0] |= 0x00000040U;
   ::bedrock::Transaction* _msg = _internal_mutable_transaction();
   // @@protoc_insertion_point(field_mutable:bedrock.PrePrepare.transaction)
   return _msg;
@@ -2969,37 +3926,13 @@ inline void PrePrepare::set_allocated_transaction(::bedrock::Transaction* PROTOB
     if (message_arena != submessage_arena) {
       value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000010U;
+    _impl_._has_bits_[0] |= 0x00000040U;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000010U;
+    _impl_._has_bits_[0] &= ~0x00000040U;
   }
 
   _impl_.transaction_ = reinterpret_cast<::bedrock::Transaction*>(value);
   // @@protoc_insertion_point(field_set_allocated:bedrock.PrePrepare.transaction)
-}
-
-// int32 client_listen_port = 6;
-inline void PrePrepare::clear_client_listen_port() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.client_listen_port_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000080U;
-}
-inline ::int32_t PrePrepare::client_listen_port() const {
-  // @@protoc_insertion_point(field_get:bedrock.PrePrepare.client_listen_port)
-  return _internal_client_listen_port();
-}
-inline void PrePrepare::set_client_listen_port(::int32_t value) {
-  _internal_set_client_listen_port(value);
-  _impl_._has_bits_[0] |= 0x00000080U;
-  // @@protoc_insertion_point(field_set:bedrock.PrePrepare.client_listen_port)
-}
-inline ::int32_t PrePrepare::_internal_client_listen_port() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.client_listen_port_;
-}
-inline void PrePrepare::_internal_set_client_listen_port(::int32_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.client_listen_port_ = value;
 }
 
 // string signature = 7;
@@ -3071,7 +4004,7 @@ inline void PrePrepare::set_allocated_signature(::std::string* PROTOBUF_NULLABLE
 inline void PrePrepare::clear_message_sender_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_sender_id_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000100U;
+  _impl_._has_bits_[0] &= ~0x00000400U;
 }
 inline ::int32_t PrePrepare::message_sender_id() const {
   // @@protoc_insertion_point(field_get:bedrock.PrePrepare.message_sender_id)
@@ -3079,7 +4012,7 @@ inline ::int32_t PrePrepare::message_sender_id() const {
 }
 inline void PrePrepare::set_message_sender_id(::int32_t value) {
   _internal_set_message_sender_id(value);
-  _impl_._has_bits_[0] |= 0x00000100U;
+  _impl_._has_bits_[0] |= 0x00000400U;
   // @@protoc_insertion_point(field_set:bedrock.PrePrepare.message_sender_id)
 }
 inline ::int32_t PrePrepare::_internal_message_sender_id() const {
@@ -3156,6 +4089,186 @@ inline void PrePrepare::set_allocated_client_id(::std::string* PROTOBUF_NULLABLE
   // @@protoc_insertion_point(field_set_allocated:bedrock.PrePrepare.client_id)
 }
 
+// repeated .bedrock.AggregatedMessage combined_messages = 10;
+inline int PrePrepare::_internal_combined_messages_size() const {
+  return _internal_combined_messages().size();
+}
+inline int PrePrepare::combined_messages_size() const {
+  return _internal_combined_messages_size();
+}
+inline void PrePrepare::clear_combined_messages() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.combined_messages_.Clear();
+}
+inline ::bedrock::AggregatedMessage* PROTOBUF_NONNULL PrePrepare::mutable_combined_messages(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:bedrock.PrePrepare.combined_messages)
+  return _internal_mutable_combined_messages()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL PrePrepare::mutable_combined_messages()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:bedrock.PrePrepare.combined_messages)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_combined_messages();
+}
+inline const ::bedrock::AggregatedMessage& PrePrepare::combined_messages(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.PrePrepare.combined_messages)
+  return _internal_combined_messages().Get(index);
+}
+inline ::bedrock::AggregatedMessage* PROTOBUF_NONNULL PrePrepare::add_combined_messages()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::bedrock::AggregatedMessage* _add = _internal_mutable_combined_messages()->Add();
+  // @@protoc_insertion_point(field_add:bedrock.PrePrepare.combined_messages)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& PrePrepare::combined_messages() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:bedrock.PrePrepare.combined_messages)
+  return _internal_combined_messages();
+}
+inline const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>&
+PrePrepare::_internal_combined_messages() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.combined_messages_;
+}
+inline ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL
+PrePrepare::_internal_mutable_combined_messages() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.combined_messages_;
+}
+
+// string qc = 11;
+inline void PrePrepare::clear_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.qc_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000010U;
+}
+inline const ::std::string& PrePrepare::qc() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.PrePrepare.qc)
+  return _internal_qc();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void PrePrepare::set_qc(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000010U;
+  _impl_.qc_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.PrePrepare.qc)
+}
+inline ::std::string* PROTOBUF_NONNULL PrePrepare::mutable_qc()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_qc();
+  // @@protoc_insertion_point(field_mutable:bedrock.PrePrepare.qc)
+  return _s;
+}
+inline const ::std::string& PrePrepare::_internal_qc() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.qc_.Get();
+}
+inline void PrePrepare::_internal_set_qc(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000010U;
+  _impl_.qc_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL PrePrepare::_internal_mutable_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000010U;
+  return _impl_.qc_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE PrePrepare::release_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.PrePrepare.qc)
+  if ((_impl_._has_bits_[0] & 0x00000010U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000010U;
+  auto* released = _impl_.qc_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.qc_.Set("", GetArena());
+  }
+  return released;
+}
+inline void PrePrepare::set_allocated_qc(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000010U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000010U;
+  }
+  _impl_.qc_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.qc_.IsDefault()) {
+    _impl_.qc_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.PrePrepare.qc)
+}
+
+// string type = 12;
+inline void PrePrepare::clear_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000020U;
+}
+inline const ::std::string& PrePrepare::type() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.PrePrepare.type)
+  return _internal_type();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void PrePrepare::set_type(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000020U;
+  _impl_.type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.PrePrepare.type)
+}
+inline ::std::string* PROTOBUF_NONNULL PrePrepare::mutable_type()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_type();
+  // @@protoc_insertion_point(field_mutable:bedrock.PrePrepare.type)
+  return _s;
+}
+inline const ::std::string& PrePrepare::_internal_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.type_.Get();
+}
+inline void PrePrepare::_internal_set_type(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000020U;
+  _impl_.type_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL PrePrepare::_internal_mutable_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000020U;
+  return _impl_.type_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE PrePrepare::release_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.PrePrepare.type)
+  if ((_impl_._has_bits_[0] & 0x00000020U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000020U;
+  auto* released = _impl_.type_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.type_.Set("", GetArena());
+  }
+  return released;
+}
+inline void PrePrepare::set_allocated_type(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000020U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000020U;
+  }
+  _impl_.type_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.type_.IsDefault()) {
+    _impl_.type_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.PrePrepare.type)
+}
+
 // -------------------------------------------------------------------
 
 // Prepare
@@ -3164,7 +4277,7 @@ inline void PrePrepare::set_allocated_client_id(::std::string* PROTOBUF_NULLABLE
 inline void Prepare::clear_view() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.view_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000002U;
+  _impl_._has_bits_[0] &= ~0x00000008U;
 }
 inline ::int32_t Prepare::view() const {
   // @@protoc_insertion_point(field_get:bedrock.Prepare.view)
@@ -3172,7 +4285,7 @@ inline ::int32_t Prepare::view() const {
 }
 inline void Prepare::set_view(::int32_t value) {
   _internal_set_view(value);
-  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_._has_bits_[0] |= 0x00000008U;
   // @@protoc_insertion_point(field_set:bedrock.Prepare.view)
 }
 inline ::int32_t Prepare::_internal_view() const {
@@ -3188,7 +4301,7 @@ inline void Prepare::_internal_set_view(::int32_t value) {
 inline void Prepare::clear_sequence() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.sequence_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000004U;
+  _impl_._has_bits_[0] &= ~0x00000010U;
 }
 inline ::int32_t Prepare::sequence() const {
   // @@protoc_insertion_point(field_get:bedrock.Prepare.sequence)
@@ -3196,7 +4309,7 @@ inline ::int32_t Prepare::sequence() const {
 }
 inline void Prepare::set_sequence(::int32_t value) {
   _internal_set_sequence(value);
-  _impl_._has_bits_[0] |= 0x00000004U;
+  _impl_._has_bits_[0] |= 0x00000010U;
   // @@protoc_insertion_point(field_set:bedrock.Prepare.sequence)
 }
 inline ::int32_t Prepare::_internal_sequence() const {
@@ -3277,7 +4390,7 @@ inline void Prepare::set_allocated_operation(::std::string* PROTOBUF_NULLABLE va
 inline void Prepare::clear_message_sender_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_sender_id_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000008U;
+  _impl_._has_bits_[0] &= ~0x00000020U;
 }
 inline ::int32_t Prepare::message_sender_id() const {
   // @@protoc_insertion_point(field_get:bedrock.Prepare.message_sender_id)
@@ -3285,7 +4398,7 @@ inline ::int32_t Prepare::message_sender_id() const {
 }
 inline void Prepare::set_message_sender_id(::int32_t value) {
   _internal_set_message_sender_id(value);
-  _impl_._has_bits_[0] |= 0x00000008U;
+  _impl_._has_bits_[0] |= 0x00000020U;
   // @@protoc_insertion_point(field_set:bedrock.Prepare.message_sender_id)
 }
 inline ::int32_t Prepare::_internal_message_sender_id() const {
@@ -3297,6 +4410,186 @@ inline void Prepare::_internal_set_message_sender_id(::int32_t value) {
   _impl_.message_sender_id_ = value;
 }
 
+// repeated .bedrock.AggregatedMessage combined_messages = 5;
+inline int Prepare::_internal_combined_messages_size() const {
+  return _internal_combined_messages().size();
+}
+inline int Prepare::combined_messages_size() const {
+  return _internal_combined_messages_size();
+}
+inline void Prepare::clear_combined_messages() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.combined_messages_.Clear();
+}
+inline ::bedrock::AggregatedMessage* PROTOBUF_NONNULL Prepare::mutable_combined_messages(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:bedrock.Prepare.combined_messages)
+  return _internal_mutable_combined_messages()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL Prepare::mutable_combined_messages()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:bedrock.Prepare.combined_messages)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_combined_messages();
+}
+inline const ::bedrock::AggregatedMessage& Prepare::combined_messages(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.Prepare.combined_messages)
+  return _internal_combined_messages().Get(index);
+}
+inline ::bedrock::AggregatedMessage* PROTOBUF_NONNULL Prepare::add_combined_messages()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::bedrock::AggregatedMessage* _add = _internal_mutable_combined_messages()->Add();
+  // @@protoc_insertion_point(field_add:bedrock.Prepare.combined_messages)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& Prepare::combined_messages() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:bedrock.Prepare.combined_messages)
+  return _internal_combined_messages();
+}
+inline const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>&
+Prepare::_internal_combined_messages() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.combined_messages_;
+}
+inline ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL
+Prepare::_internal_mutable_combined_messages() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.combined_messages_;
+}
+
+// string qc = 6;
+inline void Prepare::clear_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.qc_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002U;
+}
+inline const ::std::string& Prepare::qc() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.Prepare.qc)
+  return _internal_qc();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void Prepare::set_qc(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_.qc_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.Prepare.qc)
+}
+inline ::std::string* PROTOBUF_NONNULL Prepare::mutable_qc()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_qc();
+  // @@protoc_insertion_point(field_mutable:bedrock.Prepare.qc)
+  return _s;
+}
+inline const ::std::string& Prepare::_internal_qc() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.qc_.Get();
+}
+inline void Prepare::_internal_set_qc(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_.qc_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL Prepare::_internal_mutable_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  return _impl_.qc_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE Prepare::release_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.Prepare.qc)
+  if ((_impl_._has_bits_[0] & 0x00000002U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002U;
+  auto* released = _impl_.qc_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.qc_.Set("", GetArena());
+  }
+  return released;
+}
+inline void Prepare::set_allocated_qc(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002U;
+  }
+  _impl_.qc_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.qc_.IsDefault()) {
+    _impl_.qc_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.Prepare.qc)
+}
+
+// string type = 7;
+inline void Prepare::clear_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000004U;
+}
+inline const ::std::string& Prepare::type() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.Prepare.type)
+  return _internal_type();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void Prepare::set_type(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  _impl_.type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.Prepare.type)
+}
+inline ::std::string* PROTOBUF_NONNULL Prepare::mutable_type()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_type();
+  // @@protoc_insertion_point(field_mutable:bedrock.Prepare.type)
+  return _s;
+}
+inline const ::std::string& Prepare::_internal_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.type_.Get();
+}
+inline void Prepare::_internal_set_type(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  _impl_.type_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL Prepare::_internal_mutable_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  return _impl_.type_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE Prepare::release_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.Prepare.type)
+  if ((_impl_._has_bits_[0] & 0x00000004U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000004U;
+  auto* released = _impl_.type_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.type_.Set("", GetArena());
+  }
+  return released;
+}
+inline void Prepare::set_allocated_type(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000004U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000004U;
+  }
+  _impl_.type_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.type_.IsDefault()) {
+    _impl_.type_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.Prepare.type)
+}
+
 // -------------------------------------------------------------------
 
 // Commit
@@ -3305,7 +4598,7 @@ inline void Prepare::_internal_set_message_sender_id(::int32_t value) {
 inline void Commit::clear_view() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.view_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000002U;
+  _impl_._has_bits_[0] &= ~0x00000008U;
 }
 inline ::int32_t Commit::view() const {
   // @@protoc_insertion_point(field_get:bedrock.Commit.view)
@@ -3313,7 +4606,7 @@ inline ::int32_t Commit::view() const {
 }
 inline void Commit::set_view(::int32_t value) {
   _internal_set_view(value);
-  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_._has_bits_[0] |= 0x00000008U;
   // @@protoc_insertion_point(field_set:bedrock.Commit.view)
 }
 inline ::int32_t Commit::_internal_view() const {
@@ -3329,7 +4622,7 @@ inline void Commit::_internal_set_view(::int32_t value) {
 inline void Commit::clear_sequence() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.sequence_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000004U;
+  _impl_._has_bits_[0] &= ~0x00000010U;
 }
 inline ::int32_t Commit::sequence() const {
   // @@protoc_insertion_point(field_get:bedrock.Commit.sequence)
@@ -3337,7 +4630,7 @@ inline ::int32_t Commit::sequence() const {
 }
 inline void Commit::set_sequence(::int32_t value) {
   _internal_set_sequence(value);
-  _impl_._has_bits_[0] |= 0x00000004U;
+  _impl_._has_bits_[0] |= 0x00000010U;
   // @@protoc_insertion_point(field_set:bedrock.Commit.sequence)
 }
 inline ::int32_t Commit::_internal_sequence() const {
@@ -3418,7 +4711,7 @@ inline void Commit::set_allocated_operation(::std::string* PROTOBUF_NULLABLE val
 inline void Commit::clear_message_sender_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_sender_id_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000008U;
+  _impl_._has_bits_[0] &= ~0x00000020U;
 }
 inline ::int32_t Commit::message_sender_id() const {
   // @@protoc_insertion_point(field_get:bedrock.Commit.message_sender_id)
@@ -3426,7 +4719,7 @@ inline ::int32_t Commit::message_sender_id() const {
 }
 inline void Commit::set_message_sender_id(::int32_t value) {
   _internal_set_message_sender_id(value);
-  _impl_._has_bits_[0] |= 0x00000008U;
+  _impl_._has_bits_[0] |= 0x00000020U;
   // @@protoc_insertion_point(field_set:bedrock.Commit.message_sender_id)
 }
 inline ::int32_t Commit::_internal_message_sender_id() const {
@@ -3438,47 +4731,227 @@ inline void Commit::_internal_set_message_sender_id(::int32_t value) {
   _impl_.message_sender_id_ = value;
 }
 
+// repeated .bedrock.AggregatedMessage combined_messages = 5;
+inline int Commit::_internal_combined_messages_size() const {
+  return _internal_combined_messages().size();
+}
+inline int Commit::combined_messages_size() const {
+  return _internal_combined_messages_size();
+}
+inline void Commit::clear_combined_messages() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.combined_messages_.Clear();
+}
+inline ::bedrock::AggregatedMessage* PROTOBUF_NONNULL Commit::mutable_combined_messages(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:bedrock.Commit.combined_messages)
+  return _internal_mutable_combined_messages()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL Commit::mutable_combined_messages()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:bedrock.Commit.combined_messages)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_combined_messages();
+}
+inline const ::bedrock::AggregatedMessage& Commit::combined_messages(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.Commit.combined_messages)
+  return _internal_combined_messages().Get(index);
+}
+inline ::bedrock::AggregatedMessage* PROTOBUF_NONNULL Commit::add_combined_messages()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::bedrock::AggregatedMessage* _add = _internal_mutable_combined_messages()->Add();
+  // @@protoc_insertion_point(field_add:bedrock.Commit.combined_messages)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>& Commit::combined_messages() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:bedrock.Commit.combined_messages)
+  return _internal_combined_messages();
+}
+inline const ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>&
+Commit::_internal_combined_messages() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.combined_messages_;
+}
+inline ::google::protobuf::RepeatedPtrField<::bedrock::AggregatedMessage>* PROTOBUF_NONNULL
+Commit::_internal_mutable_combined_messages() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.combined_messages_;
+}
+
+// string qc = 6;
+inline void Commit::clear_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.qc_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002U;
+}
+inline const ::std::string& Commit::qc() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.Commit.qc)
+  return _internal_qc();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void Commit::set_qc(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_.qc_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.Commit.qc)
+}
+inline ::std::string* PROTOBUF_NONNULL Commit::mutable_qc()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_qc();
+  // @@protoc_insertion_point(field_mutable:bedrock.Commit.qc)
+  return _s;
+}
+inline const ::std::string& Commit::_internal_qc() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.qc_.Get();
+}
+inline void Commit::_internal_set_qc(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  _impl_.qc_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL Commit::_internal_mutable_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000002U;
+  return _impl_.qc_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE Commit::release_qc() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.Commit.qc)
+  if ((_impl_._has_bits_[0] & 0x00000002U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002U;
+  auto* released = _impl_.qc_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.qc_.Set("", GetArena());
+  }
+  return released;
+}
+inline void Commit::set_allocated_qc(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002U;
+  }
+  _impl_.qc_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.qc_.IsDefault()) {
+    _impl_.qc_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.Commit.qc)
+}
+
+// string type = 7;
+inline void Commit::clear_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000004U;
+}
+inline const ::std::string& Commit::type() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:bedrock.Commit.type)
+  return _internal_type();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void Commit::set_type(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  _impl_.type_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:bedrock.Commit.type)
+}
+inline ::std::string* PROTOBUF_NONNULL Commit::mutable_type()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::std::string* _s = _internal_mutable_type();
+  // @@protoc_insertion_point(field_mutable:bedrock.Commit.type)
+  return _s;
+}
+inline const ::std::string& Commit::_internal_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.type_.Get();
+}
+inline void Commit::_internal_set_type(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  _impl_.type_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL Commit::_internal_mutable_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_._has_bits_[0] |= 0x00000004U;
+  return _impl_.type_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE Commit::release_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:bedrock.Commit.type)
+  if ((_impl_._has_bits_[0] & 0x00000004U) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000004U;
+  auto* released = _impl_.type_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.type_.Set("", GetArena());
+  }
+  return released;
+}
+inline void Commit::set_allocated_type(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000004U;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000004U;
+  }
+  _impl_.type_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.type_.IsDefault()) {
+    _impl_.type_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:bedrock.Commit.type)
+}
+
 // -------------------------------------------------------------------
 
 // ProtocolEnvelope
 
 // .bedrock.PrePrepare pre_prepare = 1;
 inline bool ProtocolEnvelope::has_pre_prepare() const {
-  return kind_case() == kPrePrepare;
+  return payload_case() == kPrePrepare;
 }
 inline bool ProtocolEnvelope::_internal_has_pre_prepare() const {
-  return kind_case() == kPrePrepare;
+  return payload_case() == kPrePrepare;
 }
 inline void ProtocolEnvelope::set_has_pre_prepare() {
   _impl_._oneof_case_[0] = kPrePrepare;
 }
 inline void ProtocolEnvelope::clear_pre_prepare() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  if (kind_case() == kPrePrepare) {
+  if (payload_case() == kPrePrepare) {
     if (GetArena() == nullptr) {
-      delete _impl_.kind_.pre_prepare_;
+      delete _impl_.payload_.pre_prepare_;
     } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
-      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.kind_.pre_prepare_);
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.pre_prepare_);
     }
-    clear_has_kind();
+    clear_has_payload();
   }
 }
 inline ::bedrock::PrePrepare* PROTOBUF_NULLABLE ProtocolEnvelope::release_pre_prepare() {
   // @@protoc_insertion_point(field_release:bedrock.ProtocolEnvelope.pre_prepare)
-  if (kind_case() == kPrePrepare) {
-    clear_has_kind();
-    auto* temp = reinterpret_cast<::bedrock::PrePrepare*>(_impl_.kind_.pre_prepare_);
+  if (payload_case() == kPrePrepare) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::bedrock::PrePrepare*>(_impl_.payload_.pre_prepare_);
     if (GetArena() != nullptr) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
-    _impl_.kind_.pre_prepare_ = nullptr;
+    _impl_.payload_.pre_prepare_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
 inline const ::bedrock::PrePrepare& ProtocolEnvelope::_internal_pre_prepare() const {
-  return kind_case() == kPrePrepare ? *reinterpret_cast<::bedrock::PrePrepare*>(_impl_.kind_.pre_prepare_) : reinterpret_cast<::bedrock::PrePrepare&>(::bedrock::_PrePrepare_default_instance_);
+  return payload_case() == kPrePrepare ? *reinterpret_cast<::bedrock::PrePrepare*>(_impl_.payload_.pre_prepare_) : reinterpret_cast<::bedrock::PrePrepare&>(::bedrock::_PrePrepare_default_instance_);
 }
 inline const ::bedrock::PrePrepare& ProtocolEnvelope::pre_prepare() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_get:bedrock.ProtocolEnvelope.pre_prepare)
@@ -3486,10 +4959,10 @@ inline const ::bedrock::PrePrepare& ProtocolEnvelope::pre_prepare() const ABSL_A
 }
 inline ::bedrock::PrePrepare* PROTOBUF_NULLABLE ProtocolEnvelope::unsafe_arena_release_pre_prepare() {
   // @@protoc_insertion_point(field_unsafe_arena_release:bedrock.ProtocolEnvelope.pre_prepare)
-  if (kind_case() == kPrePrepare) {
-    clear_has_kind();
-    auto* temp = reinterpret_cast<::bedrock::PrePrepare*>(_impl_.kind_.pre_prepare_);
-    _impl_.kind_.pre_prepare_ = nullptr;
+  if (payload_case() == kPrePrepare) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::bedrock::PrePrepare*>(_impl_.payload_.pre_prepare_);
+    _impl_.payload_.pre_prepare_ = nullptr;
     return temp;
   } else {
     return nullptr;
@@ -3500,21 +4973,21 @@ inline void ProtocolEnvelope::unsafe_arena_set_allocated_pre_prepare(
   // We rely on the oneof clear method to free the earlier contents
   // of this oneof. We can directly use the pointer we're given to
   // set the new value.
-  clear_kind();
+  clear_payload();
   if (value) {
     set_has_pre_prepare();
-    _impl_.kind_.pre_prepare_ = reinterpret_cast<::google::protobuf::Message*>(value);
+    _impl_.payload_.pre_prepare_ = reinterpret_cast<::google::protobuf::Message*>(value);
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bedrock.ProtocolEnvelope.pre_prepare)
 }
 inline ::bedrock::PrePrepare* PROTOBUF_NONNULL ProtocolEnvelope::_internal_mutable_pre_prepare() {
-  if (kind_case() != kPrePrepare) {
-    clear_kind();
+  if (payload_case() != kPrePrepare) {
+    clear_payload();
     set_has_pre_prepare();
-    _impl_.kind_.pre_prepare_ = reinterpret_cast<::google::protobuf::Message*>(
+    _impl_.payload_.pre_prepare_ = reinterpret_cast<::google::protobuf::Message*>(
         ::google::protobuf::Message::DefaultConstruct<::bedrock::PrePrepare>(GetArena()));
   }
-  return reinterpret_cast<::bedrock::PrePrepare*>(_impl_.kind_.pre_prepare_);
+  return reinterpret_cast<::bedrock::PrePrepare*>(_impl_.payload_.pre_prepare_);
 }
 inline ::bedrock::PrePrepare* PROTOBUF_NONNULL ProtocolEnvelope::mutable_pre_prepare()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -3525,41 +4998,41 @@ inline ::bedrock::PrePrepare* PROTOBUF_NONNULL ProtocolEnvelope::mutable_pre_pre
 
 // .bedrock.Prepare prepare = 2;
 inline bool ProtocolEnvelope::has_prepare() const {
-  return kind_case() == kPrepare;
+  return payload_case() == kPrepare;
 }
 inline bool ProtocolEnvelope::_internal_has_prepare() const {
-  return kind_case() == kPrepare;
+  return payload_case() == kPrepare;
 }
 inline void ProtocolEnvelope::set_has_prepare() {
   _impl_._oneof_case_[0] = kPrepare;
 }
 inline void ProtocolEnvelope::clear_prepare() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  if (kind_case() == kPrepare) {
+  if (payload_case() == kPrepare) {
     if (GetArena() == nullptr) {
-      delete _impl_.kind_.prepare_;
+      delete _impl_.payload_.prepare_;
     } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
-      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.kind_.prepare_);
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.prepare_);
     }
-    clear_has_kind();
+    clear_has_payload();
   }
 }
 inline ::bedrock::Prepare* PROTOBUF_NULLABLE ProtocolEnvelope::release_prepare() {
   // @@protoc_insertion_point(field_release:bedrock.ProtocolEnvelope.prepare)
-  if (kind_case() == kPrepare) {
-    clear_has_kind();
-    auto* temp = reinterpret_cast<::bedrock::Prepare*>(_impl_.kind_.prepare_);
+  if (payload_case() == kPrepare) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::bedrock::Prepare*>(_impl_.payload_.prepare_);
     if (GetArena() != nullptr) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
-    _impl_.kind_.prepare_ = nullptr;
+    _impl_.payload_.prepare_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
 inline const ::bedrock::Prepare& ProtocolEnvelope::_internal_prepare() const {
-  return kind_case() == kPrepare ? *reinterpret_cast<::bedrock::Prepare*>(_impl_.kind_.prepare_) : reinterpret_cast<::bedrock::Prepare&>(::bedrock::_Prepare_default_instance_);
+  return payload_case() == kPrepare ? *reinterpret_cast<::bedrock::Prepare*>(_impl_.payload_.prepare_) : reinterpret_cast<::bedrock::Prepare&>(::bedrock::_Prepare_default_instance_);
 }
 inline const ::bedrock::Prepare& ProtocolEnvelope::prepare() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_get:bedrock.ProtocolEnvelope.prepare)
@@ -3567,10 +5040,10 @@ inline const ::bedrock::Prepare& ProtocolEnvelope::prepare() const ABSL_ATTRIBUT
 }
 inline ::bedrock::Prepare* PROTOBUF_NULLABLE ProtocolEnvelope::unsafe_arena_release_prepare() {
   // @@protoc_insertion_point(field_unsafe_arena_release:bedrock.ProtocolEnvelope.prepare)
-  if (kind_case() == kPrepare) {
-    clear_has_kind();
-    auto* temp = reinterpret_cast<::bedrock::Prepare*>(_impl_.kind_.prepare_);
-    _impl_.kind_.prepare_ = nullptr;
+  if (payload_case() == kPrepare) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::bedrock::Prepare*>(_impl_.payload_.prepare_);
+    _impl_.payload_.prepare_ = nullptr;
     return temp;
   } else {
     return nullptr;
@@ -3581,21 +5054,21 @@ inline void ProtocolEnvelope::unsafe_arena_set_allocated_prepare(
   // We rely on the oneof clear method to free the earlier contents
   // of this oneof. We can directly use the pointer we're given to
   // set the new value.
-  clear_kind();
+  clear_payload();
   if (value) {
     set_has_prepare();
-    _impl_.kind_.prepare_ = reinterpret_cast<::google::protobuf::Message*>(value);
+    _impl_.payload_.prepare_ = reinterpret_cast<::google::protobuf::Message*>(value);
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bedrock.ProtocolEnvelope.prepare)
 }
 inline ::bedrock::Prepare* PROTOBUF_NONNULL ProtocolEnvelope::_internal_mutable_prepare() {
-  if (kind_case() != kPrepare) {
-    clear_kind();
+  if (payload_case() != kPrepare) {
+    clear_payload();
     set_has_prepare();
-    _impl_.kind_.prepare_ = reinterpret_cast<::google::protobuf::Message*>(
+    _impl_.payload_.prepare_ = reinterpret_cast<::google::protobuf::Message*>(
         ::google::protobuf::Message::DefaultConstruct<::bedrock::Prepare>(GetArena()));
   }
-  return reinterpret_cast<::bedrock::Prepare*>(_impl_.kind_.prepare_);
+  return reinterpret_cast<::bedrock::Prepare*>(_impl_.payload_.prepare_);
 }
 inline ::bedrock::Prepare* PROTOBUF_NONNULL ProtocolEnvelope::mutable_prepare()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -3606,41 +5079,41 @@ inline ::bedrock::Prepare* PROTOBUF_NONNULL ProtocolEnvelope::mutable_prepare()
 
 // .bedrock.Commit commit = 3;
 inline bool ProtocolEnvelope::has_commit() const {
-  return kind_case() == kCommit;
+  return payload_case() == kCommit;
 }
 inline bool ProtocolEnvelope::_internal_has_commit() const {
-  return kind_case() == kCommit;
+  return payload_case() == kCommit;
 }
 inline void ProtocolEnvelope::set_has_commit() {
   _impl_._oneof_case_[0] = kCommit;
 }
 inline void ProtocolEnvelope::clear_commit() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  if (kind_case() == kCommit) {
+  if (payload_case() == kCommit) {
     if (GetArena() == nullptr) {
-      delete _impl_.kind_.commit_;
+      delete _impl_.payload_.commit_;
     } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
-      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.kind_.commit_);
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.commit_);
     }
-    clear_has_kind();
+    clear_has_payload();
   }
 }
 inline ::bedrock::Commit* PROTOBUF_NULLABLE ProtocolEnvelope::release_commit() {
   // @@protoc_insertion_point(field_release:bedrock.ProtocolEnvelope.commit)
-  if (kind_case() == kCommit) {
-    clear_has_kind();
-    auto* temp = reinterpret_cast<::bedrock::Commit*>(_impl_.kind_.commit_);
+  if (payload_case() == kCommit) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::bedrock::Commit*>(_impl_.payload_.commit_);
     if (GetArena() != nullptr) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
-    _impl_.kind_.commit_ = nullptr;
+    _impl_.payload_.commit_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
 inline const ::bedrock::Commit& ProtocolEnvelope::_internal_commit() const {
-  return kind_case() == kCommit ? *reinterpret_cast<::bedrock::Commit*>(_impl_.kind_.commit_) : reinterpret_cast<::bedrock::Commit&>(::bedrock::_Commit_default_instance_);
+  return payload_case() == kCommit ? *reinterpret_cast<::bedrock::Commit*>(_impl_.payload_.commit_) : reinterpret_cast<::bedrock::Commit&>(::bedrock::_Commit_default_instance_);
 }
 inline const ::bedrock::Commit& ProtocolEnvelope::commit() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_get:bedrock.ProtocolEnvelope.commit)
@@ -3648,10 +5121,10 @@ inline const ::bedrock::Commit& ProtocolEnvelope::commit() const ABSL_ATTRIBUTE_
 }
 inline ::bedrock::Commit* PROTOBUF_NULLABLE ProtocolEnvelope::unsafe_arena_release_commit() {
   // @@protoc_insertion_point(field_unsafe_arena_release:bedrock.ProtocolEnvelope.commit)
-  if (kind_case() == kCommit) {
-    clear_has_kind();
-    auto* temp = reinterpret_cast<::bedrock::Commit*>(_impl_.kind_.commit_);
-    _impl_.kind_.commit_ = nullptr;
+  if (payload_case() == kCommit) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::bedrock::Commit*>(_impl_.payload_.commit_);
+    _impl_.payload_.commit_ = nullptr;
     return temp;
   } else {
     return nullptr;
@@ -3662,21 +5135,21 @@ inline void ProtocolEnvelope::unsafe_arena_set_allocated_commit(
   // We rely on the oneof clear method to free the earlier contents
   // of this oneof. We can directly use the pointer we're given to
   // set the new value.
-  clear_kind();
+  clear_payload();
   if (value) {
     set_has_commit();
-    _impl_.kind_.commit_ = reinterpret_cast<::google::protobuf::Message*>(value);
+    _impl_.payload_.commit_ = reinterpret_cast<::google::protobuf::Message*>(value);
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bedrock.ProtocolEnvelope.commit)
 }
 inline ::bedrock::Commit* PROTOBUF_NONNULL ProtocolEnvelope::_internal_mutable_commit() {
-  if (kind_case() != kCommit) {
-    clear_kind();
+  if (payload_case() != kCommit) {
+    clear_payload();
     set_has_commit();
-    _impl_.kind_.commit_ = reinterpret_cast<::google::protobuf::Message*>(
+    _impl_.payload_.commit_ = reinterpret_cast<::google::protobuf::Message*>(
         ::google::protobuf::Message::DefaultConstruct<::bedrock::Commit>(GetArena()));
   }
-  return reinterpret_cast<::bedrock::Commit*>(_impl_.kind_.commit_);
+  return reinterpret_cast<::bedrock::Commit*>(_impl_.payload_.commit_);
 }
 inline ::bedrock::Commit* PROTOBUF_NONNULL ProtocolEnvelope::mutable_commit()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -3685,14 +5158,14 @@ inline ::bedrock::Commit* PROTOBUF_NONNULL ProtocolEnvelope::mutable_commit()
   return _msg;
 }
 
-inline bool ProtocolEnvelope::has_kind() const {
-  return kind_case() != KIND_NOT_SET;
+inline bool ProtocolEnvelope::has_payload() const {
+  return payload_case() != PAYLOAD_NOT_SET;
 }
-inline void ProtocolEnvelope::clear_has_kind() {
-  _impl_._oneof_case_[0] = KIND_NOT_SET;
+inline void ProtocolEnvelope::clear_has_payload() {
+  _impl_._oneof_case_[0] = PAYLOAD_NOT_SET;
 }
-inline ProtocolEnvelope::KindCase ProtocolEnvelope::kind_case() const {
-  return ProtocolEnvelope::KindCase(_impl_._oneof_case_[0]);
+inline ProtocolEnvelope::PayloadCase ProtocolEnvelope::payload_case() const {
+  return ProtocolEnvelope::PayloadCase(_impl_._oneof_case_[0]);
 }
 // -------------------------------------------------------------------
 

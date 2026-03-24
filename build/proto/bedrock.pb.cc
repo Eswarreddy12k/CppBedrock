@@ -84,66 +84,6 @@ struct RawJsonDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RawJsonDefaultTypeInternal _RawJson_default_instance_;
 
-inline constexpr Prepare::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        operation_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        view_{0},
-        sequence_{0},
-        message_sender_id_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR Prepare::Prepare(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(Prepare_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(::_pbi::ConstantInitialized()) {
-}
-struct PrepareDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR PrepareDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~PrepareDefaultTypeInternal() {}
-  union {
-    Prepare _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PrepareDefaultTypeInternal _Prepare_default_instance_;
-
-inline constexpr Commit::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        operation_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        view_{0},
-        sequence_{0},
-        message_sender_id_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR Commit::Commit(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(Commit_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(::_pbi::ConstantInitialized()) {
-}
-struct CommitDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR CommitDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~CommitDefaultTypeInternal() {}
-  union {
-    Commit _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CommitDefaultTypeInternal _Commit_default_instance_;
-
 inline constexpr Ack::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -171,47 +111,6 @@ struct AckDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AckDefaultTypeInternal _Ack_default_instance_;
-
-inline constexpr PrePrepare::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        timestamp_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        operation_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        signature_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        client_id_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        transaction_{nullptr},
-        view_{0},
-        sequence_{0},
-        client_listen_port_{0},
-        message_sender_id_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR PrePrepare::PrePrepare(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(PrePrepare_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(::_pbi::ConstantInitialized()) {
-}
-struct PrePrepareDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR PrePrepareDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~PrePrepareDefaultTypeInternal() {}
-  union {
-    PrePrepare _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PrePrepareDefaultTypeInternal _PrePrepare_default_instance_;
 
 inline constexpr ClientRequest::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -252,9 +151,172 @@ struct ClientRequestDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ClientRequestDefaultTypeInternal _ClientRequest_default_instance_;
 
+inline constexpr AggregatedMessage::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        digest_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        signature_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        clientid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        timestamp_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        transaction_{nullptr},
+        view_{0},
+        sequence_{0},
+        message_sender_id_{0},
+        client_listen_port_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR AggregatedMessage::AggregatedMessage(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(AggregatedMessage_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct AggregatedMessageDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR AggregatedMessageDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~AggregatedMessageDefaultTypeInternal() {}
+  union {
+    AggregatedMessage _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AggregatedMessageDefaultTypeInternal _AggregatedMessage_default_instance_;
+
+inline constexpr Prepare::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        combined_messages_{},
+        operation_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        qc_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        view_{0},
+        sequence_{0},
+        message_sender_id_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR Prepare::Prepare(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(Prepare_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct PrepareDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR PrepareDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~PrepareDefaultTypeInternal() {}
+  union {
+    Prepare _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PrepareDefaultTypeInternal _Prepare_default_instance_;
+
+inline constexpr PrePrepare::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        combined_messages_{},
+        operation_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        timestamp_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        signature_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        client_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        qc_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        transaction_{nullptr},
+        view_{0},
+        sequence_{0},
+        client_listen_port_{0},
+        message_sender_id_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR PrePrepare::PrePrepare(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(PrePrepare_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct PrePrepareDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR PrePrepareDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~PrePrepareDefaultTypeInternal() {}
+  union {
+    PrePrepare _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PrePrepareDefaultTypeInternal _PrePrepare_default_instance_;
+
+inline constexpr Commit::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        combined_messages_{},
+        operation_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        qc_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        view_{0},
+        sequence_{0},
+        message_sender_id_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR Commit::Commit(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(Commit_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct CommitDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR CommitDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CommitDefaultTypeInternal() {}
+  union {
+    Commit _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CommitDefaultTypeInternal _Commit_default_instance_;
+
 inline constexpr ProtocolEnvelope::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : kind_{},
+      : payload_{},
         _cached_size_{0},
         _oneof_case_{} {}
 
@@ -300,6 +362,27 @@ const ::uint32_t
         1,
         2,
         0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_._has_bits_),
+        12, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.view_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.sequence_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.digest_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.message_sender_id_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.signature_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.client_listen_port_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.clientid_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.timestamp_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::AggregatedMessage, _impl_.transaction_),
+        5,
+        6,
+        0,
+        7,
+        1,
+        8,
+        2,
+        3,
+        4,
+        0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::bedrock::ClientRequest, _impl_._has_bits_),
         10, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::bedrock::ClientRequest, _impl_.message_sender_id_),
@@ -318,53 +401,71 @@ const ::uint32_t
         3,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_._has_bits_),
-        12, // hasbit index offset
+        15, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.view_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.sequence_),
-        PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.timestamp_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.operation_),
-        PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.transaction_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.timestamp_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.client_listen_port_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.transaction_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.signature_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.message_sender_id_),
         PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.client_id_),
-        5,
-        6,
+        PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.combined_messages_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.qc_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::PrePrepare, _impl_.type_),
+        7,
+        8,
         0,
         1,
-        4,
-        7,
+        9,
+        6,
         2,
-        8,
+        10,
         3,
+        ~0u,
+        4,
+        5,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_._has_bits_),
-        7, // hasbit index offset
+        10, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_.view_),
         PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_.sequence_),
         PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_.operation_),
         PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_.message_sender_id_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_.combined_messages_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_.qc_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::Prepare, _impl_.type_),
+        3,
+        4,
+        0,
+        5,
+        ~0u,
         1,
         2,
-        0,
-        3,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::bedrock::Commit, _impl_._has_bits_),
-        7, // hasbit index offset
+        10, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::bedrock::Commit, _impl_.view_),
         PROTOBUF_FIELD_OFFSET(::bedrock::Commit, _impl_.sequence_),
         PROTOBUF_FIELD_OFFSET(::bedrock::Commit, _impl_.operation_),
         PROTOBUF_FIELD_OFFSET(::bedrock::Commit, _impl_.message_sender_id_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::Commit, _impl_.combined_messages_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::Commit, _impl_.qc_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::Commit, _impl_.type_),
+        3,
+        4,
+        0,
+        5,
+        ~0u,
         1,
         2,
-        0,
-        3,
         0x004, // bitmap
         PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_._oneof_case_[0]),
-        PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_.kind_),
-        PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_.kind_),
-        PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_.kind_),
-        PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_.kind_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::bedrock::ProtocolEnvelope, _impl_.payload_),
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::bedrock::Ack, _impl_._has_bits_),
         5, // hasbit index offset
@@ -378,16 +479,18 @@ static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
         {0, sizeof(::bedrock::RawJson)},
         {5, sizeof(::bedrock::Transaction)},
-        {14, sizeof(::bedrock::ClientRequest)},
-        {31, sizeof(::bedrock::PrePrepare)},
-        {52, sizeof(::bedrock::Prepare)},
-        {63, sizeof(::bedrock::Commit)},
-        {74, sizeof(::bedrock::ProtocolEnvelope)},
-        {80, sizeof(::bedrock::Ack)},
+        {14, sizeof(::bedrock::AggregatedMessage)},
+        {35, sizeof(::bedrock::ClientRequest)},
+        {52, sizeof(::bedrock::PrePrepare)},
+        {79, sizeof(::bedrock::Prepare)},
+        {96, sizeof(::bedrock::Commit)},
+        {113, sizeof(::bedrock::ProtocolEnvelope)},
+        {119, sizeof(::bedrock::Ack)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::bedrock::_RawJson_default_instance_._instance,
     &::bedrock::_Transaction_default_instance_._instance,
+    &::bedrock::_AggregatedMessage_default_instance_._instance,
     &::bedrock::_ClientRequest_default_instance_._instance,
     &::bedrock::_PrePrepare_default_instance_._instance,
     &::bedrock::_Prepare_default_instance_._instance,
@@ -399,43 +502,54 @@ const char descriptor_table_protodef_bedrock_2eproto[] ABSL_ATTRIBUTE_SECTION_VA
     protodesc_cold) = {
     "\n\rbedrock.proto\022\007bedrock\"\027\n\007RawJson\022\014\n\004j"
     "son\030\001 \001(\t\"7\n\013Transaction\022\014\n\004from\030\001 \001(\t\022\n"
-    "\n\002to\030\002 \001(\t\022\016\n\006amount\030\003 \001(\005\"\270\001\n\rClientReq"
-    "uest\022\031\n\021message_sender_id\030\001 \001(\t\022\021\n\ttimes"
-    "tamp\030\002 \001(\t\022)\n\013transaction\030\003 \001(\0132\024.bedroc"
-    "k.Transaction\022\014\n\004view\030\004 \001(\005\022\021\n\toperation"
-    "\030\005 \001(\t\022\032\n\022client_listen_port\030\006 \001(\005\022\021\n\tsi"
-    "gnature\030\007 \001(\t\"\332\001\n\nPrePrepare\022\014\n\004view\030\001 \001"
-    "(\005\022\020\n\010sequence\030\002 \001(\005\022\021\n\ttimestamp\030\003 \001(\t\022"
-    "\021\n\toperation\030\004 \001(\t\022)\n\013transaction\030\005 \001(\0132"
-    "\024.bedrock.Transaction\022\032\n\022client_listen_p"
-    "ort\030\006 \001(\005\022\021\n\tsignature\030\007 \001(\t\022\031\n\021message_"
-    "sender_id\030\010 \001(\005\022\021\n\tclient_id\030\t \001(\t\"W\n\007Pr"
-    "epare\022\014\n\004view\030\001 \001(\005\022\020\n\010sequence\030\002 \001(\005\022\021\n"
-    "\toperation\030\003 \001(\t\022\031\n\021message_sender_id\030\004 "
-    "\001(\005\"V\n\006Commit\022\014\n\004view\030\001 \001(\005\022\020\n\010sequence\030"
-    "\002 \001(\005\022\021\n\toperation\030\003 \001(\t\022\031\n\021message_send"
-    "er_id\030\004 \001(\005\"\216\001\n\020ProtocolEnvelope\022*\n\013pre_"
-    "prepare\030\001 \001(\0132\023.bedrock.PrePrepareH\000\022#\n\007"
-    "prepare\030\002 \001(\0132\020.bedrock.PrepareH\000\022!\n\006com"
-    "mit\030\003 \001(\0132\017.bedrock.CommitH\000B\006\n\004kind\"\036\n\003"
-    "Ack\022\n\n\002ok\030\001 \001(\010\022\013\n\003msg\030\002 \001(\t2\251\001\n\004Node\0221\n"
-    "\013SendRawJson\022\020.bedrock.RawJson\032\020.bedrock"
-    ".RawJson\0225\n\rSubmitRequest\022\026.bedrock.Clie"
-    "ntRequest\032\014.bedrock.Ack\0227\n\014SendProtocol\022"
-    "\031.bedrock.ProtocolEnvelope\032\014.bedrock.Ack"
-    "b\006proto3"
+    "\n\002to\030\002 \001(\t\022\016\n\006amount\030\003 \001(\005\"\335\001\n\021Aggregate"
+    "dMessage\022\014\n\004view\030\001 \001(\005\022\020\n\010sequence\030\002 \001(\005"
+    "\022\016\n\006digest\030\003 \001(\t\022\031\n\021message_sender_id\030\004 "
+    "\001(\005\022\021\n\tsignature\030\005 \001(\t\022\032\n\022client_listen_"
+    "port\030\006 \001(\005\022\020\n\010clientid\030\007 \001(\t\022\021\n\ttimestam"
+    "p\030\010 \001(\t\022)\n\013transaction\030\t \001(\0132\024.bedrock.T"
+    "ransaction\"\270\001\n\rClientRequest\022\031\n\021message_"
+    "sender_id\030\001 \001(\t\022\021\n\ttimestamp\030\002 \001(\t\022)\n\013tr"
+    "ansaction\030\003 \001(\0132\024.bedrock.Transaction\022\014\n"
+    "\004view\030\004 \001(\005\022\021\n\toperation\030\005 \001(\t\022\032\n\022client"
+    "_listen_port\030\006 \001(\005\022\021\n\tsignature\030\007 \001(\t\"\253\002"
+    "\n\nPrePrepare\022\014\n\004view\030\001 \001(\005\022\020\n\010sequence\030\002"
+    " \001(\005\022\021\n\toperation\030\003 \001(\t\022\021\n\ttimestamp\030\004 \001"
+    "(\t\022\032\n\022client_listen_port\030\005 \001(\005\022)\n\013transa"
+    "ction\030\006 \001(\0132\024.bedrock.Transaction\022\021\n\tsig"
+    "nature\030\007 \001(\t\022\031\n\021message_sender_id\030\010 \001(\005\022"
+    "\021\n\tclient_id\030\t \001(\t\0225\n\021combined_messages\030"
+    "\n \003(\0132\032.bedrock.AggregatedMessage\022\n\n\002qc\030"
+    "\013 \001(\t\022\014\n\004type\030\014 \001(\t\"\250\001\n\007Prepare\022\014\n\004view\030"
+    "\001 \001(\005\022\020\n\010sequence\030\002 \001(\005\022\021\n\toperation\030\003 \001"
+    "(\t\022\031\n\021message_sender_id\030\004 \001(\005\0225\n\021combine"
+    "d_messages\030\005 \003(\0132\032.bedrock.AggregatedMes"
+    "sage\022\n\n\002qc\030\006 \001(\t\022\014\n\004type\030\007 \001(\t\"\247\001\n\006Commi"
+    "t\022\014\n\004view\030\001 \001(\005\022\020\n\010sequence\030\002 \001(\005\022\021\n\tope"
+    "ration\030\003 \001(\t\022\031\n\021message_sender_id\030\004 \001(\005\022"
+    "5\n\021combined_messages\030\005 \003(\0132\032.bedrock.Agg"
+    "regatedMessage\022\n\n\002qc\030\006 \001(\t\022\014\n\004type\030\007 \001(\t"
+    "\"\221\001\n\020ProtocolEnvelope\022*\n\013pre_prepare\030\001 \001"
+    "(\0132\023.bedrock.PrePrepareH\000\022#\n\007prepare\030\002 \001"
+    "(\0132\020.bedrock.PrepareH\000\022!\n\006commit\030\003 \001(\0132\017"
+    ".bedrock.CommitH\000B\t\n\007payload\"\036\n\003Ack\022\n\n\002o"
+    "k\030\001 \001(\010\022\013\n\003msg\030\002 \001(\t2\251\001\n\004Node\0221\n\013SendRaw"
+    "Json\022\020.bedrock.RawJson\032\020.bedrock.RawJson"
+    "\0225\n\rSubmitRequest\022\026.bedrock.ClientReques"
+    "t\032\014.bedrock.Ack\0227\n\014SendProtocol\022\031.bedroc"
+    "k.ProtocolEnvelope\032\014.bedrock.Ackb\006proto3"
 };
 static ::absl::once_flag descriptor_table_bedrock_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_bedrock_2eproto = {
     false,
     false,
-    1048,
+    1520,
     descriptor_table_protodef_bedrock_2eproto,
     "bedrock.proto",
     &descriptor_table_bedrock_2eproto_once,
     nullptr,
     0,
-    8,
+    9,
     schemas,
     file_default_instances,
     TableStruct_bedrock_2eproto::offsets,
@@ -1060,6 +1174,574 @@ void Transaction::InternalSwap(Transaction* PROTOBUF_RESTRICT PROTOBUF_NONNULL o
 }
 // ===================================================================
 
+class AggregatedMessage::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<AggregatedMessage>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_._has_bits_);
+};
+
+AggregatedMessage::AggregatedMessage(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, AggregatedMessage_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:bedrock.AggregatedMessage)
+}
+PROTOBUF_NDEBUG_INLINE AggregatedMessage::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::bedrock::AggregatedMessage& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        digest_(arena, from.digest_),
+        signature_(arena, from.signature_),
+        clientid_(arena, from.clientid_),
+        timestamp_(arena, from.timestamp_) {}
+
+AggregatedMessage::AggregatedMessage(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const AggregatedMessage& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, AggregatedMessage_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  AggregatedMessage* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::uint32_t cached_has_bits = _impl_._has_bits_[0];
+  _impl_.transaction_ = ((cached_has_bits & 0x00000010U) != 0)
+                ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.transaction_)
+                : nullptr;
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, view_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, view_),
+           offsetof(Impl_, client_listen_port_) -
+               offsetof(Impl_, view_) +
+               sizeof(Impl_::client_listen_port_));
+
+  // @@protoc_insertion_point(copy_constructor:bedrock.AggregatedMessage)
+}
+PROTOBUF_NDEBUG_INLINE AggregatedMessage::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        digest_(arena),
+        signature_(arena),
+        clientid_(arena),
+        timestamp_(arena) {}
+
+inline void AggregatedMessage::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, transaction_),
+           0,
+           offsetof(Impl_, client_listen_port_) -
+               offsetof(Impl_, transaction_) +
+               sizeof(Impl_::client_listen_port_));
+}
+AggregatedMessage::~AggregatedMessage() {
+  // @@protoc_insertion_point(destructor:bedrock.AggregatedMessage)
+  SharedDtor(*this);
+}
+inline void AggregatedMessage::SharedDtor(MessageLite& self) {
+  AggregatedMessage& this_ = static_cast<AggregatedMessage&>(self);
+  if constexpr (::_pbi::DebugHardenVerifyHasBitConsistency()) {
+    this_.VerifyHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.digest_.Destroy();
+  this_._impl_.signature_.Destroy();
+  this_._impl_.clientid_.Destroy();
+  this_._impl_.timestamp_.Destroy();
+  delete this_._impl_.transaction_;
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL AggregatedMessage::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) AggregatedMessage(arena);
+}
+constexpr auto AggregatedMessage::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(AggregatedMessage),
+                                            alignof(AggregatedMessage));
+}
+constexpr auto AggregatedMessage::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_AggregatedMessage_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &AggregatedMessage::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<AggregatedMessage>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &AggregatedMessage::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<AggregatedMessage>(), &AggregatedMessage::ByteSizeLong,
+              &AggregatedMessage::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_._cached_size_),
+          false,
+      },
+      &AggregatedMessage::kDescriptorMethods,
+      &descriptor_table_bedrock_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull AggregatedMessage_class_data_ =
+        AggregatedMessage::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+AggregatedMessage::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&AggregatedMessage_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(AggregatedMessage_class_data_.tc_table);
+  return AggregatedMessage_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<4, 9, 1, 74, 2>
+AggregatedMessage::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_._has_bits_),
+    0, // no _extensions_
+    9, 120,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294966784,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    9,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    AggregatedMessage_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::bedrock::AggregatedMessage>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // int32 view = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AggregatedMessage, _impl_.view_), 5>(),
+     {8, 5, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.view_)}},
+    // int32 sequence = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AggregatedMessage, _impl_.sequence_), 6>(),
+     {16, 6, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.sequence_)}},
+    // string digest = 3;
+    {::_pbi::TcParser::FastUS1,
+     {26, 0, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.digest_)}},
+    // int32 message_sender_id = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AggregatedMessage, _impl_.message_sender_id_), 7>(),
+     {32, 7, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.message_sender_id_)}},
+    // string signature = 5;
+    {::_pbi::TcParser::FastUS1,
+     {42, 1, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.signature_)}},
+    // int32 client_listen_port = 6;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AggregatedMessage, _impl_.client_listen_port_), 8>(),
+     {48, 8, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.client_listen_port_)}},
+    // string clientid = 7;
+    {::_pbi::TcParser::FastUS1,
+     {58, 2, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.clientid_)}},
+    // string timestamp = 8;
+    {::_pbi::TcParser::FastUS1,
+     {66, 3, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.timestamp_)}},
+    // .bedrock.Transaction transaction = 9;
+    {::_pbi::TcParser::FastMtS1,
+     {74, 4, 0, PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.transaction_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // int32 view = 1;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.view_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // int32 sequence = 2;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.sequence_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // string digest = 3;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.digest_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // int32 message_sender_id = 4;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // string signature = 5;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.signature_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // int32 client_listen_port = 6;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.client_listen_port_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // string clientid = 7;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.clientid_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string timestamp = 8;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.timestamp_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // .bedrock.Transaction transaction = 9;
+    {PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.transaction_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::bedrock::Transaction>()},
+  }},
+  {{
+    "\31\0\0\6\0\11\0\10\11\0\0\0\0\0\0\0"
+    "bedrock.AggregatedMessage"
+    "digest"
+    "signature"
+    "clientid"
+    "timestamp"
+  }},
+};
+PROTOBUF_NOINLINE void AggregatedMessage::Clear() {
+// @@protoc_insertion_point(message_clear_start:bedrock.AggregatedMessage)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if ((cached_has_bits & 0x0000001fU) != 0) {
+    if ((cached_has_bits & 0x00000001U) != 0) {
+      _impl_.digest_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000002U) != 0) {
+      _impl_.signature_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      _impl_.clientid_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000008U) != 0) {
+      _impl_.timestamp_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000010U) != 0) {
+      ABSL_DCHECK(_impl_.transaction_ != nullptr);
+      _impl_.transaction_->Clear();
+    }
+  }
+  if ((cached_has_bits & 0x000000e0U) != 0) {
+    ::memset(&_impl_.view_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.message_sender_id_) -
+        reinterpret_cast<char*>(&_impl_.view_)) + sizeof(_impl_.message_sender_id_));
+  }
+  _impl_.client_listen_port_ = 0;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL AggregatedMessage::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const AggregatedMessage& this_ = static_cast<const AggregatedMessage&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL AggregatedMessage::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const AggregatedMessage& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenVerifyHasBitConsistency()) {
+    this_.VerifyHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:bedrock.AggregatedMessage)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  // int32 view = 1;
+  if ((this_._impl_._has_bits_[0] & 0x00000020U) != 0) {
+    if (this_._internal_view() != 0) {
+      target =
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<1>(
+              stream, this_._internal_view(), target);
+    }
+  }
+
+  // int32 sequence = 2;
+  if ((this_._impl_._has_bits_[0] & 0x00000040U) != 0) {
+    if (this_._internal_sequence() != 0) {
+      target =
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<2>(
+              stream, this_._internal_sequence(), target);
+    }
+  }
+
+  // string digest = 3;
+  if ((this_._impl_._has_bits_[0] & 0x00000001U) != 0) {
+    if (!this_._internal_digest().empty()) {
+      const ::std::string& _s = this_._internal_digest();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.AggregatedMessage.digest");
+      target = stream->WriteStringMaybeAliased(3, _s, target);
+    }
+  }
+
+  // int32 message_sender_id = 4;
+  if ((this_._impl_._has_bits_[0] & 0x00000080U) != 0) {
+    if (this_._internal_message_sender_id() != 0) {
+      target =
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<4>(
+              stream, this_._internal_message_sender_id(), target);
+    }
+  }
+
+  // string signature = 5;
+  if ((this_._impl_._has_bits_[0] & 0x00000002U) != 0) {
+    if (!this_._internal_signature().empty()) {
+      const ::std::string& _s = this_._internal_signature();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.AggregatedMessage.signature");
+      target = stream->WriteStringMaybeAliased(5, _s, target);
+    }
+  }
+
+  // int32 client_listen_port = 6;
+  if ((this_._impl_._has_bits_[0] & 0x00000100U) != 0) {
+    if (this_._internal_client_listen_port() != 0) {
+      target =
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<6>(
+              stream, this_._internal_client_listen_port(), target);
+    }
+  }
+
+  // string clientid = 7;
+  if ((this_._impl_._has_bits_[0] & 0x00000004U) != 0) {
+    if (!this_._internal_clientid().empty()) {
+      const ::std::string& _s = this_._internal_clientid();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.AggregatedMessage.clientid");
+      target = stream->WriteStringMaybeAliased(7, _s, target);
+    }
+  }
+
+  // string timestamp = 8;
+  if ((this_._impl_._has_bits_[0] & 0x00000008U) != 0) {
+    if (!this_._internal_timestamp().empty()) {
+      const ::std::string& _s = this_._internal_timestamp();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.AggregatedMessage.timestamp");
+      target = stream->WriteStringMaybeAliased(8, _s, target);
+    }
+  }
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // .bedrock.Transaction transaction = 9;
+  if ((cached_has_bits & 0x00000010U) != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+        9, *this_._impl_.transaction_, this_._impl_.transaction_->GetCachedSize(), target,
+        stream);
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:bedrock.AggregatedMessage)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t AggregatedMessage::ByteSizeLong(const MessageLite& base) {
+  const AggregatedMessage& this_ = static_cast<const AggregatedMessage&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t AggregatedMessage::ByteSizeLong() const {
+  const AggregatedMessage& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:bedrock.AggregatedMessage)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if ((cached_has_bits & 0x000000ffU) != 0) {
+    // string digest = 3;
+    if ((cached_has_bits & 0x00000001U) != 0) {
+      if (!this_._internal_digest().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_digest());
+      }
+    }
+    // string signature = 5;
+    if ((cached_has_bits & 0x00000002U) != 0) {
+      if (!this_._internal_signature().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_signature());
+      }
+    }
+    // string clientid = 7;
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      if (!this_._internal_clientid().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_clientid());
+      }
+    }
+    // string timestamp = 8;
+    if ((cached_has_bits & 0x00000008U) != 0) {
+      if (!this_._internal_timestamp().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_timestamp());
+      }
+    }
+    // .bedrock.Transaction transaction = 9;
+    if ((cached_has_bits & 0x00000010U) != 0) {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.transaction_);
+    }
+    // int32 view = 1;
+    if ((cached_has_bits & 0x00000020U) != 0) {
+      if (this_._internal_view() != 0) {
+        total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+            this_._internal_view());
+      }
+    }
+    // int32 sequence = 2;
+    if ((cached_has_bits & 0x00000040U) != 0) {
+      if (this_._internal_sequence() != 0) {
+        total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+            this_._internal_sequence());
+      }
+    }
+    // int32 message_sender_id = 4;
+    if ((cached_has_bits & 0x00000080U) != 0) {
+      if (this_._internal_message_sender_id() != 0) {
+        total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+            this_._internal_message_sender_id());
+      }
+    }
+  }
+   {
+    // int32 client_listen_port = 6;
+    if ((cached_has_bits & 0x00000100U) != 0) {
+      if (this_._internal_client_listen_port() != 0) {
+        total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+            this_._internal_client_listen_port());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void AggregatedMessage::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<AggregatedMessage*>(&to_msg);
+  auto& from = static_cast<const AggregatedMessage&>(from_msg);
+  if constexpr (::_pbi::DebugHardenVerifyHasBitConsistency()) {
+    from.VerifyHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:bedrock.AggregatedMessage)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if ((cached_has_bits & 0x000000ffU) != 0) {
+    if ((cached_has_bits & 0x00000001U) != 0) {
+      if (!from._internal_digest().empty()) {
+        _this->_internal_set_digest(from._internal_digest());
+      } else {
+        if (_this->_impl_.digest_.IsDefault()) {
+          _this->_internal_set_digest("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000002U) != 0) {
+      if (!from._internal_signature().empty()) {
+        _this->_internal_set_signature(from._internal_signature());
+      } else {
+        if (_this->_impl_.signature_.IsDefault()) {
+          _this->_internal_set_signature("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      if (!from._internal_clientid().empty()) {
+        _this->_internal_set_clientid(from._internal_clientid());
+      } else {
+        if (_this->_impl_.clientid_.IsDefault()) {
+          _this->_internal_set_clientid("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000008U) != 0) {
+      if (!from._internal_timestamp().empty()) {
+        _this->_internal_set_timestamp(from._internal_timestamp());
+      } else {
+        if (_this->_impl_.timestamp_.IsDefault()) {
+          _this->_internal_set_timestamp("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000010U) != 0) {
+      ABSL_DCHECK(from._impl_.transaction_ != nullptr);
+      if (_this->_impl_.transaction_ == nullptr) {
+        _this->_impl_.transaction_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.transaction_);
+      } else {
+        _this->_impl_.transaction_->MergeFrom(*from._impl_.transaction_);
+      }
+    }
+    if ((cached_has_bits & 0x00000020U) != 0) {
+      if (from._internal_view() != 0) {
+        _this->_impl_.view_ = from._impl_.view_;
+      }
+    }
+    if ((cached_has_bits & 0x00000040U) != 0) {
+      if (from._internal_sequence() != 0) {
+        _this->_impl_.sequence_ = from._impl_.sequence_;
+      }
+    }
+    if ((cached_has_bits & 0x00000080U) != 0) {
+      if (from._internal_message_sender_id() != 0) {
+        _this->_impl_.message_sender_id_ = from._impl_.message_sender_id_;
+      }
+    }
+  }
+  if ((cached_has_bits & 0x00000100U) != 0) {
+    if (from._internal_client_listen_port() != 0) {
+      _this->_impl_.client_listen_port_ = from._impl_.client_listen_port_;
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void AggregatedMessage::CopyFrom(const AggregatedMessage& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:bedrock.AggregatedMessage)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void AggregatedMessage::InternalSwap(AggregatedMessage* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.digest_, &other->_impl_.digest_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.signature_, &other->_impl_.signature_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.clientid_, &other->_impl_.clientid_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.timestamp_, &other->_impl_.timestamp_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.client_listen_port_)
+      + sizeof(AggregatedMessage::_impl_.client_listen_port_)
+      - PROTOBUF_FIELD_OFFSET(AggregatedMessage, _impl_.transaction_)>(
+          reinterpret_cast<char*>(&_impl_.transaction_),
+          reinterpret_cast<char*>(&other->_impl_.transaction_));
+}
+
+::google::protobuf::Metadata AggregatedMessage::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
 class ClientRequest::_Internal {
  public:
   using HasBits =
@@ -1590,10 +2272,13 @@ PROTOBUF_NDEBUG_INLINE PrePrepare::Impl_::Impl_(
     [[maybe_unused]] const ::bedrock::PrePrepare& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        timestamp_(arena, from.timestamp_),
+        combined_messages_{visibility, arena, from.combined_messages_},
         operation_(arena, from.operation_),
+        timestamp_(arena, from.timestamp_),
         signature_(arena, from.signature_),
-        client_id_(arena, from.client_id_) {}
+        client_id_(arena, from.client_id_),
+        qc_(arena, from.qc_),
+        type_(arena, from.type_) {}
 
 PrePrepare::PrePrepare(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
@@ -1609,7 +2294,7 @@ PrePrepare::PrePrepare(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
   ::uint32_t cached_has_bits = _impl_._has_bits_[0];
-  _impl_.transaction_ = ((cached_has_bits & 0x00000010U) != 0)
+  _impl_.transaction_ = ((cached_has_bits & 0x00000040U) != 0)
                 ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.transaction_)
                 : nullptr;
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
@@ -1626,10 +2311,13 @@ PROTOBUF_NDEBUG_INLINE PrePrepare::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
       : _cached_size_{0},
-        timestamp_(arena),
+        combined_messages_{visibility, arena},
         operation_(arena),
+        timestamp_(arena),
         signature_(arena),
-        client_id_(arena) {}
+        client_id_(arena),
+        qc_(arena),
+        type_(arena) {}
 
 inline void PrePrepare::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -1651,10 +2339,12 @@ inline void PrePrepare::SharedDtor(MessageLite& self) {
   }
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.timestamp_.Destroy();
   this_._impl_.operation_.Destroy();
+  this_._impl_.timestamp_.Destroy();
   this_._impl_.signature_.Destroy();
   this_._impl_.client_id_.Destroy();
+  this_._impl_.qc_.Destroy();
+  this_._impl_.type_.Destroy();
   delete this_._impl_.transaction_;
   this_._impl_.~Impl_();
 }
@@ -1665,8 +2355,20 @@ inline void* PROTOBUF_NONNULL PrePrepare::PlacementNew_(
   return ::new (mem) PrePrepare(arena);
 }
 constexpr auto PrePrepare::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(PrePrepare),
-                                            alignof(PrePrepare));
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.combined_messages_) +
+          decltype(PrePrepare::_impl_.combined_messages_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(PrePrepare), alignof(PrePrepare), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&PrePrepare::PlacementNew_,
+                                 sizeof(PrePrepare),
+                                 alignof(PrePrepare));
+  }
 }
 constexpr auto PrePrepare::InternalGenerateClassData_() {
   return ::google::protobuf::internal::ClassDataFull{
@@ -1702,17 +2404,17 @@ PrePrepare::GetClassData() const {
   return PrePrepare_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<4, 9, 1, 71, 2>
+const ::_pbi::TcParseTable<4, 12, 2, 77, 2>
 PrePrepare::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_._has_bits_),
     0, // no _extensions_
-    9, 120,  // max_field_number, fast_idx_mask
+    12, 120,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294966784,  // skipmap
+    4294963200,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    9,  // num_field_entries
-    1,  // num_aux_entries
+    12,  // num_field_entries
+    2,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     PrePrepare_class_data_.base(),
     nullptr,  // post_loop_handler
@@ -1723,35 +2425,41 @@ PrePrepare::_table_ = {
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
     // int32 view = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.view_), 5>(),
-     {8, 5, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.view_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.view_), 7>(),
+     {8, 7, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.view_)}},
     // int32 sequence = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.sequence_), 6>(),
-     {16, 6, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.sequence_)}},
-    // string timestamp = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.sequence_), 8>(),
+     {16, 8, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.sequence_)}},
+    // string operation = 3;
     {::_pbi::TcParser::FastUS1,
-     {26, 0, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.timestamp_)}},
-    // string operation = 4;
+     {26, 0, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.operation_)}},
+    // string timestamp = 4;
     {::_pbi::TcParser::FastUS1,
-     {34, 1, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.operation_)}},
-    // .bedrock.Transaction transaction = 5;
+     {34, 1, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.timestamp_)}},
+    // int32 client_listen_port = 5;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.client_listen_port_), 9>(),
+     {40, 9, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_listen_port_)}},
+    // .bedrock.Transaction transaction = 6;
     {::_pbi::TcParser::FastMtS1,
-     {42, 4, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.transaction_)}},
-    // int32 client_listen_port = 6;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.client_listen_port_), 7>(),
-     {48, 7, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_listen_port_)}},
+     {50, 6, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.transaction_)}},
     // string signature = 7;
     {::_pbi::TcParser::FastUS1,
      {58, 2, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.signature_)}},
     // int32 message_sender_id = 8;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.message_sender_id_), 8>(),
-     {64, 8, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(PrePrepare, _impl_.message_sender_id_), 10>(),
+     {64, 10, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_)}},
     // string client_id = 9;
     {::_pbi::TcParser::FastUS1,
      {74, 3, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_id_)}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // repeated .bedrock.AggregatedMessage combined_messages = 10;
+    {::_pbi::TcParser::FastMtR1,
+     {82, 63, 1, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.combined_messages_)}},
+    // string qc = 11;
+    {::_pbi::TcParser::FastUS1,
+     {90, 4, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.qc_)}},
+    // string type = 12;
+    {::_pbi::TcParser::FastUS1,
+     {98, 5, 0, PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.type_)}},
     {::_pbi::TcParser::MiniParse, {}},
     {::_pbi::TcParser::MiniParse, {}},
     {::_pbi::TcParser::MiniParse, {}},
@@ -1759,34 +2467,43 @@ PrePrepare::_table_ = {
     65535, 65535
   }}, {{
     // int32 view = 1;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.view_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.view_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 sequence = 2;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.sequence_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
-    // string timestamp = 3;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.timestamp_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string operation = 4;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.operation_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // .bedrock.Transaction transaction = 5;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.transaction_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
-    // int32 client_listen_port = 6;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_listen_port_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.sequence_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // string operation = 3;
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.operation_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string timestamp = 4;
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.timestamp_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // int32 client_listen_port = 5;
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_listen_port_), _Internal::kHasBitsOffset + 9, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // .bedrock.Transaction transaction = 6;
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.transaction_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // string signature = 7;
     {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.signature_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // int32 message_sender_id = 8;
-    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 10, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // string client_id = 9;
     {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.client_id_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // repeated .bedrock.AggregatedMessage combined_messages = 10;
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.combined_messages_), -1, 1, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // string qc = 11;
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.qc_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string type = 12;
+    {PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.type_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::bedrock::Transaction>()},
+      {::_pbi::TcParser::GetTable<::bedrock::AggregatedMessage>()},
   }},
   {{
-    "\22\0\0\11\11\0\0\11\0\11\0\0\0\0\0\0"
+    "\22\0\0\11\11\0\0\11\0\11\0\2\4\0\0\0"
     "bedrock.PrePrepare"
-    "timestamp"
     "operation"
+    "timestamp"
     "signature"
     "client_id"
+    "qc"
+    "type"
   }},
 };
 PROTOBUF_NOINLINE void PrePrepare::Clear() {
@@ -1796,13 +2513,14 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.combined_messages_.Clear();
   cached_has_bits = _impl_._has_bits_[0];
-  if ((cached_has_bits & 0x0000001fU) != 0) {
+  if ((cached_has_bits & 0x0000007fU) != 0) {
     if ((cached_has_bits & 0x00000001U) != 0) {
-      _impl_.timestamp_.ClearNonDefaultToEmpty();
+      _impl_.operation_.ClearNonDefaultToEmpty();
     }
     if ((cached_has_bits & 0x00000002U) != 0) {
-      _impl_.operation_.ClearNonDefaultToEmpty();
+      _impl_.timestamp_.ClearNonDefaultToEmpty();
     }
     if ((cached_has_bits & 0x00000004U) != 0) {
       _impl_.signature_.ClearNonDefaultToEmpty();
@@ -1811,16 +2529,22 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
       _impl_.client_id_.ClearNonDefaultToEmpty();
     }
     if ((cached_has_bits & 0x00000010U) != 0) {
+      _impl_.qc_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000020U) != 0) {
+      _impl_.type_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000040U) != 0) {
       ABSL_DCHECK(_impl_.transaction_ != nullptr);
       _impl_.transaction_->Clear();
     }
   }
-  if ((cached_has_bits & 0x000000e0U) != 0) {
-    ::memset(&_impl_.view_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.client_listen_port_) -
-        reinterpret_cast<char*>(&_impl_.view_)) + sizeof(_impl_.client_listen_port_));
+  _impl_.view_ = 0;
+  if ((cached_has_bits & 0x00000700U) != 0) {
+    ::memset(&_impl_.sequence_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.message_sender_id_) -
+        reinterpret_cast<char*>(&_impl_.sequence_)) + sizeof(_impl_.message_sender_id_));
   }
-  _impl_.message_sender_id_ = 0;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -1844,7 +2568,7 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   (void)cached_has_bits;
 
   // int32 view = 1;
-  if ((this_._impl_._has_bits_[0] & 0x00000020U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000080U) != 0) {
     if (this_._internal_view() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<1>(
@@ -1853,7 +2577,7 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   }
 
   // int32 sequence = 2;
-  if ((this_._impl_._has_bits_[0] & 0x00000040U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000100U) != 0) {
     if (this_._internal_sequence() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<2>(
@@ -1861,41 +2585,41 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
     }
   }
 
-  // string timestamp = 3;
+  // string operation = 3;
   if ((this_._impl_._has_bits_[0] & 0x00000001U) != 0) {
-    if (!this_._internal_timestamp().empty()) {
-      const ::std::string& _s = this_._internal_timestamp();
-      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.PrePrepare.timestamp");
-      target = stream->WriteStringMaybeAliased(3, _s, target);
-    }
-  }
-
-  // string operation = 4;
-  if ((this_._impl_._has_bits_[0] & 0x00000002U) != 0) {
     if (!this_._internal_operation().empty()) {
       const ::std::string& _s = this_._internal_operation();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
           _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.PrePrepare.operation");
+      target = stream->WriteStringMaybeAliased(3, _s, target);
+    }
+  }
+
+  // string timestamp = 4;
+  if ((this_._impl_._has_bits_[0] & 0x00000002U) != 0) {
+    if (!this_._internal_timestamp().empty()) {
+      const ::std::string& _s = this_._internal_timestamp();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.PrePrepare.timestamp");
       target = stream->WriteStringMaybeAliased(4, _s, target);
     }
   }
 
-  cached_has_bits = this_._impl_._has_bits_[0];
-  // .bedrock.Transaction transaction = 5;
-  if ((cached_has_bits & 0x00000010U) != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
-        5, *this_._impl_.transaction_, this_._impl_.transaction_->GetCachedSize(), target,
-        stream);
-  }
-
-  // int32 client_listen_port = 6;
-  if ((cached_has_bits & 0x00000080U) != 0) {
+  // int32 client_listen_port = 5;
+  if ((this_._impl_._has_bits_[0] & 0x00000200U) != 0) {
     if (this_._internal_client_listen_port() != 0) {
       target =
-          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<6>(
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<5>(
               stream, this_._internal_client_listen_port(), target);
     }
+  }
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // .bedrock.Transaction transaction = 6;
+  if ((cached_has_bits & 0x00000040U) != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+        6, *this_._impl_.transaction_, this_._impl_.transaction_->GetCachedSize(), target,
+        stream);
   }
 
   // string signature = 7;
@@ -1909,7 +2633,7 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   }
 
   // int32 message_sender_id = 8;
-  if ((cached_has_bits & 0x00000100U) != 0) {
+  if ((cached_has_bits & 0x00000400U) != 0) {
     if (this_._internal_message_sender_id() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<8>(
@@ -1924,6 +2648,37 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
           _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.PrePrepare.client_id");
       target = stream->WriteStringMaybeAliased(9, _s, target);
+    }
+  }
+
+  // repeated .bedrock.AggregatedMessage combined_messages = 10;
+  for (unsigned i = 0, n = static_cast<unsigned>(
+                           this_._internal_combined_messages_size());
+       i < n; i++) {
+    const auto& repfield = this_._internal_combined_messages().Get(i);
+    target =
+        ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+            10, repfield, repfield.GetCachedSize(),
+            target, stream);
+  }
+
+  // string qc = 11;
+  if ((cached_has_bits & 0x00000010U) != 0) {
+    if (!this_._internal_qc().empty()) {
+      const ::std::string& _s = this_._internal_qc();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.PrePrepare.qc");
+      target = stream->WriteStringMaybeAliased(11, _s, target);
+    }
+  }
+
+  // string type = 12;
+  if ((cached_has_bits & 0x00000020U) != 0) {
+    if (!this_._internal_type().empty()) {
+      const ::std::string& _s = this_._internal_type();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.PrePrepare.type");
+      target = stream->WriteStringMaybeAliased(12, _s, target);
     }
   }
 
@@ -1951,20 +2706,29 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
   (void)cached_has_bits;
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
-  cached_has_bits = this_._impl_._has_bits_[0];
-  if ((cached_has_bits & 0x000000ffU) != 0) {
-    // string timestamp = 3;
-    if ((cached_has_bits & 0x00000001U) != 0) {
-      if (!this_._internal_timestamp().empty()) {
-        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                        this_._internal_timestamp());
+   {
+    // repeated .bedrock.AggregatedMessage combined_messages = 10;
+    {
+      total_size += 1UL * this_._internal_combined_messages_size();
+      for (const auto& msg : this_._internal_combined_messages()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
       }
     }
-    // string operation = 4;
-    if ((cached_has_bits & 0x00000002U) != 0) {
+  }
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if ((cached_has_bits & 0x000000ffU) != 0) {
+    // string operation = 3;
+    if ((cached_has_bits & 0x00000001U) != 0) {
       if (!this_._internal_operation().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_operation());
+      }
+    }
+    // string timestamp = 4;
+    if ((cached_has_bits & 0x00000002U) != 0) {
+      if (!this_._internal_timestamp().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_timestamp());
       }
     }
     // string signature = 7;
@@ -1981,36 +2745,50 @@ PROTOBUF_NOINLINE void PrePrepare::Clear() {
                                         this_._internal_client_id());
       }
     }
-    // .bedrock.Transaction transaction = 5;
+    // string qc = 11;
     if ((cached_has_bits & 0x00000010U) != 0) {
+      if (!this_._internal_qc().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_qc());
+      }
+    }
+    // string type = 12;
+    if ((cached_has_bits & 0x00000020U) != 0) {
+      if (!this_._internal_type().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_type());
+      }
+    }
+    // .bedrock.Transaction transaction = 6;
+    if ((cached_has_bits & 0x00000040U) != 0) {
       total_size += 1 +
                     ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.transaction_);
     }
     // int32 view = 1;
-    if ((cached_has_bits & 0x00000020U) != 0) {
+    if ((cached_has_bits & 0x00000080U) != 0) {
       if (this_._internal_view() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_view());
       }
     }
+  }
+  if ((cached_has_bits & 0x00000700U) != 0) {
     // int32 sequence = 2;
-    if ((cached_has_bits & 0x00000040U) != 0) {
+    if ((cached_has_bits & 0x00000100U) != 0) {
       if (this_._internal_sequence() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_sequence());
       }
     }
-    // int32 client_listen_port = 6;
-    if ((cached_has_bits & 0x00000080U) != 0) {
+    // int32 client_listen_port = 5;
+    if ((cached_has_bits & 0x00000200U) != 0) {
       if (this_._internal_client_listen_port() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_client_listen_port());
       }
     }
-  }
-   {
     // int32 message_sender_id = 8;
-    if ((cached_has_bits & 0x00000100U) != 0) {
+    if ((cached_has_bits & 0x00000400U) != 0) {
       if (this_._internal_message_sender_id() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_message_sender_id());
@@ -2033,23 +2811,25 @@ void PrePrepare::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  _this->_internal_mutable_combined_messages()->MergeFrom(
+      from._internal_combined_messages());
   cached_has_bits = from._impl_._has_bits_[0];
   if ((cached_has_bits & 0x000000ffU) != 0) {
     if ((cached_has_bits & 0x00000001U) != 0) {
-      if (!from._internal_timestamp().empty()) {
-        _this->_internal_set_timestamp(from._internal_timestamp());
-      } else {
-        if (_this->_impl_.timestamp_.IsDefault()) {
-          _this->_internal_set_timestamp("");
-        }
-      }
-    }
-    if ((cached_has_bits & 0x00000002U) != 0) {
       if (!from._internal_operation().empty()) {
         _this->_internal_set_operation(from._internal_operation());
       } else {
         if (_this->_impl_.operation_.IsDefault()) {
           _this->_internal_set_operation("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000002U) != 0) {
+      if (!from._internal_timestamp().empty()) {
+        _this->_internal_set_timestamp(from._internal_timestamp());
+      } else {
+        if (_this->_impl_.timestamp_.IsDefault()) {
+          _this->_internal_set_timestamp("");
         }
       }
     }
@@ -2072,6 +2852,24 @@ void PrePrepare::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
       }
     }
     if ((cached_has_bits & 0x00000010U) != 0) {
+      if (!from._internal_qc().empty()) {
+        _this->_internal_set_qc(from._internal_qc());
+      } else {
+        if (_this->_impl_.qc_.IsDefault()) {
+          _this->_internal_set_qc("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000020U) != 0) {
+      if (!from._internal_type().empty()) {
+        _this->_internal_set_type(from._internal_type());
+      } else {
+        if (_this->_impl_.type_.IsDefault()) {
+          _this->_internal_set_type("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000040U) != 0) {
       ABSL_DCHECK(from._impl_.transaction_ != nullptr);
       if (_this->_impl_.transaction_ == nullptr) {
         _this->_impl_.transaction_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.transaction_);
@@ -2079,25 +2877,27 @@ void PrePrepare::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
         _this->_impl_.transaction_->MergeFrom(*from._impl_.transaction_);
       }
     }
-    if ((cached_has_bits & 0x00000020U) != 0) {
+    if ((cached_has_bits & 0x00000080U) != 0) {
       if (from._internal_view() != 0) {
         _this->_impl_.view_ = from._impl_.view_;
       }
     }
-    if ((cached_has_bits & 0x00000040U) != 0) {
+  }
+  if ((cached_has_bits & 0x00000700U) != 0) {
+    if ((cached_has_bits & 0x00000100U) != 0) {
       if (from._internal_sequence() != 0) {
         _this->_impl_.sequence_ = from._impl_.sequence_;
       }
     }
-    if ((cached_has_bits & 0x00000080U) != 0) {
+    if ((cached_has_bits & 0x00000200U) != 0) {
       if (from._internal_client_listen_port() != 0) {
         _this->_impl_.client_listen_port_ = from._impl_.client_listen_port_;
       }
     }
-  }
-  if ((cached_has_bits & 0x00000100U) != 0) {
-    if (from._internal_message_sender_id() != 0) {
-      _this->_impl_.message_sender_id_ = from._impl_.message_sender_id_;
+    if ((cached_has_bits & 0x00000400U) != 0) {
+      if (from._internal_message_sender_id() != 0) {
+        _this->_impl_.message_sender_id_ = from._impl_.message_sender_id_;
+      }
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -2118,10 +2918,13 @@ void PrePrepare::InternalSwap(PrePrepare* PROTOBUF_RESTRICT PROTOBUF_NONNULL oth
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.timestamp_, &other->_impl_.timestamp_, arena);
+  _impl_.combined_messages_.InternalSwap(&other->_impl_.combined_messages_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.operation_, &other->_impl_.operation_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.timestamp_, &other->_impl_.timestamp_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.signature_, &other->_impl_.signature_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.client_id_, &other->_impl_.client_id_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.qc_, &other->_impl_.qc_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.type_, &other->_impl_.type_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(PrePrepare, _impl_.message_sender_id_)
       + sizeof(PrePrepare::_impl_.message_sender_id_)
@@ -2158,7 +2961,10 @@ PROTOBUF_NDEBUG_INLINE Prepare::Impl_::Impl_(
     [[maybe_unused]] const ::bedrock::Prepare& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        operation_(arena, from.operation_) {}
+        combined_messages_{visibility, arena, from.combined_messages_},
+        operation_(arena, from.operation_),
+        qc_(arena, from.qc_),
+        type_(arena, from.type_) {}
 
 Prepare::Prepare(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
@@ -2187,7 +2993,10 @@ PROTOBUF_NDEBUG_INLINE Prepare::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
       : _cached_size_{0},
-        operation_(arena) {}
+        combined_messages_{visibility, arena},
+        operation_(arena),
+        qc_(arena),
+        type_(arena) {}
 
 inline void Prepare::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -2210,6 +3019,8 @@ inline void Prepare::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.operation_.Destroy();
+  this_._impl_.qc_.Destroy();
+  this_._impl_.type_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -2219,8 +3030,20 @@ inline void* PROTOBUF_NONNULL Prepare::PlacementNew_(
   return ::new (mem) Prepare(arena);
 }
 constexpr auto Prepare::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(Prepare),
-                                            alignof(Prepare));
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(Prepare, _impl_.combined_messages_) +
+          decltype(Prepare::_impl_.combined_messages_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(Prepare), alignof(Prepare), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&Prepare::PlacementNew_,
+                                 sizeof(Prepare),
+                                 alignof(Prepare));
+  }
 }
 constexpr auto Prepare::InternalGenerateClassData_() {
   return ::google::protobuf::internal::ClassDataFull{
@@ -2256,18 +3079,18 @@ Prepare::GetClassData() const {
   return Prepare_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 33, 2>
+const ::_pbi::TcParseTable<3, 7, 1, 39, 2>
 Prepare::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(Prepare, _impl_._has_bits_),
     0, // no _extensions_
-    4, 24,  // max_field_number, fast_idx_mask
+    7, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967280,  // skipmap
+    4294967168,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    4,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
+    7,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
     Prepare_class_data_.base(),
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
@@ -2275,35 +3098,55 @@ Prepare::_table_ = {
     ::_pbi::TcParser::GetTable<::bedrock::Prepare>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // int32 message_sender_id = 4;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Prepare, _impl_.message_sender_id_), 3>(),
-     {32, 3, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.message_sender_id_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // int32 view = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Prepare, _impl_.view_), 1>(),
-     {8, 1, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.view_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Prepare, _impl_.view_), 3>(),
+     {8, 3, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.view_)}},
     // int32 sequence = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Prepare, _impl_.sequence_), 2>(),
-     {16, 2, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.sequence_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Prepare, _impl_.sequence_), 4>(),
+     {16, 4, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.sequence_)}},
     // string operation = 3;
     {::_pbi::TcParser::FastUS1,
      {26, 0, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.operation_)}},
+    // int32 message_sender_id = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Prepare, _impl_.message_sender_id_), 5>(),
+     {32, 5, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.message_sender_id_)}},
+    // repeated .bedrock.AggregatedMessage combined_messages = 5;
+    {::_pbi::TcParser::FastMtR1,
+     {42, 63, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.combined_messages_)}},
+    // string qc = 6;
+    {::_pbi::TcParser::FastUS1,
+     {50, 1, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.qc_)}},
+    // string type = 7;
+    {::_pbi::TcParser::FastUS1,
+     {58, 2, 0, PROTOBUF_FIELD_OFFSET(Prepare, _impl_.type_)}},
   }}, {{
     65535, 65535
   }}, {{
     // int32 view = 1;
-    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.view_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.view_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 sequence = 2;
-    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.sequence_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.sequence_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // string operation = 3;
     {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.operation_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // int32 message_sender_id = 4;
-    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // repeated .bedrock.AggregatedMessage combined_messages = 5;
+    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.combined_messages_), -1, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // string qc = 6;
+    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.qc_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string type = 7;
+    {PROTOBUF_FIELD_OFFSET(Prepare, _impl_.type_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
-  // no aux_entries
   {{
-    "\17\0\0\11\0\0\0\0"
+      {::_pbi::TcParser::GetTable<::bedrock::AggregatedMessage>()},
+  }},
+  {{
+    "\17\0\0\11\0\0\2\4"
     "bedrock.Prepare"
     "operation"
+    "qc"
+    "type"
   }},
 };
 PROTOBUF_NOINLINE void Prepare::Clear() {
@@ -2313,11 +3156,20 @@ PROTOBUF_NOINLINE void Prepare::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.combined_messages_.Clear();
   cached_has_bits = _impl_._has_bits_[0];
-  if ((cached_has_bits & 0x00000001U) != 0) {
-    _impl_.operation_.ClearNonDefaultToEmpty();
+  if ((cached_has_bits & 0x00000007U) != 0) {
+    if ((cached_has_bits & 0x00000001U) != 0) {
+      _impl_.operation_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000002U) != 0) {
+      _impl_.qc_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      _impl_.type_.ClearNonDefaultToEmpty();
+    }
   }
-  if ((cached_has_bits & 0x0000000eU) != 0) {
+  if ((cached_has_bits & 0x00000038U) != 0) {
     ::memset(&_impl_.view_, 0, static_cast<::size_t>(
         reinterpret_cast<char*>(&_impl_.message_sender_id_) -
         reinterpret_cast<char*>(&_impl_.view_)) + sizeof(_impl_.message_sender_id_));
@@ -2345,7 +3197,7 @@ PROTOBUF_NOINLINE void Prepare::Clear() {
   (void)cached_has_bits;
 
   // int32 view = 1;
-  if ((this_._impl_._has_bits_[0] & 0x00000002U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000008U) != 0) {
     if (this_._internal_view() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<1>(
@@ -2354,7 +3206,7 @@ PROTOBUF_NOINLINE void Prepare::Clear() {
   }
 
   // int32 sequence = 2;
-  if ((this_._impl_._has_bits_[0] & 0x00000004U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000010U) != 0) {
     if (this_._internal_sequence() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<2>(
@@ -2373,11 +3225,42 @@ PROTOBUF_NOINLINE void Prepare::Clear() {
   }
 
   // int32 message_sender_id = 4;
-  if ((this_._impl_._has_bits_[0] & 0x00000008U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000020U) != 0) {
     if (this_._internal_message_sender_id() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<4>(
               stream, this_._internal_message_sender_id(), target);
+    }
+  }
+
+  // repeated .bedrock.AggregatedMessage combined_messages = 5;
+  for (unsigned i = 0, n = static_cast<unsigned>(
+                           this_._internal_combined_messages_size());
+       i < n; i++) {
+    const auto& repfield = this_._internal_combined_messages().Get(i);
+    target =
+        ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+            5, repfield, repfield.GetCachedSize(),
+            target, stream);
+  }
+
+  // string qc = 6;
+  if ((this_._impl_._has_bits_[0] & 0x00000002U) != 0) {
+    if (!this_._internal_qc().empty()) {
+      const ::std::string& _s = this_._internal_qc();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.Prepare.qc");
+      target = stream->WriteStringMaybeAliased(6, _s, target);
+    }
+  }
+
+  // string type = 7;
+  if ((this_._impl_._has_bits_[0] & 0x00000004U) != 0) {
+    if (!this_._internal_type().empty()) {
+      const ::std::string& _s = this_._internal_type();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.Prepare.type");
+      target = stream->WriteStringMaybeAliased(7, _s, target);
     }
   }
 
@@ -2405,8 +3288,17 @@ PROTOBUF_NOINLINE void Prepare::Clear() {
   (void)cached_has_bits;
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+   {
+    // repeated .bedrock.AggregatedMessage combined_messages = 5;
+    {
+      total_size += 1UL * this_._internal_combined_messages_size();
+      for (const auto& msg : this_._internal_combined_messages()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
+  }
   cached_has_bits = this_._impl_._has_bits_[0];
-  if ((cached_has_bits & 0x0000000fU) != 0) {
+  if ((cached_has_bits & 0x0000003fU) != 0) {
     // string operation = 3;
     if ((cached_has_bits & 0x00000001U) != 0) {
       if (!this_._internal_operation().empty()) {
@@ -2414,22 +3306,36 @@ PROTOBUF_NOINLINE void Prepare::Clear() {
                                         this_._internal_operation());
       }
     }
-    // int32 view = 1;
+    // string qc = 6;
     if ((cached_has_bits & 0x00000002U) != 0) {
+      if (!this_._internal_qc().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_qc());
+      }
+    }
+    // string type = 7;
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      if (!this_._internal_type().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_type());
+      }
+    }
+    // int32 view = 1;
+    if ((cached_has_bits & 0x00000008U) != 0) {
       if (this_._internal_view() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_view());
       }
     }
     // int32 sequence = 2;
-    if ((cached_has_bits & 0x00000004U) != 0) {
+    if ((cached_has_bits & 0x00000010U) != 0) {
       if (this_._internal_sequence() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_sequence());
       }
     }
     // int32 message_sender_id = 4;
-    if ((cached_has_bits & 0x00000008U) != 0) {
+    if ((cached_has_bits & 0x00000020U) != 0) {
       if (this_._internal_message_sender_id() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_message_sender_id());
@@ -2451,8 +3357,10 @@ void Prepare::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  _this->_internal_mutable_combined_messages()->MergeFrom(
+      from._internal_combined_messages());
   cached_has_bits = from._impl_._has_bits_[0];
-  if ((cached_has_bits & 0x0000000fU) != 0) {
+  if ((cached_has_bits & 0x0000003fU) != 0) {
     if ((cached_has_bits & 0x00000001U) != 0) {
       if (!from._internal_operation().empty()) {
         _this->_internal_set_operation(from._internal_operation());
@@ -2463,16 +3371,34 @@ void Prepare::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google:
       }
     }
     if ((cached_has_bits & 0x00000002U) != 0) {
+      if (!from._internal_qc().empty()) {
+        _this->_internal_set_qc(from._internal_qc());
+      } else {
+        if (_this->_impl_.qc_.IsDefault()) {
+          _this->_internal_set_qc("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      if (!from._internal_type().empty()) {
+        _this->_internal_set_type(from._internal_type());
+      } else {
+        if (_this->_impl_.type_.IsDefault()) {
+          _this->_internal_set_type("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000008U) != 0) {
       if (from._internal_view() != 0) {
         _this->_impl_.view_ = from._impl_.view_;
       }
     }
-    if ((cached_has_bits & 0x00000004U) != 0) {
+    if ((cached_has_bits & 0x00000010U) != 0) {
       if (from._internal_sequence() != 0) {
         _this->_impl_.sequence_ = from._impl_.sequence_;
       }
     }
-    if ((cached_has_bits & 0x00000008U) != 0) {
+    if ((cached_has_bits & 0x00000020U) != 0) {
       if (from._internal_message_sender_id() != 0) {
         _this->_impl_.message_sender_id_ = from._impl_.message_sender_id_;
       }
@@ -2496,7 +3422,10 @@ void Prepare::InternalSwap(Prepare* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.combined_messages_.InternalSwap(&other->_impl_.combined_messages_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.operation_, &other->_impl_.operation_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.qc_, &other->_impl_.qc_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.type_, &other->_impl_.type_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(Prepare, _impl_.message_sender_id_)
       + sizeof(Prepare::_impl_.message_sender_id_)
@@ -2533,7 +3462,10 @@ PROTOBUF_NDEBUG_INLINE Commit::Impl_::Impl_(
     [[maybe_unused]] const ::bedrock::Commit& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        operation_(arena, from.operation_) {}
+        combined_messages_{visibility, arena, from.combined_messages_},
+        operation_(arena, from.operation_),
+        qc_(arena, from.qc_),
+        type_(arena, from.type_) {}
 
 Commit::Commit(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
@@ -2562,7 +3494,10 @@ PROTOBUF_NDEBUG_INLINE Commit::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
       : _cached_size_{0},
-        operation_(arena) {}
+        combined_messages_{visibility, arena},
+        operation_(arena),
+        qc_(arena),
+        type_(arena) {}
 
 inline void Commit::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -2585,6 +3520,8 @@ inline void Commit::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.operation_.Destroy();
+  this_._impl_.qc_.Destroy();
+  this_._impl_.type_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -2594,8 +3531,20 @@ inline void* PROTOBUF_NONNULL Commit::PlacementNew_(
   return ::new (mem) Commit(arena);
 }
 constexpr auto Commit::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(Commit),
-                                            alignof(Commit));
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(Commit, _impl_.combined_messages_) +
+          decltype(Commit::_impl_.combined_messages_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(Commit), alignof(Commit), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&Commit::PlacementNew_,
+                                 sizeof(Commit),
+                                 alignof(Commit));
+  }
 }
 constexpr auto Commit::InternalGenerateClassData_() {
   return ::google::protobuf::internal::ClassDataFull{
@@ -2631,18 +3580,18 @@ Commit::GetClassData() const {
   return Commit_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 32, 2>
+const ::_pbi::TcParseTable<3, 7, 1, 38, 2>
 Commit::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(Commit, _impl_._has_bits_),
     0, // no _extensions_
-    4, 24,  // max_field_number, fast_idx_mask
+    7, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967280,  // skipmap
+    4294967168,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    4,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
+    7,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
     Commit_class_data_.base(),
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
@@ -2650,35 +3599,55 @@ Commit::_table_ = {
     ::_pbi::TcParser::GetTable<::bedrock::Commit>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // int32 message_sender_id = 4;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Commit, _impl_.message_sender_id_), 3>(),
-     {32, 3, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.message_sender_id_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // int32 view = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Commit, _impl_.view_), 1>(),
-     {8, 1, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.view_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Commit, _impl_.view_), 3>(),
+     {8, 3, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.view_)}},
     // int32 sequence = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Commit, _impl_.sequence_), 2>(),
-     {16, 2, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.sequence_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Commit, _impl_.sequence_), 4>(),
+     {16, 4, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.sequence_)}},
     // string operation = 3;
     {::_pbi::TcParser::FastUS1,
      {26, 0, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.operation_)}},
+    // int32 message_sender_id = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(Commit, _impl_.message_sender_id_), 5>(),
+     {32, 5, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.message_sender_id_)}},
+    // repeated .bedrock.AggregatedMessage combined_messages = 5;
+    {::_pbi::TcParser::FastMtR1,
+     {42, 63, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.combined_messages_)}},
+    // string qc = 6;
+    {::_pbi::TcParser::FastUS1,
+     {50, 1, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.qc_)}},
+    // string type = 7;
+    {::_pbi::TcParser::FastUS1,
+     {58, 2, 0, PROTOBUF_FIELD_OFFSET(Commit, _impl_.type_)}},
   }}, {{
     65535, 65535
   }}, {{
     // int32 view = 1;
-    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.view_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.view_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 sequence = 2;
-    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.sequence_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.sequence_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // string operation = 3;
     {PROTOBUF_FIELD_OFFSET(Commit, _impl_.operation_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // int32 message_sender_id = 4;
-    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.message_sender_id_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // repeated .bedrock.AggregatedMessage combined_messages = 5;
+    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.combined_messages_), -1, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // string qc = 6;
+    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.qc_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string type = 7;
+    {PROTOBUF_FIELD_OFFSET(Commit, _impl_.type_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
-  // no aux_entries
   {{
-    "\16\0\0\11\0\0\0\0"
+      {::_pbi::TcParser::GetTable<::bedrock::AggregatedMessage>()},
+  }},
+  {{
+    "\16\0\0\11\0\0\2\4"
     "bedrock.Commit"
     "operation"
+    "qc"
+    "type"
   }},
 };
 PROTOBUF_NOINLINE void Commit::Clear() {
@@ -2688,11 +3657,20 @@ PROTOBUF_NOINLINE void Commit::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.combined_messages_.Clear();
   cached_has_bits = _impl_._has_bits_[0];
-  if ((cached_has_bits & 0x00000001U) != 0) {
-    _impl_.operation_.ClearNonDefaultToEmpty();
+  if ((cached_has_bits & 0x00000007U) != 0) {
+    if ((cached_has_bits & 0x00000001U) != 0) {
+      _impl_.operation_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000002U) != 0) {
+      _impl_.qc_.ClearNonDefaultToEmpty();
+    }
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      _impl_.type_.ClearNonDefaultToEmpty();
+    }
   }
-  if ((cached_has_bits & 0x0000000eU) != 0) {
+  if ((cached_has_bits & 0x00000038U) != 0) {
     ::memset(&_impl_.view_, 0, static_cast<::size_t>(
         reinterpret_cast<char*>(&_impl_.message_sender_id_) -
         reinterpret_cast<char*>(&_impl_.view_)) + sizeof(_impl_.message_sender_id_));
@@ -2720,7 +3698,7 @@ PROTOBUF_NOINLINE void Commit::Clear() {
   (void)cached_has_bits;
 
   // int32 view = 1;
-  if ((this_._impl_._has_bits_[0] & 0x00000002U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000008U) != 0) {
     if (this_._internal_view() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<1>(
@@ -2729,7 +3707,7 @@ PROTOBUF_NOINLINE void Commit::Clear() {
   }
 
   // int32 sequence = 2;
-  if ((this_._impl_._has_bits_[0] & 0x00000004U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000010U) != 0) {
     if (this_._internal_sequence() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<2>(
@@ -2748,11 +3726,42 @@ PROTOBUF_NOINLINE void Commit::Clear() {
   }
 
   // int32 message_sender_id = 4;
-  if ((this_._impl_._has_bits_[0] & 0x00000008U) != 0) {
+  if ((this_._impl_._has_bits_[0] & 0x00000020U) != 0) {
     if (this_._internal_message_sender_id() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<4>(
               stream, this_._internal_message_sender_id(), target);
+    }
+  }
+
+  // repeated .bedrock.AggregatedMessage combined_messages = 5;
+  for (unsigned i = 0, n = static_cast<unsigned>(
+                           this_._internal_combined_messages_size());
+       i < n; i++) {
+    const auto& repfield = this_._internal_combined_messages().Get(i);
+    target =
+        ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+            5, repfield, repfield.GetCachedSize(),
+            target, stream);
+  }
+
+  // string qc = 6;
+  if ((this_._impl_._has_bits_[0] & 0x00000002U) != 0) {
+    if (!this_._internal_qc().empty()) {
+      const ::std::string& _s = this_._internal_qc();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.Commit.qc");
+      target = stream->WriteStringMaybeAliased(6, _s, target);
+    }
+  }
+
+  // string type = 7;
+  if ((this_._impl_._has_bits_[0] & 0x00000004U) != 0) {
+    if (!this_._internal_type().empty()) {
+      const ::std::string& _s = this_._internal_type();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "bedrock.Commit.type");
+      target = stream->WriteStringMaybeAliased(7, _s, target);
     }
   }
 
@@ -2780,8 +3789,17 @@ PROTOBUF_NOINLINE void Commit::Clear() {
   (void)cached_has_bits;
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+   {
+    // repeated .bedrock.AggregatedMessage combined_messages = 5;
+    {
+      total_size += 1UL * this_._internal_combined_messages_size();
+      for (const auto& msg : this_._internal_combined_messages()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
+  }
   cached_has_bits = this_._impl_._has_bits_[0];
-  if ((cached_has_bits & 0x0000000fU) != 0) {
+  if ((cached_has_bits & 0x0000003fU) != 0) {
     // string operation = 3;
     if ((cached_has_bits & 0x00000001U) != 0) {
       if (!this_._internal_operation().empty()) {
@@ -2789,22 +3807,36 @@ PROTOBUF_NOINLINE void Commit::Clear() {
                                         this_._internal_operation());
       }
     }
-    // int32 view = 1;
+    // string qc = 6;
     if ((cached_has_bits & 0x00000002U) != 0) {
+      if (!this_._internal_qc().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_qc());
+      }
+    }
+    // string type = 7;
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      if (!this_._internal_type().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_type());
+      }
+    }
+    // int32 view = 1;
+    if ((cached_has_bits & 0x00000008U) != 0) {
       if (this_._internal_view() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_view());
       }
     }
     // int32 sequence = 2;
-    if ((cached_has_bits & 0x00000004U) != 0) {
+    if ((cached_has_bits & 0x00000010U) != 0) {
       if (this_._internal_sequence() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_sequence());
       }
     }
     // int32 message_sender_id = 4;
-    if ((cached_has_bits & 0x00000008U) != 0) {
+    if ((cached_has_bits & 0x00000020U) != 0) {
       if (this_._internal_message_sender_id() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_message_sender_id());
@@ -2826,8 +3858,10 @@ void Commit::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  _this->_internal_mutable_combined_messages()->MergeFrom(
+      from._internal_combined_messages());
   cached_has_bits = from._impl_._has_bits_[0];
-  if ((cached_has_bits & 0x0000000fU) != 0) {
+  if ((cached_has_bits & 0x0000003fU) != 0) {
     if ((cached_has_bits & 0x00000001U) != 0) {
       if (!from._internal_operation().empty()) {
         _this->_internal_set_operation(from._internal_operation());
@@ -2838,16 +3872,34 @@ void Commit::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::
       }
     }
     if ((cached_has_bits & 0x00000002U) != 0) {
+      if (!from._internal_qc().empty()) {
+        _this->_internal_set_qc(from._internal_qc());
+      } else {
+        if (_this->_impl_.qc_.IsDefault()) {
+          _this->_internal_set_qc("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000004U) != 0) {
+      if (!from._internal_type().empty()) {
+        _this->_internal_set_type(from._internal_type());
+      } else {
+        if (_this->_impl_.type_.IsDefault()) {
+          _this->_internal_set_type("");
+        }
+      }
+    }
+    if ((cached_has_bits & 0x00000008U) != 0) {
       if (from._internal_view() != 0) {
         _this->_impl_.view_ = from._impl_.view_;
       }
     }
-    if ((cached_has_bits & 0x00000004U) != 0) {
+    if ((cached_has_bits & 0x00000010U) != 0) {
       if (from._internal_sequence() != 0) {
         _this->_impl_.sequence_ = from._impl_.sequence_;
       }
     }
-    if ((cached_has_bits & 0x00000008U) != 0) {
+    if ((cached_has_bits & 0x00000020U) != 0) {
       if (from._internal_message_sender_id() != 0) {
         _this->_impl_.message_sender_id_ = from._impl_.message_sender_id_;
       }
@@ -2871,7 +3923,10 @@ void Commit::InternalSwap(Commit* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.combined_messages_.InternalSwap(&other->_impl_.combined_messages_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.operation_, &other->_impl_.operation_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.qc_, &other->_impl_.qc_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.type_, &other->_impl_.type_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(Commit, _impl_.message_sender_id_)
       + sizeof(Commit::_impl_.message_sender_id_)
@@ -2893,40 +3948,40 @@ class ProtocolEnvelope::_Internal {
 
 void ProtocolEnvelope::set_allocated_pre_prepare(::bedrock::PrePrepare* PROTOBUF_NULLABLE pre_prepare) {
   ::google::protobuf::Arena* message_arena = GetArena();
-  clear_kind();
+  clear_payload();
   if (pre_prepare) {
     ::google::protobuf::Arena* submessage_arena = pre_prepare->GetArena();
     if (message_arena != submessage_arena) {
       pre_prepare = ::google::protobuf::internal::GetOwnedMessage(message_arena, pre_prepare, submessage_arena);
     }
     set_has_pre_prepare();
-    _impl_.kind_.pre_prepare_ = pre_prepare;
+    _impl_.payload_.pre_prepare_ = pre_prepare;
   }
   // @@protoc_insertion_point(field_set_allocated:bedrock.ProtocolEnvelope.pre_prepare)
 }
 void ProtocolEnvelope::set_allocated_prepare(::bedrock::Prepare* PROTOBUF_NULLABLE prepare) {
   ::google::protobuf::Arena* message_arena = GetArena();
-  clear_kind();
+  clear_payload();
   if (prepare) {
     ::google::protobuf::Arena* submessage_arena = prepare->GetArena();
     if (message_arena != submessage_arena) {
       prepare = ::google::protobuf::internal::GetOwnedMessage(message_arena, prepare, submessage_arena);
     }
     set_has_prepare();
-    _impl_.kind_.prepare_ = prepare;
+    _impl_.payload_.prepare_ = prepare;
   }
   // @@protoc_insertion_point(field_set_allocated:bedrock.ProtocolEnvelope.prepare)
 }
 void ProtocolEnvelope::set_allocated_commit(::bedrock::Commit* PROTOBUF_NULLABLE commit) {
   ::google::protobuf::Arena* message_arena = GetArena();
-  clear_kind();
+  clear_payload();
   if (commit) {
     ::google::protobuf::Arena* submessage_arena = commit->GetArena();
     if (message_arena != submessage_arena) {
       commit = ::google::protobuf::internal::GetOwnedMessage(message_arena, commit, submessage_arena);
     }
     set_has_commit();
-    _impl_.kind_.commit_ = commit;
+    _impl_.payload_.commit_ = commit;
   }
   // @@protoc_insertion_point(field_set_allocated:bedrock.ProtocolEnvelope.commit)
 }
@@ -2943,7 +3998,7 @@ PROTOBUF_NDEBUG_INLINE ProtocolEnvelope::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
     [[maybe_unused]] const ::bedrock::ProtocolEnvelope& from_msg)
-      : kind_{},
+      : payload_{},
         _cached_size_{0},
         _oneof_case_{from._oneof_case_[0]} {}
 
@@ -2960,17 +4015,17 @@ ProtocolEnvelope::ProtocolEnvelope(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  switch (kind_case()) {
-    case KIND_NOT_SET:
+  switch (payload_case()) {
+    case PAYLOAD_NOT_SET:
       break;
       case kPrePrepare:
-        _impl_.kind_.pre_prepare_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.kind_.pre_prepare_);
+        _impl_.payload_.pre_prepare_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.pre_prepare_);
         break;
       case kPrepare:
-        _impl_.kind_.prepare_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.kind_.prepare_);
+        _impl_.payload_.prepare_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.prepare_);
         break;
       case kCommit:
-        _impl_.kind_.commit_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.kind_.commit_);
+        _impl_.payload_.commit_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.commit_);
         break;
   }
 
@@ -2979,7 +4034,7 @@ ProtocolEnvelope::ProtocolEnvelope(
 PROTOBUF_NDEBUG_INLINE ProtocolEnvelope::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-      : kind_{},
+      : payload_{},
         _cached_size_{0},
         _oneof_case_{} {}
 
@@ -2997,45 +4052,45 @@ inline void ProtocolEnvelope::SharedDtor(MessageLite& self) {
   }
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  if (this_.has_kind()) {
-    this_.clear_kind();
+  if (this_.has_payload()) {
+    this_.clear_payload();
   }
   this_._impl_.~Impl_();
 }
 
-void ProtocolEnvelope::clear_kind() {
+void ProtocolEnvelope::clear_payload() {
 // @@protoc_insertion_point(one_of_clear_start:bedrock.ProtocolEnvelope)
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  switch (kind_case()) {
+  switch (payload_case()) {
     case kPrePrepare: {
       if (GetArena() == nullptr) {
-        delete _impl_.kind_.pre_prepare_;
+        delete _impl_.payload_.pre_prepare_;
       } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
-        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.kind_.pre_prepare_);
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.pre_prepare_);
       }
       break;
     }
     case kPrepare: {
       if (GetArena() == nullptr) {
-        delete _impl_.kind_.prepare_;
+        delete _impl_.payload_.prepare_;
       } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
-        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.kind_.prepare_);
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.prepare_);
       }
       break;
     }
     case kCommit: {
       if (GetArena() == nullptr) {
-        delete _impl_.kind_.commit_;
+        delete _impl_.payload_.commit_;
       } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
-        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.kind_.commit_);
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.commit_);
       }
       break;
     }
-    case KIND_NOT_SET: {
+    case PAYLOAD_NOT_SET: {
       break;
     }
   }
-  _impl_._oneof_case_[0] = KIND_NOT_SET;
+  _impl_._oneof_case_[0] = PAYLOAD_NOT_SET;
 }
 
 
@@ -3106,11 +4161,11 @@ ProtocolEnvelope::_table_ = {
     65535, 65535
   }}, {{
     // .bedrock.PrePrepare pre_prepare = 1;
-    {PROTOBUF_FIELD_OFFSET(ProtocolEnvelope, _impl_.kind_.pre_prepare_), _Internal::kOneofCaseOffset + 0, 0, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+    {PROTOBUF_FIELD_OFFSET(ProtocolEnvelope, _impl_.payload_.pre_prepare_), _Internal::kOneofCaseOffset + 0, 0, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
     // .bedrock.Prepare prepare = 2;
-    {PROTOBUF_FIELD_OFFSET(ProtocolEnvelope, _impl_.kind_.prepare_), _Internal::kOneofCaseOffset + 0, 1, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+    {PROTOBUF_FIELD_OFFSET(ProtocolEnvelope, _impl_.payload_.prepare_), _Internal::kOneofCaseOffset + 0, 1, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
     // .bedrock.Commit commit = 3;
-    {PROTOBUF_FIELD_OFFSET(ProtocolEnvelope, _impl_.kind_.commit_), _Internal::kOneofCaseOffset + 0, 2, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+    {PROTOBUF_FIELD_OFFSET(ProtocolEnvelope, _impl_.payload_.commit_), _Internal::kOneofCaseOffset + 0, 2, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::bedrock::PrePrepare>()},
@@ -3127,7 +4182,7 @@ PROTOBUF_NOINLINE void ProtocolEnvelope::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  clear_kind();
+  clear_payload();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -3149,22 +4204,22 @@ PROTOBUF_NOINLINE void ProtocolEnvelope::Clear() {
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
 
-  switch (this_.kind_case()) {
+  switch (this_.payload_case()) {
     case kPrePrepare: {
       target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
-          1, *this_._impl_.kind_.pre_prepare_, this_._impl_.kind_.pre_prepare_->GetCachedSize(), target,
+          1, *this_._impl_.payload_.pre_prepare_, this_._impl_.payload_.pre_prepare_->GetCachedSize(), target,
           stream);
       break;
     }
     case kPrepare: {
       target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
-          2, *this_._impl_.kind_.prepare_, this_._impl_.kind_.prepare_->GetCachedSize(), target,
+          2, *this_._impl_.payload_.prepare_, this_._impl_.payload_.prepare_->GetCachedSize(), target,
           stream);
       break;
     }
     case kCommit: {
       target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
-          3, *this_._impl_.kind_.commit_, this_._impl_.kind_.commit_->GetCachedSize(), target,
+          3, *this_._impl_.payload_.commit_, this_._impl_.payload_.commit_->GetCachedSize(), target,
           stream);
       break;
     }
@@ -3194,26 +4249,26 @@ PROTOBUF_NOINLINE void ProtocolEnvelope::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void)cached_has_bits;
 
-  switch (this_.kind_case()) {
+  switch (this_.payload_case()) {
     // .bedrock.PrePrepare pre_prepare = 1;
     case kPrePrepare: {
       total_size += 1 +
-                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.kind_.pre_prepare_);
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.pre_prepare_);
       break;
     }
     // .bedrock.Prepare prepare = 2;
     case kPrepare: {
       total_size += 1 +
-                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.kind_.prepare_);
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.prepare_);
       break;
     }
     // .bedrock.Commit commit = 3;
     case kCommit: {
       total_size += 1 +
-                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.kind_.commit_);
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.commit_);
       break;
     }
-    case KIND_NOT_SET: {
+    case PAYLOAD_NOT_SET: {
       break;
     }
   }
@@ -3238,7 +4293,7 @@ void ProtocolEnvelope::MergeImpl(::google::protobuf::MessageLite& to_msg, const 
     const bool oneof_needs_init = oneof_to_case != oneof_from_case;
     if (oneof_needs_init) {
       if (oneof_to_case != 0) {
-        _this->clear_kind();
+        _this->clear_payload();
       }
       _this->_impl_._oneof_case_[0] = oneof_from_case;
     }
@@ -3246,29 +4301,29 @@ void ProtocolEnvelope::MergeImpl(::google::protobuf::MessageLite& to_msg, const 
     switch (oneof_from_case) {
       case kPrePrepare: {
         if (oneof_needs_init) {
-          _this->_impl_.kind_.pre_prepare_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.kind_.pre_prepare_);
+          _this->_impl_.payload_.pre_prepare_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.pre_prepare_);
         } else {
-          _this->_impl_.kind_.pre_prepare_->MergeFrom(*from._impl_.kind_.pre_prepare_);
+          _this->_impl_.payload_.pre_prepare_->MergeFrom(*from._impl_.payload_.pre_prepare_);
         }
         break;
       }
       case kPrepare: {
         if (oneof_needs_init) {
-          _this->_impl_.kind_.prepare_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.kind_.prepare_);
+          _this->_impl_.payload_.prepare_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.prepare_);
         } else {
-          _this->_impl_.kind_.prepare_->MergeFrom(*from._impl_.kind_.prepare_);
+          _this->_impl_.payload_.prepare_->MergeFrom(*from._impl_.payload_.prepare_);
         }
         break;
       }
       case kCommit: {
         if (oneof_needs_init) {
-          _this->_impl_.kind_.commit_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.kind_.commit_);
+          _this->_impl_.payload_.commit_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.payload_.commit_);
         } else {
-          _this->_impl_.kind_.commit_->MergeFrom(*from._impl_.kind_.commit_);
+          _this->_impl_.payload_.commit_->MergeFrom(*from._impl_.payload_.commit_);
         }
         break;
       }
-      case KIND_NOT_SET:
+      case PAYLOAD_NOT_SET:
         break;
     }
   }
@@ -3286,7 +4341,7 @@ void ProtocolEnvelope::CopyFrom(const ProtocolEnvelope& from) {
 void ProtocolEnvelope::InternalSwap(ProtocolEnvelope* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
   using ::std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.kind_, other->_impl_.kind_);
+  swap(_impl_.payload_, other->_impl_.payload_);
   swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 

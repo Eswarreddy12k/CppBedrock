@@ -30,6 +30,7 @@
 #include <grpcpp/grpcpp.h>
 #include "proto/bedrock.grpc.pb.h"
 #include "proto/bedrock.pb.h"
+#include <functional> // For std::hash
 
 namespace grpc { class Server; }
 class NodeServiceImpl;
@@ -58,7 +59,13 @@ struct ViewChangeData {
     nlohmann::json locked_qc;
 };
 
-
+// Custom hash function for std::pair
+struct PairHash {
+    template <typename T1, typename T2>
+    std::size_t operator()(const std::pair<T1, T2>& pair) const {
+        return std::hash<T1>()(pair.first) ^ (std::hash<T2>()(pair.second) << 1);
+    }
+};
 
 class Entity : public EventHandler<EntityState> {
     friend class Event; // <-- Add this line
@@ -213,6 +220,7 @@ public:
     std::unordered_map<int, std::string> prepareOperations;
     std::unordered_map<int, std::string> commitOperations;
     std::unordered_map<int, std::vector<nlohmann::json>> viewChangeMessages;
+    std::unordered_map<std::pair<int, int>, int, PairHash> nodeDelays;
     bool inViewChange = false;
     std::unique_ptr<TimeKeeper> timeKeeper;
     std::mutex timerMtx;
@@ -236,8 +244,14 @@ public:
     bool isByzantine;
     std::unordered_map<int, std::unique_ptr<TimeKeeper>> prepareTimers;
 
-    // Add this line:
+    std::mutex senderIdsMtx;
     std::unordered_map<std::string, std::unordered_set<int>> keyToSenderIds;
+
+    // Quorum deduplication: ensures broadcast fires exactly once per phase+seq
+    std::mutex quorumTriggeredMtx;
+    std::unordered_set<std::string> quorumTriggered;
+
+    std::mutex prePrepareMtx;
 
     std::unordered_set<std::string> executedTransactions;
 
@@ -275,6 +289,7 @@ public:
     void processProtocolEnvelope(const bedrock::ProtocolEnvelope& env);
     void sendProtocolToAll(const bedrock::ProtocolEnvelope& env);
     void sendProtocolTo(int peer, const bedrock::ProtocolEnvelope& env);
+    void loadDelaysFromConfig(const std::string& configFile);
 
     struct PrePrepareInfo {
         std::string timestamp;
@@ -288,9 +303,7 @@ public:
     // Fast lookup for CompleteEvent; does not change existing dataset behavior
     std::unordered_map<int, PrePrepareInfo> prePrepareIndex; // seq -> info
 
-    // Guards for concurrent access
-    mutable std::mutex senderIdsMtx;     // protects keyToSenderIds
-    mutable std::mutex prePrepareMtx;    // protects prePrepareIndex
+    
     mutable std::mutex processedMtx;     // protects processedOperations
 
 private:

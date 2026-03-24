@@ -114,9 +114,8 @@ integration_test: /opt/homebrew/lib/libupb_base_lib.50.0.0.dylib
 integration_test: /opt/homebrew/lib/libupb_mem_lib.50.0.0.dylib
 integration_test: /opt/homebrew/lib/libre2.11.0.0.dylib
 integration_test: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/libz.tbd
-integration_test: /opt/homebrew/lib/libcares.2.19.4.dylib
+integration_test: /opt/homebrew/lib/libcares.2.19.5.dylib
 integration_test: /opt/homebrew/lib/libgpr.50.0.0.dylib
-integration_test: /opt/homebrew/Cellar/openssl@3/3.5.2/lib/libssl.dylib
 integration_test: /opt/homebrew/lib/libaddress_sorting.50.0.0.dylib
 integration_test: /opt/homebrew/lib/libabsl_log_internal_check_op.2508.0.0.dylib
 integration_test: /opt/homebrew/lib/libabsl_die_if_null.2508.0.0.dylib
@@ -196,7 +195,8 @@ integration_test: /opt/homebrew/lib/libabsl_spinlock_wait.2508.0.0.dylib
 integration_test: /opt/homebrew/lib/libabsl_throw_delegate.2508.0.0.dylib
 integration_test: /opt/homebrew/lib/libabsl_raw_logging_internal.2508.0.0.dylib
 integration_test: /opt/homebrew/lib/libabsl_log_severity.2508.0.0.dylib
-integration_test: /opt/homebrew/Cellar/openssl@3/3.5.2/lib/libcrypto.dylib
+integration_test: /opt/homebrew/lib/libssl.dylib
+integration_test: /opt/homebrew/lib/libcrypto.dylib
 integration_test: CMakeFiles/integration_test.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/eswar/Downloads/CppBedrock/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable integration_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/integration_test.dir/link.txt --verbose=$(VERBOSE)

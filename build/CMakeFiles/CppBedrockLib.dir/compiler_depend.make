@@ -8408,33 +8408,33 @@ CMakeFiles/CppBedrockLib.dir/src/core/crypto/CryptoUtils.cpp.o: /Users/eswar/Dow
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/stddef.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/stdint.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoUtils.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/asn1.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/asn1err.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bio.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bioerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bn.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bnerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/configuration.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/core.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/core_dispatch.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/crypto.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/cryptoerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/cryptoerr_legacy.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/e_os2.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/evp.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/evperr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/indicator.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/macros.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/obj_mac.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/objects.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/objectserr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/opensslconf.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/opensslv.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/params.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/safestack.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/stack.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/symhacks.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/types.h
+  /opt/homebrew/include/openssl/asn1.h \
+  /opt/homebrew/include/openssl/asn1err.h \
+  /opt/homebrew/include/openssl/bio.h \
+  /opt/homebrew/include/openssl/bioerr.h \
+  /opt/homebrew/include/openssl/bn.h \
+  /opt/homebrew/include/openssl/bnerr.h \
+  /opt/homebrew/include/openssl/configuration.h \
+  /opt/homebrew/include/openssl/core.h \
+  /opt/homebrew/include/openssl/core_dispatch.h \
+  /opt/homebrew/include/openssl/crypto.h \
+  /opt/homebrew/include/openssl/cryptoerr.h \
+  /opt/homebrew/include/openssl/cryptoerr_legacy.h \
+  /opt/homebrew/include/openssl/e_os2.h \
+  /opt/homebrew/include/openssl/evp.h \
+  /opt/homebrew/include/openssl/evperr.h \
+  /opt/homebrew/include/openssl/indicator.h \
+  /opt/homebrew/include/openssl/macros.h \
+  /opt/homebrew/include/openssl/obj_mac.h \
+  /opt/homebrew/include/openssl/objects.h \
+  /opt/homebrew/include/openssl/objectserr.h \
+  /opt/homebrew/include/openssl/opensslconf.h \
+  /opt/homebrew/include/openssl/opensslv.h \
+  /opt/homebrew/include/openssl/params.h \
+  /opt/homebrew/include/openssl/safestack.h \
+  /opt/homebrew/include/openssl/stack.h \
+  /opt/homebrew/include/openssl/symhacks.h \
+  /opt/homebrew/include/openssl/types.h
 
 CMakeFiles/CppBedrockLib.dir/src/core/crypto/OpenSSLCryptoProvider.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/crypto/OpenSSLCryptoProvider.cpp \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/Availability.h \
@@ -9253,57 +9253,57 @@ CMakeFiles/CppBedrockLib.dir/src/core/crypto/OpenSSLCryptoProvider.cpp.o: /Users
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/stdint.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoProvider.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/OpenSSLCryptoProvider.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/asn1.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/asn1err.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bio.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bioerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bn.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bnerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/buffer.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/buffererr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/conf.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/conferr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/configuration.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/conftypes.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/core.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/core_dispatch.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/crypto.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/cryptoerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/cryptoerr_legacy.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/dh.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/dherr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/dsa.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/dsaerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/e_os2.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/ec.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/ecerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/err.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/evp.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/evperr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/http.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/indicator.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/lhash.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/macros.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/obj_mac.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/objects.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/objectserr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/opensslconf.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/opensslv.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/params.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/pem.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/pemerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/pkcs7.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/pkcs7err.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/rsa.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/rsaerr.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/safestack.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/sha.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/stack.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/symhacks.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/types.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/x509.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/x509_vfy.h \
-  /opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/x509err.h
+  /opt/homebrew/include/openssl/asn1.h \
+  /opt/homebrew/include/openssl/asn1err.h \
+  /opt/homebrew/include/openssl/bio.h \
+  /opt/homebrew/include/openssl/bioerr.h \
+  /opt/homebrew/include/openssl/bn.h \
+  /opt/homebrew/include/openssl/bnerr.h \
+  /opt/homebrew/include/openssl/buffer.h \
+  /opt/homebrew/include/openssl/buffererr.h \
+  /opt/homebrew/include/openssl/conf.h \
+  /opt/homebrew/include/openssl/conferr.h \
+  /opt/homebrew/include/openssl/configuration.h \
+  /opt/homebrew/include/openssl/conftypes.h \
+  /opt/homebrew/include/openssl/core.h \
+  /opt/homebrew/include/openssl/core_dispatch.h \
+  /opt/homebrew/include/openssl/crypto.h \
+  /opt/homebrew/include/openssl/cryptoerr.h \
+  /opt/homebrew/include/openssl/cryptoerr_legacy.h \
+  /opt/homebrew/include/openssl/dh.h \
+  /opt/homebrew/include/openssl/dherr.h \
+  /opt/homebrew/include/openssl/dsa.h \
+  /opt/homebrew/include/openssl/dsaerr.h \
+  /opt/homebrew/include/openssl/e_os2.h \
+  /opt/homebrew/include/openssl/ec.h \
+  /opt/homebrew/include/openssl/ecerr.h \
+  /opt/homebrew/include/openssl/err.h \
+  /opt/homebrew/include/openssl/evp.h \
+  /opt/homebrew/include/openssl/evperr.h \
+  /opt/homebrew/include/openssl/http.h \
+  /opt/homebrew/include/openssl/indicator.h \
+  /opt/homebrew/include/openssl/lhash.h \
+  /opt/homebrew/include/openssl/macros.h \
+  /opt/homebrew/include/openssl/obj_mac.h \
+  /opt/homebrew/include/openssl/objects.h \
+  /opt/homebrew/include/openssl/objectserr.h \
+  /opt/homebrew/include/openssl/opensslconf.h \
+  /opt/homebrew/include/openssl/opensslv.h \
+  /opt/homebrew/include/openssl/params.h \
+  /opt/homebrew/include/openssl/pem.h \
+  /opt/homebrew/include/openssl/pemerr.h \
+  /opt/homebrew/include/openssl/pkcs7.h \
+  /opt/homebrew/include/openssl/pkcs7err.h \
+  /opt/homebrew/include/openssl/rsa.h \
+  /opt/homebrew/include/openssl/rsaerr.h \
+  /opt/homebrew/include/openssl/safestack.h \
+  /opt/homebrew/include/openssl/sha.h \
+  /opt/homebrew/include/openssl/stack.h \
+  /opt/homebrew/include/openssl/symhacks.h \
+  /opt/homebrew/include/openssl/types.h \
+  /opt/homebrew/include/openssl/x509.h \
+  /opt/homebrew/include/openssl/x509_vfy.h \
+  /opt/homebrew/include/openssl/x509err.h
 
 CMakeFiles/CppBedrockLib.dir/src/core/events/Event.cpp.o: /Users/eswar/Downloads/CppBedrock/src/core/events/Event.cpp
 
@@ -11512,12 +11512,14 @@ CMakeFiles/CppBedrockLib.dir/src/core/events/EventFactoryProtocolSpecific.cpp.o:
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoProvider.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoUtils.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/OpenSSLCryptoProvider.h \
+  /Users/eswar/Downloads/CppBedrock/include/core/events/Message.h \
   /Users/eswar/Downloads/CppBedrock/include/core/crypto/CryptoUtils.h \
   /Users/eswar/Downloads/CppBedrock/include/core/state/EntityState.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/BaseEvent.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/Event.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/EventFactory.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/EventHandler.h \
+  /Users/eswar/Downloads/CppBedrock/include/core/events/ProtoMessage.h \
   /Users/eswar/Downloads/CppBedrock/include/core/pipeline/Pipeline.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/Event.h \
   /Users/eswar/Downloads/CppBedrock/include/core/events/Message.h \
@@ -16559,37 +16561,47 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 
 /Users/eswar/Downloads/CppBedrock/src/core/events/EventFactoryProtocolSpecific.cpp:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/rsa.h:
+/opt/homebrew/include/openssl/x509err.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/err.h:
+/opt/homebrew/include/openssl/x509_vfy.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/dsaerr.h:
+/opt/homebrew/include/openssl/sha.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/buffererr.h:
+/opt/homebrew/include/openssl/rsaerr.h:
+
+/opt/homebrew/include/openssl/rsa.h:
+
+/opt/homebrew/include/openssl/pkcs7.h:
+
+/opt/homebrew/include/openssl/pemerr.h:
+
+/opt/homebrew/include/openssl/pem.h:
+
+/opt/homebrew/include/openssl/http.h:
+
+/opt/homebrew/include/openssl/ec.h:
+
+/opt/homebrew/include/openssl/conferr.h:
+
+/opt/homebrew/include/openssl/conf.h:
 
 /Users/eswar/Downloads/CppBedrock/src/core/crypto/OpenSSLCryptoProvider.cpp:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/opensslv.h:
+/opt/homebrew/include/openssl/symhacks.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/opensslconf.h:
+/opt/homebrew/include/openssl/params.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/evperr.h:
+/opt/homebrew/include/openssl/opensslconf.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/cryptoerr_legacy.h:
+/opt/homebrew/include/openssl/evp.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/cryptoerr.h:
+/opt/homebrew/include/openssl/cryptoerr_legacy.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/crypto.h:
+/opt/homebrew/include/openssl/crypto.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/core_dispatch.h:
+/opt/homebrew/include/openssl/configuration.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bn.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bio.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/asn1err.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/asn1.h:
+/opt/homebrew/include/openssl/bn.h:
 
 /Users/eswar/Downloads/CppBedrock/src/core/crypto/CryptoUtils.cpp:
 
@@ -16598,8 +16610,6 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 /Users/eswar/Downloads/CppBedrock/include/core/events/MessageHandler.h:
 
 /Users/eswar/Downloads/CppBedrock/src/core/Entity.cpp:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/pem.h:
 
 /Users/eswar/Downloads/CppBedrock/src/coordination/grpc/NodeServiceImpl.cpp:
 
@@ -16657,6 +16667,8 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 
 /opt/homebrew/include/nlohmann/byte_container_with_subtype.hpp:
 
+/opt/homebrew/include/openssl/dsa.h:
+
 /opt/homebrew/include/grpcpp/support/sync_stream.h:
 
 /opt/homebrew/include/grpcpp/support/stub_options.h:
@@ -16689,6 +16701,8 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 
 /opt/homebrew/include/grpcpp/server_posix.h:
 
+/opt/homebrew/include/openssl/safestack.h:
+
 /opt/homebrew/include/grpcpp/server_interface.h:
 
 /opt/homebrew/include/grpcpp/security/tls_crl_provider.h:
@@ -16701,9 +16715,9 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 
 /opt/homebrew/include/grpcpp/security/auth_metadata_processor.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/ecerr.h:
-
 /opt/homebrew/include/grpcpp/resource_quota.h:
+
+/opt/homebrew/include/openssl/opensslv.h:
 
 /opt/homebrew/include/grpcpp/ports_undef.inc:
 
@@ -16756,8 +16770,6 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 /opt/homebrew/include/grpcpp/channel.h:
 
 /opt/homebrew/include/grpc/support/port_platform.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/x509.h:
 
 /opt/homebrew/include/grpc/passive_listener.h:
 
@@ -16839,9 +16851,9 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 
 /opt/homebrew/include/google/protobuf/descriptor_lite.h:
 
-/opt/homebrew/include/google/protobuf/descriptor_database.h:
+/opt/homebrew/include/openssl/lhash.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/obj_mac.h:
+/opt/homebrew/include/google/protobuf/descriptor_database.h:
 
 /opt/homebrew/include/google/protobuf/descriptor.pb.h:
 
@@ -16881,8 +16893,6 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 
 /opt/homebrew/include/absl/strings/internal/resize_uninitialized.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/symhacks.h:
-
 /opt/homebrew/include/absl/strings/internal/cordz_update_scope.h:
 
 /opt/homebrew/include/absl/strings/internal/cordz_handle.h:
@@ -16899,11 +16909,11 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 
 /opt/homebrew/include/absl/status/internal/statusor_internal.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/conferr.h:
-
 /opt/homebrew/include/absl/profiling/internal/sample_recorder.h:
 
 /opt/homebrew/include/absl/numeric/int128_have_intrinsic.inc:
+
+/opt/homebrew/include/openssl/asn1.h:
 
 /opt/homebrew/include/absl/meta/type_traits.h:
 
@@ -16924,8 +16934,6 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 /opt/homebrew/include/absl/log/internal/nullguard.h:
 
 /opt/homebrew/include/absl/log/internal/conditions.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/pemerr.h:
 
 /opt/homebrew/include/nlohmann/detail/macro_unscope.hpp:
 
@@ -16958,6 +16966,8 @@ CMakeFiles/CppBedrockLib.dir/src/utils/Benchmark.cpp.o: /Users/eswar/Downloads/C
 /opt/homebrew/include/absl/container/internal/raw_hash_set.h:
 
 /opt/homebrew/include/absl/container/internal/inlined_vector.h:
+
+/opt/homebrew/include/openssl/pkcs7err.h:
 
 /opt/homebrew/include/absl/container/internal/hashtable_debug_hooks.h:
 
@@ -17185,8 +17195,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__filesystem/u8path.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/pkcs7err.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__filesystem/recursive_directory_iterator.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__filesystem/operations.h:
@@ -17277,6 +17285,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/types.h:
 
+/opt/homebrew/include/openssl/evperr.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/stdio.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/Availability.h:
@@ -17327,8 +17337,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_timeval.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/conftypes.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/_abort.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/locale.h:
@@ -17344,8 +17352,6 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_always_bitcastable.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_rsize_t.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/ec.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_pid_t.h:
 
@@ -17509,8 +17515,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/machine/limits.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/x509_vfy.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/in_out_result.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/pthread/sched.h:
@@ -17526,8 +17530,6 @@ proto/bedrock.grpc.pb.h:
 /opt/homebrew/include/grpcpp/support/status.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/ctype.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/types.h:
 
 /opt/homebrew/include/grpcpp/impl/server_builder_option.h:
 
@@ -17551,6 +17553,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/streambuf:
 
+/opt/homebrew/include/openssl/macros.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/nl_types.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/stdlib.h:
@@ -17560,8 +17564,6 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/ostream:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/memory:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/http.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/math.h:
 
@@ -17591,8 +17593,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/format:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/buffer.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/deque:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/cwctype:
@@ -17600,8 +17600,6 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/cwchar:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/ctype.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/objects.h:
 
 /opt/homebrew/include/nlohmann/detail/meta/call_std/end.hpp:
 
@@ -17616,8 +17614,6 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/cstdlib:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/condition_variable:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/rsaerr.h:
 
 /opt/homebrew/include/grpcpp/impl/codegen/metadata_map.h:
 
@@ -17739,6 +17735,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/make_32_64_or_128_bit.h:
 
+/opt/homebrew/include/openssl/bnerr.h:
+
 /opt/homebrew/include/grpcpp/impl/service_type.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__format/parser_std_format_spec.h:
@@ -17781,8 +17779,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_errno_t.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/e_os2.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_signed_integer.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_timeval64.h:
@@ -17822,6 +17818,8 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_nothrow_constructible.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_fundamental.h:
+
+/opt/homebrew/include/openssl/indicator.h:
 
 /opt/homebrew/include/grpcpp/create_channel_posix.h:
 
@@ -17889,8 +17887,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/desugars_to.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/dsa.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_os_inline.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_trivially_copyable.h:
@@ -17917,6 +17913,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/add_pointer.h:
 
+/opt/homebrew/include/openssl/core.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__variant/monostate.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/add_cv.h:
@@ -17934,6 +17932,8 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__tuple/tuple_indices.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_allocator.h:
+
+/opt/homebrew/include/openssl/core_dispatch.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__tuple/sfinae_helpers.h:
 
@@ -18039,6 +18039,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__ranges/data.h:
 
+/opt/homebrew/include/openssl/bioerr.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_u_int32_t.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__ranges/dangling.h:
@@ -18080,6 +18082,8 @@ proto/bedrock.grpc.pb.h:
 /opt/homebrew/include/google/protobuf/extension_set.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/raw_storage_iterator.h:
+
+/opt/homebrew/include/openssl/stack.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__fwd/string_view.h:
 
@@ -18124,8 +18128,6 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__locale:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/concepts.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/pkcs7.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_posix_vdisable.h:
 
@@ -18192,8 +18194,6 @@ proto/bedrock.grpc.pb.h:
 /opt/homebrew/include/absl/strings/internal/str_format/extension.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__split_buffer:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/objectserr.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__exception/operations.h:
 
@@ -18277,8 +18277,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/wctype.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/dh.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__iterator/iterator_traits.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/arm/_types.h:
@@ -18301,8 +18299,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__iterator/distance.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/macros.h:
-
 /opt/homebrew/include/grpcpp/server_context.h:
 
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/__stddef_offsetof.h:
@@ -18324,6 +18320,8 @@ proto/bedrock.grpc.pb.h:
 /opt/homebrew/include/grpc/event_engine/slice.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__ios/fpos.h:
+
+/opt/homebrew/include/openssl/dsaerr.h:
 
 /opt/homebrew/include/absl/container/internal/hashtablez_sampler.h:
 
@@ -18349,6 +18347,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__fwd/stack.h:
 
+/opt/homebrew/include/openssl/buffererr.h:
+
 /opt/homebrew/Cellar/yaml-cpp/0.8.0/include/yaml-cpp/emitterstyle.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/allocator_arg_t.h:
@@ -18356,6 +18356,8 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_trivially_constructible.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__iterator/bounded_iter.h:
+
+/opt/homebrew/include/openssl/e_os2.h:
 
 /opt/homebrew/include/grpcpp/ports_def.inc:
 
@@ -18377,6 +18379,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__concepts/equality_comparable.h:
 
+/opt/homebrew/include/openssl/cryptoerr.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/unique.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__fwd/istream.h:
@@ -18391,6 +18395,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/promote.h:
 
+/opt/homebrew/include/openssl/conftypes.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__fwd/array.h:
 
 /opt/homebrew/include/absl/types/variant.h:
@@ -18398,8 +18404,6 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__hash_table:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/unwrap_ref.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/sha.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__debug_utils/strict_weak_ordering_check.h:
 
@@ -18447,9 +18451,9 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/decay.h:
 
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/__wctype.h:
+/opt/homebrew/include/openssl/err.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/indicator.h:
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/__wctype.h:
 
 /opt/homebrew/include/grpcpp/support/method_handler.h:
 
@@ -18541,8 +18545,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/stddef.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/safestack.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__assertion_handler:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__exception/exception.h:
@@ -18560,6 +18562,8 @@ proto/bedrock.grpc.pb.h:
 /opt/homebrew/include/absl/functional/internal/any_invocable.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__cstddef/max_align_t.h:
+
+/opt/homebrew/include/openssl/objects.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/AvailabilityInternal.h:
 
@@ -18592,8 +18596,6 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__condition_variable/condition_variable.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__concepts/swappable.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/lhash.h:
 
 /opt/homebrew/include/absl/container/internal/raw_hash_map.h:
 
@@ -18679,6 +18681,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_mach_port_t.h:
 
+/opt/homebrew/include/openssl/bio.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/netdb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__atomic/contention_t.h:
@@ -18755,6 +18759,8 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__charconv/to_chars_result.h:
 
+/opt/homebrew/include/openssl/objectserr.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/inout_ptr.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/for_each_n.h:
@@ -18795,11 +18801,15 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/search.h:
 
+/opt/homebrew/include/openssl/dherr.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/set_difference.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/addressof.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/rotate_copy.h:
+
+/opt/homebrew/include/openssl/buffer.h:
 
 /opt/homebrew/include/absl/container/internal/hash_policy_traits.h:
 
@@ -18818,8 +18828,6 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__chrono/steady_clock.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/remove_extent.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/x509err.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/replace_if.h:
 
@@ -18857,8 +18865,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/conditional.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/stack.h:
-
 /opt/homebrew/include/absl/container/internal/container_memory.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/ranges_copy.h:
@@ -18886,6 +18892,8 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/align.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/arm/endian.h:
+
+/opt/homebrew/include/openssl/ecerr.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/pop_heap.h:
 
@@ -18983,8 +18991,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/is_heap.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/core.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_ucontext.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__chrono/time_point.h:
@@ -19017,13 +19023,9 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/remove_if.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bioerr.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/unwrap_range.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/generate_n.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/conf.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/copy_move_common.h:
 
@@ -19049,15 +19051,17 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/xlocale/_ctype.h:
 
+/opt/homebrew/include/openssl/x509.h:
+
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/for_each.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/_mb_cur_max.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/allocation_guard.h:
 
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__math/abs.h:
+/opt/homebrew/include/openssl/obj_mac.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/dherr.h:
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__math/abs.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/ranges_fill_n.h:
 
@@ -19076,6 +19080,8 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/is_sorted_until.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/conjunction.h:
+
+/opt/homebrew/include/openssl/dh.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/swap_ranges.h:
 
@@ -19149,8 +19155,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__fwd/pair.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/bnerr.h:
-
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/__stdarg_header_macro.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/arm/types.h:
@@ -19170,6 +19174,8 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/remove_cvref.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/binary_search.h:
+
+/opt/homebrew/include/openssl/types.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__compare/compare_three_way.h:
 
@@ -19191,8 +19197,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__algorithm/any_of.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/evp.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/arm/limits.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__fwd/queue.h:
@@ -19204,6 +19208,8 @@ proto/bedrock.grpc.pb.h:
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__math/fdim.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/alloca.h:
+
+/opt/homebrew/include/openssl/asn1err.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__utility/piecewise_construct.h:
 
@@ -19249,8 +19255,6 @@ proto/bedrock.grpc.pb.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__fwd/fstream.h:
 
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/params.h:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/sstream:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/has_virtual_destructor.h:
@@ -19270,8 +19274,6 @@ proto/bedrock.grpc.pb.h:
 /opt/homebrew/include/absl/base/policy_checks.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/_types/_intptr_t.h:
-
-/opt/homebrew/Cellar/openssl@3/3.5.2/include/openssl/configuration.h:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/include/sys/select.h:
 

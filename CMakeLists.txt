@@ -10,9 +10,24 @@ include_directories("/opt/homebrew/Cellar/yaml-cpp/0.8.0/include")
 find_package(nlohmann_json REQUIRED)
 find_package(OpenSSL REQUIRED)
 
+# Fallback: define OpenSSL imported targets when the find-module doesn’t
+if(NOT TARGET OpenSSL::Crypto AND DEFINED OPENSSL_CRYPTO_LIBRARY)
+  add_library(OpenSSL::Crypto UNKNOWN IMPORTED)
+  set_target_properties(OpenSSL::Crypto PROPERTIES
+    IMPORTED_LOCATION "${OPENSSL_CRYPTO_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}")
+endif()
+if(NOT TARGET OpenSSL::SSL AND DEFINED OPENSSL_SSL_LIBRARY)
+  add_library(OpenSSL::SSL UNKNOWN IMPORTED)
+  set_target_properties(OpenSSL::SSL PROPERTIES
+    IMPORTED_LOCATION "${OPENSSL_SSL_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIR}")
+endif()
+
 # gRPC will pull protobuf, so don't call find_package(Protobuf) explicitly
 # find_package(Protobuf REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
+find_package(Protobuf REQUIRED)
 
 # Manually specify the library path for yaml-cpp
 link_directories("/opt/homebrew/Cellar/yaml-cpp/0.8.0/lib")
@@ -76,7 +91,11 @@ target_include_directories(bedrock_proto PUBLIC ${CMAKE_BINARY_DIR})
 # Add the library and link libraries
 add_library(CppBedrockLib ${SOURCES})
 add_dependencies(CppBedrockLib bedrock_proto)
-target_link_libraries(CppBedrockLib PUBLIC OpenSSL::Crypto yaml-cpp nlohmann_json::nlohmann_json bedrock_proto gRPC::grpc++ protobuf::libprotobuf)
+target_link_libraries(CppBedrockLib PUBLIC
+  OpenSSL::Crypto OpenSSL::SSL
+  yaml-cpp nlohmann_json::nlohmann_json
+  bedrock_proto gRPC::grpc++ protobuf::libprotobuf
+)
 target_include_directories(CppBedrockLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Add the executable and link libraries

@@ -349,7 +349,8 @@ int main(int argc, char* argv[]) {
         for (auto& t : clientThreads) t.join();
     }
     else if (scenario == 4) {
-        NUM_REQUESTS = 50;
+        NUM_REQUESTS = 10; // reduce burst size
+
         transactions.clear();
         for (int i = 0; i < NUM_REQUESTS; ++i) {
             std::string from = (i % 4 == 0) ? "A" : (i % 4 == 1) ? "B" : (i % 4 == 2) ? "C" : "D";
@@ -358,8 +359,19 @@ int main(int argc, char* argv[]) {
             transactions.push_back({from, to, amount});
         }
         std::vector<std::thread> clientThreads;
+        const int maxConcurrent = 128; // cap concurrency
+        std::mutex gateMtx;
+        std::condition_variable gateCv;
+        int inFlight = 0;
+
         int txnIdx = 0;
         for (const auto& txn : transactions) {
+            // throttle thread creation
+            {
+                std::unique_lock<std::mutex> lk(gateMtx);
+                gateCv.wait(lk, [&]{ return inFlight < maxConcurrent; });
+                ++inFlight;
+            }
             clientThreads.emplace_back([&, txnIdx, txn]() {
                 auto [from, to, amount] = txn;
                 json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
@@ -392,8 +404,15 @@ int main(int argc, char* argv[]) {
                     std::lock_guard<std::mutex> lock(txnMutex);
                     txnResponses[timestamp] = 0;
                 }
+                // release slot
+                {
+                    std::lock_guard<std::mutex> lk(gateMtx);
+                    --inFlight;
+                }
+                gateCv.notify_one();
             });
             txnIdx++;
+            // small pacing to avoid instant stampede
             //std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
         for (auto& t : clientThreads) t.join();

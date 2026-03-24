@@ -1,0 +1,1191 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CppBedrock — AWS Global Network Simulator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+    }
+    h1 { color: #00d4ff; }
+    h2 { color: #00d4ff; }
+    .accordion-button {
+      background-color: #16213e;
+      color: #e0e0e0;
+    }
+    .accordion-button:not(.collapsed) {
+      background-color: #0f3460;
+      color: #00d4ff;
+    }
+    .accordion-body {
+      background-color: #16213e;
+    }
+    .form-label { color: #b0b0b0; }
+    #cy {
+      width: 100%;
+      height: 650px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      margin-top: 20px;
+      background-color: #0a0a1a;
+    }
+    canvas { margin-top: 20px; }
+    .legend-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #16213e;
+      border-radius: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #ccc;
+    }
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid #555;
+    }
+    .cluster-delay-table {
+      margin-top: 15px;
+      font-size: 11px;
+    }
+    .cluster-delay-table th {
+      background-color: #0f3460;
+      color: #00d4ff;
+      text-align: center;
+      padding: 4px;
+    }
+    .cluster-delay-table td {
+      text-align: center;
+      padding: 3px;
+      color: #ccc;
+      background-color: #16213e;
+    }
+    .cluster-delay-table td.same-cluster {
+      background-color: #1a3a1a;
+      color: #4caf50;
+    }
+    .cluster-delay-table td.low-delay {
+      background-color: #1a2a3a;
+      color: #64b5f6;
+    }
+    .cluster-delay-table td.med-delay {
+      background-color: #3a3a1a;
+      color: #ffd54f;
+    }
+    .cluster-delay-table td.high-delay {
+      background-color: #3a1a1a;
+      color: #ef5350;
+    }
+    .status-bar {
+      margin-top: 10px;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .status-running {
+      background-color: #1a3a1a;
+      border: 1px solid #4caf50;
+      color: #4caf50;
+    }
+    .status-stopped {
+      background-color: #3a1a1a;
+      border: 1px solid #ef5350;
+      color: #ef5350;
+    }
+    .status-info {
+      background-color: #1a2a3a;
+      border: 1px solid #64b5f6;
+      color: #64b5f6;
+    }
+    .protocol-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      background-color: #0f3460;
+      color: #00d4ff;
+      border: 1px solid #00d4ff;
+    }
+    #terminal {
+      background-color: #0a0a0a;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body class="container my-4">
+  <h1 class="text-center mb-4">BFTGym — Geo-distributed Network Simulator</h1>
+
+  <!-- Controls Section -->
+  <div class="accordion mb-4" id="controlsAccordion">
+    <!-- Network Topology -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="graphControlsHeading">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#graphControls" aria-expanded="false" aria-controls="graphControls">
+          Network Topology (31 Nodes / 10 Regions — 3f+1, f=10)
+        </button>
+      </h2>
+      <div id="graphControls" class="accordion-collapse collapse" aria-labelledby="graphControlsHeading">
+        <div class="accordion-body">
+          <div class="row align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Total Nodes (3f+1):</label>
+              <input id="numNodes" type="number" class="form-control" value="31" readonly>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">AWS Regions:</label>
+              <input id="numClusters" type="number" class="form-control" value="10" readonly>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Byzantine Tolerance (f):</label>
+              <input id="faultTolerance" type="number" class="form-control" value="10" readonly>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Current Protocol:</label>
+              <div id="currentProtocol" class="protocol-badge">PBFT</div>
+            </div>
+          </div>
+          <div id="legend" class="legend-container mt-3"></div>
+          <div id="latencyMatrix" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Protocol Controls -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="protocolControlsHeading">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#protocolControls" aria-expanded="false" aria-controls="protocolControls">
+          Protocol and Test Controls
+        </button>
+      </h2>
+      <div id="protocolControls" class="accordion-collapse collapse show" aria-labelledby="protocolControlsHeading">
+        <div class="accordion-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Select Protocol:</label>
+              <select id="protocolSelect" class="form-select">
+                <option value="PBFT" selected>PBFT</option>
+                <option value="Linear PBFT">Linear PBFT</option>
+                <option value="SBFT">SBFT</option>
+                <option value="HotStuff">HotStuff</option>
+                <option value="ChainedHotStuff">Chained HotStuff</option>
+                <option value="Zyzzyva">Zyzzyva</option>
+              </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button id="selectProtocol" class="btn btn-secondary w-100">Apply Protocol</button>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <div id="protocolStatus" class="status-bar status-info w-100 text-center">
+                Protocol: PBFT
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Test Scenario:</label>
+              <select id="scenario" class="form-select">
+                <option value="1">Scenario 1 — Basic Consensus</option>
+                <option value="2">Scenario 2 — Multiple Transactions</option>
+                <option value="3">Scenario 3 — Concurrent Clients</option>
+                <option value="4" selected>Scenario 4 — Standard Load</option>
+                <option value="5">Scenario 5 — High Load</option>
+                <option value="6">Scenario 6 — Byzantine Nodes</option>
+                <option value="7">Scenario 7 — Leader Failure</option>
+                <option value="8">Scenario 8 — Network Partition</option>
+              </select>
+            </div>
+            <div class="col-md-6 d-flex align-items-end gap-2">
+              <button id="runTest" class="btn btn-warning flex-fill">Run Test</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <button id="startServer" class="btn btn-success w-100">Start Protocol (./CppBedrock)</button>
+            </div>
+            <div class="col-md-6">
+              <button id="stopServer" class="btn btn-danger w-100">Stop Protocol</button>
+            </div>
+          </div>
+
+          <div id="serverStatus" class="status-bar status-stopped mt-3 text-center">
+            Protocol not running
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cluster Management -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="clusterMgmtHeading">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#clusterMgmt" aria-expanded="false" aria-controls="clusterMgmt">
+          Cluster Management — Add / Remove / Configure Nodes
+        </button>
+      </h2>
+      <div id="clusterMgmt" class="accordion-collapse collapse" aria-labelledby="clusterMgmtHeading">
+        <div class="accordion-body">
+
+          <!-- Action: Add Node -->
+          <div class="row mb-3 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Add Node to Region:</label>
+              <select id="addClusterSelect" class="form-select">
+                <option value="0">us-east-1 (N. Virginia)</option>
+                <option value="1">us-west-2 (Oregon)</option>
+                <option value="2">eu-west-1 (Ireland)</option>
+                <option value="3">eu-central-1 (Frankfurt)</option>
+                <option value="4">ap-southeast-1 (Singapore)</option>
+                <option value="5">ap-northeast-1 (Tokyo)</option>
+                <option value="6">ap-south-1 (Mumbai)</option>
+                <option value="7">sa-east-1 (São Paulo)</option>
+                <option value="8">ap-southeast-2 (Sydney)</option>
+                <option value="9">ca-central-1 (Canada)</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Role:</label>
+              <select id="addRoleSelect" class="form-select">
+                <option value="Replica" selected>Replica</option>
+                <option value="Leader">Leader</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="addByzantineCheck">
+                <label class="form-check-label" for="addByzantineCheck" style="color:#ef5350;">Byzantine</label>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button id="btnAddNode" class="btn btn-success w-100">Add Node</button>
+            </div>
+          </div>
+
+          <!-- Action: Remove Node -->
+          <div class="row mb-3 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Remove Node:</label>
+              <select id="removeNodeSelect" class="form-select"></select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button id="btnRemoveNode" class="btn btn-danger w-100">Remove</button>
+            </div>
+          </div>
+
+          <!-- Action: Set Properties -->
+          <div class="row mb-3 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Configure Node:</label>
+              <select id="setNodeSelect" class="form-select"></select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Role:</label>
+              <select id="setRoleSelect" class="form-select">
+                <option value="">— no change —</option>
+                <option value="Leader">Leader</option>
+                <option value="Replica">Replica</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Byzantine:</label>
+              <select id="setByzSelect" class="form-select">
+                <option value="">— no change —</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button id="btnSetProp" class="btn btn-warning w-100">Update</button>
+            </div>
+          </div>
+
+          <!-- Cluster Overview Table -->
+          <div id="clusterOverview" class="mt-3"></div>
+
+          <!-- Status -->
+          <div id="clusterStatus" class="status-bar status-info mt-2 text-center" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- end accordion -->
+
+  <!-- Graph Section -->
+  <div id="cy"></div>
+
+  <!-- Terminal Output -->
+  <div class="mt-4">
+    <h2 class="text-center">🖥️ Output</h2>
+    <div id="terminal"></div>
+    <p id="status" class="text-center mt-2" style="color: #888;"></p>
+  </div>
+
+  <!-- Per-Node Operations Section -->
+  <div class="mt-4">
+    <h2 class="text-center">📈 Per-Node Operations</h2>
+    <canvas id="opsChart" width="800" height="400"></canvas>
+  </div>
+
+  <!-- Cytoscape.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let cy;
+  let clusterLatencies = {};
+
+  // ──────────────────────────────────────────────────────────────
+  // AWS Region definitions with real-world latencies (CloudPing)
+  // ──────────────────────────────────────────────────────────────
+  const AWS_REGIONS = [
+    { id: 'cluster0', name: 'us-east-1',      label: 'N. Virginia',   color: '#e74c3c', x: 150, y: 250 },
+    { id: 'cluster1', name: 'us-west-2',      label: 'Oregon',        color: '#e67e22', x: 50,  y: 200 },
+    { id: 'cluster2', name: 'eu-west-1',      label: 'Ireland',       color: '#2ecc71', x: 350, y: 120 },
+    { id: 'cluster3', name: 'eu-central-1',   label: 'Frankfurt',     color: '#27ae60', x: 400, y: 150 },
+    { id: 'cluster4', name: 'ap-southeast-1', label: 'Singapore',     color: '#3498db', x: 600, y: 350 },
+    { id: 'cluster5', name: 'ap-northeast-1', label: 'Tokyo',         color: '#2980b9', x: 700, y: 200 },
+    { id: 'cluster6', name: 'ap-south-1',     label: 'Mumbai',        color: '#9b59b6', x: 520, y: 300 },
+    { id: 'cluster7', name: 'sa-east-1',      label: 'São Paulo',     color: '#f39c12', x: 200, y: 450 },
+    { id: 'cluster8', name: 'ap-southeast-2', label: 'Sydney',        color: '#1abc9c', x: 750, y: 450 },
+    { id: 'cluster9', name: 'ca-central-1',   label: 'Canada',        color: '#c0392b', x: 120, y: 150 },
+  ];
+
+  // Real-world inter-region latencies (ms) from CloudPing
+  const LATENCY_MATRIX = [
+    //  us-e1  us-w2  eu-w1  eu-c1  ap-se1 ap-ne1 ap-s1  sa-e1  ap-se2 ca-c1
+    [     0,    62,    75,    89,   230,   158,   186,   118,   206,    16  ], // us-east-1
+    [    62,     0,   138,   150,   163,   108,   230,   180,   148,    56  ], // us-west-2
+    [    75,   138,     0,    25,   170,   220,   120,   178,   260,    78  ], // eu-west-1
+    [    89,   150,    25,     0,   155,   230,   105,   196,   270,    96  ], // eu-central-1
+    [   230,   163,   170,   155,     0,    68,    58,   320,    92,   225  ], // ap-southeast-1
+    [   158,   108,   220,   230,    68,     0,   118,   270,   108,   155  ], // ap-northeast-1
+    [   186,   230,   120,   105,    58,   118,     0,   290,   142,   200  ], // ap-south-1
+    [   118,   180,   178,   196,   320,   270,   290,     0,   310,   130  ], // sa-east-1
+    [   206,   148,   260,   270,    92,   108,   142,   310,     0,   210  ], // ap-southeast-2
+    [    16,    56,    78,    96,   225,   155,   200,   130,   210,     0  ], // ca-central-1
+  ];
+
+  // 4 nodes in leader region, 3 in each other = 31 (3f+1, f=10)
+  const NODES_PER_REGION = [4, 3, 3, 3, 3, 3, 3, 3, 3, 3];
+
+  // ──────────────────────────────────────────────────────────────
+  // Terminal helper
+  // ──────────────────────────────────────────────────────────────
+  function termLog(msg, color) {
+    const el = document.getElementById('terminal');
+    const ts = new Date().toLocaleTimeString();
+    const span = document.createElement('span');
+    span.style.color = color || '#0f0';
+    span.textContent = `[${ts}] ${msg}\n`;
+    el.appendChild(span);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // Graph initialization
+  // ──────────────────────────────────────────────────────────────
+  function initializeGraph() {
+    const numRegions = AWS_REGIONS.length;
+    const numNodes = NODES_PER_REGION.reduce((a, b) => a + b, 0);
+    const f = Math.floor((numNodes - 1) / 3);
+    const elements = [];
+
+    // Populate clusterLatencies from the matrix
+    clusterLatencies = {};
+    for (let i = 0; i < numRegions; i++) {
+      for (let j = 0; j < numRegions; j++) {
+        if (i !== j) {
+          clusterLatencies[`cluster${i}-cluster${j}`] = LATENCY_MATRIX[i][j];
+        }
+      }
+    }
+
+    // Create cluster compound nodes
+    AWS_REGIONS.forEach((region) => {
+      elements.push({
+        data: {
+          id: region.id,
+          label: `${region.label}\n(${region.name})`,
+          type: 'boundary',
+          regionColor: region.color,
+        },
+      });
+    });
+
+    // Create nodes assigned to clusters
+    let nodeId = 1;
+    AWS_REGIONS.forEach((region, regionIdx) => {
+      const count = NODES_PER_REGION[regionIdx];
+      for (let j = 0; j < count; j++) {
+        const angle = (2 * Math.PI * j) / count;
+        const radius = 40;
+        elements.push({
+          data: {
+            id: `node${nodeId}`,
+            label: `N${nodeId}`,
+            cluster: region.id,
+            parent: region.id,
+            regionColor: region.color,
+            role: (nodeId === 1) ? 'Leader' : 'Replica',
+          },
+          position: {
+            x: region.x * 1.2 + radius * Math.cos(angle),
+            y: region.y * 1.2 + radius * Math.sin(angle),
+          },
+        });
+        nodeId++;
+      }
+    });
+
+    // Create inter-region edges
+    let regionStartNode = [];
+    let acc = 1;
+    for (let i = 0; i < numRegions; i++) {
+      regionStartNode.push(acc);
+      acc += NODES_PER_REGION[i];
+    }
+
+    for (let i = 0; i < numRegions; i++) {
+      for (let j = i + 1; j < numRegions; j++) {
+        const latency = LATENCY_MATRIX[i][j];
+        elements.push({
+          data: {
+            id: `edge-r${i}-r${j}`,
+            source: `node${regionStartNode[i]}`,
+            target: `node${regionStartNode[j]}`,
+            latency: `${latency}ms`,
+            delay: latency,
+            interRegion: true,
+          },
+        });
+      }
+    }
+
+    // Initialize Cytoscape
+    cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements,
+      style: [
+        {
+          selector: ':parent',
+          style: {
+            'background-opacity': 0.15,
+            'background-color': 'data(regionColor)',
+            'border-color': 'data(regionColor)',
+            'border-width': 2,
+            'border-opacity': 0.6,
+            'shape': 'roundrectangle',
+            'padding': '20px',
+            'label': 'data(label)',
+            'text-valign': 'top',
+            'text-halign': 'center',
+            'font-size': '10px',
+            'color': '#aaa',
+            'text-wrap': 'wrap',
+            'text-max-width': '120px',
+          },
+        },
+        {
+          selector: 'node:childless',
+          style: {
+            'background-color': 'data(regionColor)',
+            'label': 'data(label)',
+            'text-valign': 'center',
+            'text-halign': 'center',
+            'font-size': '9px',
+            'color': '#fff',
+            'text-outline-width': 1,
+            'text-outline-color': '#000',
+            'border-width': 2,
+            'border-color': '#222',
+            'width': 28,
+            'height': 28,
+            'transition-property': 'background-color, border-color, width, height',
+            'transition-duration': '0.2s',
+          },
+        },
+        {
+          selector: 'edge[?interRegion]',
+          style: {
+            'width': 1,
+            'line-color': '#444',
+            'line-style': 'dashed',
+            'line-dash-pattern': [6, 3],
+            'target-arrow-shape': 'none',
+            'label': 'data(latency)',
+            'font-size': '8px',
+            'color': '#888',
+            'text-rotation': 'autorotate',
+            'text-background-color': '#0a0a1a',
+            'text-background-opacity': 0.8,
+            'text-background-padding': '2px',
+            'curve-style': 'bezier',
+            'opacity': 0.5,
+          },
+        },
+      ],
+      layout: { name: 'preset' },
+      minZoom: 0.3,
+      maxZoom: 3,
+    });
+
+    // Hover effects
+    cy.on('mouseover', 'node:childless', (evt) => {
+      const node = evt.target;
+      node.style({ 'width': 36, 'height': 36, 'border-color': '#fff', 'border-width': 3 });
+      const cluster = node.data('cluster');
+      cy.edges().forEach((edge) => {
+        const srcCluster = edge.source().data('cluster');
+        const tgtCluster = edge.target().data('cluster');
+        if (srcCluster === cluster || tgtCluster === cluster) {
+          edge.style({ 'opacity': 1, 'width': 2, 'line-color': node.data('regionColor') });
+        }
+      });
+    });
+
+    cy.on('mouseout', 'node:childless', (evt) => {
+      const node = evt.target;
+      node.style({ 'width': 28, 'height': 28, 'border-color': '#222', 'border-width': 2 });
+      cy.edges().forEach((edge) => {
+        edge.style({ 'opacity': 0.5, 'width': 1, 'line-color': '#444' });
+      });
+    });
+
+    buildLegend(f, numNodes);
+    buildLatencyMatrix();
+    termLog(`Graph initialized: ${numNodes} nodes, ${numRegions} regions, f=${f}`, '#00d4ff');
+  }
+
+  function buildLegend(f, numNodes) {
+    const legendEl = document.getElementById('legend');
+    legendEl.innerHTML =
+      `<div class="legend-item" style="width:100%; justify-content:center; margin-bottom:6px;">
+        <span style="color:#00d4ff; font-size:13px;">
+          <strong>n = ${numNodes}</strong> (3f + 1, f = ${f}) — tolerates ${f} Byzantine faults
+        </span>
+      </div>` +
+      AWS_REGIONS.map((r, i) =>
+        `<div class="legend-item">
+          <div class="legend-color" style="background-color: ${r.color};"></div>
+          <span>${r.label} (${NODES_PER_REGION[i]} nodes)</span>
+        </div>`
+      ).join('');
+  }
+
+  function buildLatencyMatrix() {
+    const container = document.getElementById('latencyMatrix');
+    const n = AWS_REGIONS.length;
+    let html = '<table class="table table-sm cluster-delay-table"><thead><tr><th></th>';
+    AWS_REGIONS.forEach((r) => { html += `<th>${r.label}</th>`; });
+    html += '</tr></thead><tbody>';
+    for (let i = 0; i < n; i++) {
+      html += `<tr><th>${AWS_REGIONS[i].label}</th>`;
+      for (let j = 0; j < n; j++) {
+        const latency = LATENCY_MATRIX[i][j];
+        let cls = '';
+        if (i === j) cls = 'same-cluster';
+        else if (latency < 80) cls = 'low-delay';
+        else if (latency < 180) cls = 'med-delay';
+        else cls = 'high-delay';
+        html += `<td class="${cls}">${latency}</td>`;
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // Chart.js helpers
+  // ──────────────────────────────────────────────────────────────
+  async function fetchNodeOps(max = 500) {
+    const res = await fetch(`/api/node-ops?max=${max}`);
+    if (!res.ok) throw new Error('No data');
+    return res.json();
+  }
+
+  let opsChart;
+  function color(i) {
+    return AWS_REGIONS[i % AWS_REGIONS.length].color;
+  }
+  function plotOps(nodeData) {
+    const ctx = document.getElementById('opsChart').getContext('2d');
+    const datasets = Object.keys(nodeData).sort((a, b) => Number(a) - Number(b)).map((id, i) => ({
+      label: `Node ${id}`,
+      data: (nodeData[id] || []).map((p) => ({ x: p.sequence, y: p.ts })),
+      borderColor: color(i),
+      borderWidth: 1,
+      pointRadius: 0,
+      fill: false,
+    }));
+    if (opsChart) opsChart.destroy();
+    opsChart = new Chart(ctx, {
+      type: 'line',
+      data: { datasets },
+      options: {
+        parsing: false,
+        animation: false,
+        responsive: false,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, labels: { color: '#ccc', font: { size: 10 } } },
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            title: { display: true, text: 'Sequence', color: '#aaa' },
+            ticks: { color: '#888' },
+            grid: { color: '#222' },
+          },
+          y: {
+            title: { display: true, text: 'Timestamp (ms)', color: '#aaa' },
+            ticks: { color: '#888' },
+            grid: { color: '#222' },
+          },
+        },
+        spanGaps: true,
+      },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // Event Listeners
+  // ──────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeGraph();
+
+    // Load current protocol on page load
+    (async () => {
+      try {
+        const res = await fetch('/api/current-protocol');
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('currentProtocol').textContent = data.protocol;
+          document.getElementById('protocolSelect').value = data.protocol;
+          document.getElementById('protocolStatus').textContent = `Protocol: ${data.protocol}`;
+        }
+      } catch (e) { /* ignore */ }
+    })();
+
+    // Select Protocol — writes to runtime.selection.yaml
+    document.getElementById('selectProtocol').addEventListener('click', async () => {
+      const protocol = document.getElementById('protocolSelect').value;
+      termLog(`Selecting protocol: ${protocol}...`, '#ffd54f');
+
+      const res = await fetch('/api/select-protocol', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ protocol }),
+      });
+
+      if (res.ok) {
+        document.getElementById('currentProtocol').textContent = protocol;
+        document.getElementById('protocolStatus').textContent = `Protocol: ${protocol}`;
+        document.getElementById('protocolStatus').className = 'status-bar status-info w-100 text-center';
+        termLog(`Protocol set to: ${protocol}`, '#4caf50');
+      } else {
+        termLog(`Failed to set protocol: ${protocol}`, '#ef5350');
+      }
+    });
+
+    // Start Protocol — runs ./CppBedrock in build/
+    document.getElementById('startServer').addEventListener('click', async () => {
+      termLog('Starting CppBedrock...', '#ffd54f');
+      document.getElementById('serverStatus').textContent = 'Starting...';
+      document.getElementById('serverStatus').className = 'status-bar status-info mt-3 text-center';
+
+      const res = await fetch('/api/start-server', { method: 'POST' });
+
+      if (res.ok) {
+        document.getElementById('serverStatus').textContent = '🟢 Protocol running (./CppBedrock)';
+        document.getElementById('serverStatus').className = 'status-bar status-running mt-3 text-center';
+        termLog('CppBedrock started successfully', '#4caf50');
+
+        // Start polling for output
+        pollServerOutput();
+      } else {
+        const err = await res.text();
+        document.getElementById('serverStatus').textContent = '🔴 Failed to start';
+        document.getElementById('serverStatus').className = 'status-bar status-stopped mt-3 text-center';
+        termLog(`Failed to start: ${err}`, '#ef5350');
+      }
+    });
+
+    // Stop Protocol — kills the CppBedrock process
+    document.getElementById('stopServer').addEventListener('click', async () => {
+      termLog('Stopping CppBedrock...', '#ffd54f');
+
+      const res = await fetch('/api/stop-server', { method: 'POST' });
+
+      if (res.ok) {
+        document.getElementById('serverStatus').textContent = '🔴 Protocol stopped';
+        document.getElementById('serverStatus').className = 'status-bar status-stopped mt-3 text-center';
+        termLog('CppBedrock stopped', '#ef5350');
+      } else {
+        termLog('Failed to stop CppBedrock', '#ef5350');
+      }
+    });
+
+    // Run Test — runs ./integration_test <scenario> in build/
+    document.getElementById('runTest').addEventListener('click', async () => {
+      const scenario = document.getElementById('scenario').value;
+      termLog(`Running integration_test scenario ${scenario}...`, '#ffd54f');
+      document.getElementById('status').textContent = `Running test scenario ${scenario}...`;
+
+      const res = await fetch('/api/run-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario: Number(scenario) }),
+      });
+
+      if (res.ok) {
+        termLog(`Test scenario ${scenario} started`, '#4caf50');
+        document.getElementById('status').textContent = `Test scenario ${scenario} running...`;
+
+        // Poll for ops data to auto-plot
+        const start = Date.now();
+        const poll = async () => {
+          try {
+            const data = await fetchNodeOps(300);
+            plotOps(data);
+            if (Date.now() - start >= 90000) {
+              const full = await fetchNodeOps(2000);
+              plotOps(full);
+              document.getElementById('status').textContent = `Test scenario ${scenario} complete — plotted`;
+              termLog(`Test scenario ${scenario} finished`, '#4caf50');
+            } else {
+              setTimeout(poll, 1000);
+            }
+          } catch {
+            if (Date.now() - start < 90000) setTimeout(poll, 1000);
+          }
+        };
+        poll();
+      } else {
+        termLog(`Failed to run test scenario ${scenario}`, '#ef5350');
+        document.getElementById('status').textContent = 'Test failed';
+      }
+    });
+  });
+
+  // Poll server output
+  async function pollServerOutput() {
+    try {
+      const res = await fetch('/api/server-output');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.output) {
+          data.output.split('\n').forEach((line) => {
+            if (line.trim()) termLog(line, '#0f0');
+          });
+        }
+      }
+    } catch { /* ignore */ }
+
+    // Check if still running
+    try {
+      const res = await fetch('/api/server-status');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.running) {
+          setTimeout(pollServerOutput, 2000);
+        }
+      }
+    } catch { /* ignore */ }
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // Cluster Management
+  // ──────────────────────────────────────────────────────────────
+
+  let clusterData = null;
+
+  async function loadClusterConfig() {
+    try {
+      const res = await fetch('/api/cluster-config');
+      if (!res.ok) throw new Error('Failed to load cluster config');
+      clusterData = await res.json();
+      renderClusterOverview();
+      populateNodeSelects();
+      refreshGraphFromConfig();
+      updateTopologyHeader();
+    } catch (e) {
+      termLog(`Cluster config error: ${e.message}`, '#ef5350');
+    }
+  }
+
+  function updateTopologyHeader() {
+    if (!clusterData) return;
+    const { n, f, quorum } = clusterData;
+    document.getElementById('numNodes').value = n;
+    document.getElementById('faultTolerance').value = f;
+
+    // Update accordion header
+    const hdr = document.querySelector('#graphControlsHeading .accordion-button');
+    if (hdr) hdr.textContent = `Network Topology (${n} Nodes / 10 AWS Regions — 3f+1, f=${f})`;
+  }
+
+  function populateNodeSelects() {
+    if (!clusterData) return;
+    const allNodes = clusterData.entities.sort((a, b) => Number(a.id) - Number(b.id));
+
+    ['removeNodeSelect', 'setNodeSelect'].forEach((selId) => {
+      const sel = document.getElementById(selId);
+      sel.innerHTML = '';
+      allNodes.forEach((ent) => {
+        const cid = ent.cluster !== undefined ? ent.cluster : 0;
+        const region = CLUSTERS_JS[cid] || { label: '?' };
+        const byz = ent.byzantine ? ' ⚠️' : '';
+        const opt = document.createElement('option');
+        opt.value = ent.id;
+        opt.textContent = `Node ${ent.id} — ${ent.role} @ ${region.label}${byz}`;
+        sel.appendChild(opt);
+      });
+    });
+  }
+
+  const CLUSTERS_JS = {
+    0: { name: 'us-east-1',      label: 'N. Virginia' },
+    1: { name: 'us-west-2',      label: 'Oregon' },
+    2: { name: 'eu-west-1',      label: 'Ireland' },
+    3: { name: 'eu-central-1',   label: 'Frankfurt' },
+    4: { name: 'ap-southeast-1', label: 'Singapore' },
+    5: { name: 'ap-northeast-1', label: 'Tokyo' },
+    6: { name: 'ap-south-1',     label: 'Mumbai' },
+    7: { name: 'sa-east-1',      label: 'São Paulo' },
+    8: { name: 'ap-southeast-2', label: 'Sydney' },
+    9: { name: 'ca-central-1',   label: 'Canada' },
+  };
+
+  function renderClusterOverview() {
+    if (!clusterData) return;
+    const { clusters, n, f, quorum } = clusterData;
+    const byzTotal = clusterData.entities.filter((e) => e.byzantine).length;
+
+    let html = `
+      <div class="mb-2" style="color:#00d4ff; font-size:14px;">
+        <strong>n=${n}</strong>, f=${f}, quorum(2f+1)=${quorum}
+        ${byzTotal > 0
+          ? (byzTotal > f
+            ? `<span style="color:#ef5350;"> — ⚠️ ${byzTotal} byzantine > f=${f}!</span>`
+            : `<span style="color:#ffd54f;"> — ${byzTotal} byzantine / ${f} tolerable</span>`)
+          : ''}
+      </div>
+      <table class="table table-sm" style="font-size:12px; color:#ccc;">
+        <thead>
+          <tr style="background:#0f3460; color:#00d4ff;">
+            <th>Region</th><th>Node</th><th>Role</th><th>Byzantine</th><th>Actions</th>
+          </tr>
+        </thead><tbody>`;
+
+    for (let cid = 0; cid < 10; cid++) {
+      const cluster = clusters[cid];
+      if (!cluster || cluster.nodes.length === 0) continue;
+
+      html += `<tr style="background:#0a1628;">
+        <td colspan="5" style="color:${AWS_REGIONS[cid].color}; font-weight:bold;">
+          ${AWS_REGIONS[cid].label} (${AWS_REGIONS[cid].name}) — ${cluster.nodes.length} nodes
+        </td></tr>`;
+
+      cluster.nodes.sort((a, b) => a.id - b.id).forEach((node) => {
+        const byzBadge = node.byzantine
+          ? '<span class="badge bg-danger">⚠️ Byzantine</span>'
+          : '<span class="badge bg-secondary">Honest</span>';
+        const roleBadge = node.role === 'Leader'
+          ? '<span class="badge bg-primary">Leader</span>'
+          : '<span class="badge bg-dark">Replica</span>';
+
+        html += `<tr style="background:#16213e;">
+          <td></td>
+          <td><strong>Node ${node.id}</strong></td>
+          <td>${roleBadge}</td>
+          <td>${byzBadge}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-warning btn-toggle-byz" data-node="${node.id}" data-byz="${!node.byzantine}">
+              ${node.byzantine ? '✅ Make Honest' : '⚠️ Make Byzantine'}
+            </button>
+            <button class="btn btn-sm btn-outline-danger btn-quick-remove" data-node="${node.id}">🗑️</button>
+          </td>
+        </tr>`;
+      });
+    }
+
+    html += '</tbody></table>';
+    document.getElementById('clusterOverview').innerHTML = html;
+    // Bind inline action buttons
+    document.querySelectorAll('.btn-toggle-byz').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const nodeId = Number(btn.dataset.node);
+        const byz = btn.dataset.byz === 'true';
+        await setNodeProperty(nodeId, { byzantine: byz });
+      });
+    });
+
+    document.querySelectorAll('.btn-quick-remove').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const nodeId = Number(btn.dataset.node);
+        if (confirm(`Remove Node ${nodeId}?`)) {
+          await removeNode(nodeId);
+        }
+      });
+    });
+  }
+
+  function refreshGraphFromConfig() {
+    if (!clusterData || !cy) return;
+
+    // Rebuild graph from clusterData
+    cy.elements().remove();
+    const elements = [];
+    const nodesPerRegion = {};
+
+    // Count nodes per region from config
+    for (let i = 0; i < 10; i++) nodesPerRegion[i] = 0;
+    clusterData.entities.forEach((ent) => {
+      const cid = ent.cluster !== undefined ? ent.cluster : 0;
+      nodesPerRegion[cid]++;
+    });
+
+    // Re-add cluster compounds
+    AWS_REGIONS.forEach((region) => {
+      elements.push({
+        group: 'nodes',
+        data: {
+          id: region.id,
+          label: `${region.label}\n(${region.name})`,
+          type: 'boundary',
+          regionColor: region.color,
+        },
+      });
+    });
+
+    // Re-add nodes
+    const clusterNodeCount = {};
+    for (let i = 0; i < 31; i++) clusterNodeCount[i] = 0;
+
+    clusterData.entities.sort((a, b) => a.id - b.id).forEach((ent) => {
+      const cid = ent.cluster !== undefined ? ent.cluster : 0;
+      const region = AWS_REGIONS[cid];
+      const count = nodesPerRegion[cid];
+      const idx = clusterNodeCount[cid]++;
+      const angle = (2 * Math.PI * idx) / Math.max(count, 1);
+      const radius = 40;
+
+      let borderColor = '#222';
+      let borderWidth = 2;
+      if (ent.byzantine) { borderColor = '#ef5350'; borderWidth = 3; }
+      if (ent.role === 'Leader') { borderColor = '#ffd54f'; borderWidth = 3; }
+
+      elements.push({
+        group: 'nodes',
+        data: {
+          id: `node${ent.id}`,
+          label: `N${ent.id}`,
+          cluster: region.id,
+          parent: region.id,
+          regionColor: region.color,
+          role: ent.role,
+          byzantine: ent.byzantine || false,
+        },
+        position: {
+          x: region.x * 1.2 + radius * Math.cos(angle),
+          y: region.y * 1.2 + radius * Math.sin(angle),
+        },
+      });
+    });
+
+    // Re-add inter-region edges
+    const regionFirstNode = {};
+    clusterData.entities.forEach((ent) => {
+      const cid = ent.cluster !== undefined ? ent.cluster : 0;
+      if (!(cid in regionFirstNode)) regionFirstNode[cid] = ent.id;
+    });
+
+    for (let i = 0; i < 10; i++) {
+      for (let j = i + 1; j < 10; j++) {
+        if (regionFirstNode[i] && regionFirstNode[j]) {
+          elements.push({
+            group: 'edges',
+            data: {
+              id: `edge-r${i}-r${j}`,
+              source: `node${regionFirstNode[i]}`,
+              target: `node${regionFirstNode[j]}`,
+              latency: `${LATENCY_MATRIX[i][j]}ms`,
+              delay: LATENCY_MATRIX[i][j],
+              interRegion: true,
+            },
+          });
+        }
+      }
+    }
+
+    cy.add(elements);
+    cy.layout({ name: 'preset' }).run();
+
+    // Highlight byzantine nodes
+    cy.nodes(':childless').forEach((node) => {
+      if (node.data('byzantine')) {
+        node.style({ 'border-color': '#ef5350', 'border-width': 3 });
+      }
+      if (node.data('role') === 'Leader') {
+        node.style({ 'border-color': '#ffd54f', 'border-width': 3 });
+      }
+    });
+
+    // Update legend
+    const n = clusterData.n;
+    const f = clusterData.f;
+    const nPerRegion = [];
+    for (let i = 0; i < 10; i++) nPerRegion.push(nodesPerRegion[i]);
+    buildLegendDynamic(f, n, nPerRegion);
+  }
+
+  function buildLegendDynamic(f, numNodes, nodesPerRegion) {
+    const legendEl = document.getElementById('legend');
+    legendEl.innerHTML =
+      `<div class="legend-item" style="width:100%; justify-content:center; margin-bottom:6px;">
+        <span style="color:#00d4ff; font-size:13px;">
+          <strong>n = ${numNodes}</strong> (3f + 1, f = ${f}) — tolerates ${f} Byzantine faults
+        </span>
+      </div>` +
+      AWS_REGIONS.map((r, i) =>
+        nodesPerRegion[i] > 0
+          ? `<div class="legend-item">
+              <div class="legend-color" style="background-color: ${r.color};"></div>
+              <span>${r.label} (${nodesPerRegion[i]} nodes)</span>
+            </div>`
+          : ''
+      ).join('');
+  }
+
+  function showClusterStatus(msg, type) {
+    const el = document.getElementById('clusterStatus');
+    el.textContent = msg;
+    el.className = `status-bar status-${type} mt-2 text-center`;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
+  }
+
+  // ─── API Calls ───
+
+  async function addNode() {
+    const cluster = Number(document.getElementById('addClusterSelect').value);
+    const role = document.getElementById('addRoleSelect').value;
+    const byzantine = document.getElementById('addByzantineCheck').checked;
+
+    try {
+      const res = await fetch('/api/cluster/add-node', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cluster, role, byzantine }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        termLog(`Added Node ${data.nodeId} to ${AWS_REGIONS[cluster].label} (n=${data.totalNodes}, f=${data.f})`, '#4caf50');
+        showClusterStatus(`Node ${data.nodeId} added to ${AWS_REGIONS[cluster].label}`, 'running');
+        await loadClusterConfig();
+      } else {
+        termLog(`Add failed: ${data.error}`, '#ef5350');
+        showClusterStatus(data.error, 'stopped');
+      }
+    } catch (e) {
+      termLog(`Add node error: ${e.message}`, '#ef5350');
+    }
+  }
+
+  async function removeNode(nodeId) {
+    try {
+      const res = await fetch('/api/cluster/remove-node', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nodeId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        termLog(`Removed Node ${nodeId} (n=${data.totalNodes}, f=${data.f})`, '#ef5350');
+        showClusterStatus(`Node ${nodeId} removed`, 'stopped');
+        await loadClusterConfig();
+      } else {
+        termLog(`Remove failed: ${data.error}`, '#ef5350');
+      }
+    } catch (e) {
+      termLog(`Remove node error: ${e.message}`, '#ef5350');
+    }
+  }
+
+  async function setNodeProperty(nodeId, props) {
+    try {
+      const res = await fetch('/api/cluster/set-property', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nodeId, ...props }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        termLog(`Node ${nodeId} updated: ${data.changed.join(', ')}`, '#ffd54f');
+        showClusterStatus(`Node ${nodeId}: ${data.changed.join(', ')}`, 'info');
+        await loadClusterConfig();
+      } else {
+        termLog(`Set property failed: ${data.error}`, '#ef5350');
+      }
+    } catch (e) {
+      termLog(`Set property error: ${e.message}`, '#ef5350');
+    }
+  }
+
+  // ─── Bind Buttons ───
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // ...existing code (initializeGraph, etc.)...
+
+    // Load cluster config on startup
+    loadClusterConfig();
+
+    document.getElementById('btnAddNode').addEventListener('click', addNode);
+
+    document.getElementById('btnRemoveNode').addEventListener('click', () => {
+      const nodeId = Number(document.getElementById('removeNodeSelect').value);
+      if (confirm(`Remove Node ${nodeId}? This updates config.entities.yaml.`)) {
+        removeNode(nodeId);
+      }
+    });
+
+    document.getElementById('btnSetProp').addEventListener('click', () => {
+      const nodeId = Number(document.getElementById('setNodeSelect').value);
+      const props = {};
+      const role = document.getElementById('setRoleSelect').value;
+      const byz = document.getElementById('setByzSelect').value;
+      if (role) props.role = role;
+      if (byz !== '') props.byzantine = byz === 'true';
+      if (Object.keys(props).length === 0) {
+        showClusterStatus('Select a property to change', 'stopped');
+        return;
+      }
+      setNodeProperty(nodeId, props);
+    });
+  });
+</script>
+</body>
+</html>

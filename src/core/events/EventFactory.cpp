@@ -58,33 +58,46 @@ public:
 class StoreMessageEvent : public BaseEvent {
 public:
     StoreMessageEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
+
+    // Small helper for extracting sender id (avoids repeated branching)
+    static int extractSenderId(const nlohmann::json& obj) {
+        if (!obj.contains("message_sender_id")) return -1;
+        const auto& v = obj["message_sender_id"];
+        if (v.is_number_integer()) return v.get<int>();
+        if (v.is_string()) {
+            try { return std::stoi(v.get<std::string>()); } catch (...) { return -1; }
+        }
+        return -1;
+    }
+
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        // -------- Proto fast-path --------
         if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
-            const std::string phase = p->phase();
+            const std::string phase = p->explicit_type();
             const int seq = p->sequence();
             const int senderId = p->sender_id();
 
+            // Update global sequence if needed
             if (seq > entity->entityInfo["sequence"].get<int>()) {
                 entity->entityInfo["sequence"] = seq;
             }
 
-            // Keep existing aggregation for other components
             const std::string aggKey = phase + "_" + std::to_string(seq);
             {
                 std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
                 entity->keyToSenderIds[aggKey].insert(senderId);
             }
+            // std::cout << "[Node " << entity->getNodeId() << "] Stored sender " << senderId << " for key " << aggKey << std::endl;
 
             // Ignore commits after completion
-            if (phase == "Commit") {
+            YAML::Node phaseConfig = entity->getPhaseConfigInsensitive(phase);
+            if (phaseConfig["next_state"].as<std::string>()=="Request" && phase == "Commit") {
                 std::lock_guard<std::mutex> pg(entity->processedMtx);
-                if (entity->processedOperations.count(seq)) {
-                    return true;
-                }
+                if (entity->processedOperations.count(seq)) return true;
             }
 
-            // Fast path: only index PrePrepare ( CompleteEvent will consume this )
-            if (phase == "PrePrepare") {
+            // Index PrePrepare minimal info
+            if (p->has_tx()) {
                 Entity::PrePrepareInfo info;
                 info.timestamp   = p->timestamp();
                 info.operation   = p->operation();
@@ -99,15 +112,16 @@ public:
                     entity->prePrepareIndex[seq] = std::move(info);
                 }
 
-                // Optional: persist only PrePrepare (lightweight)
-                nlohmann::json toStore;
-                toStore["type"] = "PrePrepare";
-                toStore["sequence"] = seq;
-                toStore["message_sender_id"] = senderId;
-                toStore["view"] = p->view();
-                toStore["operation"] = p->operation();
-                toStore["timestamp"] = p->timestamp();
-                toStore["client_listen_port"] = p->client_listen_port();
+                // Persist lightweight record
+                nlohmann::json toStore{
+                    {"type","PrePrepare"},
+                    {"sequence",seq},
+                    {"message_sender_id",senderId},
+                    {"view",p->view()},
+                    {"operation",p->operation()},
+                    {"timestamp",p->timestamp()},
+                    {"client_listen_port",p->client_listen_port()}
+                };
                 if (p->has_tx()) {
                     toStore["transaction"] = {
                         {"from", p->tx_from()},
@@ -115,14 +129,93 @@ public:
                         {"amount", p->tx_amount()}
                     };
                 }
-                const std::string key = "PrePrepare_" + std::to_string(seq) + "_" + std::to_string(senderId);
-                entity->dataset.update(key, toStore);
+                entity->dataset.update(
+                    "PrePrepare_" + std::to_string(seq) + "_" + std::to_string(senderId),
+                    toStore);
             }
 
-            // Skip JSON/dataset for Prepare/Commit to stay fast
+            // Combined senders directly from protobuf (no JSON parse needed)
+            if (phase == "Prepare" && p->hasPrepareCombined()) {
+                std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                auto& setRef = entity->keyToSenderIds[aggKey];
+                for (const auto& am : p->prepareCombined()) {
+                    setRef.insert(am.message_sender_id());
+                }
+            } else if (phase == "Commit" && p->hasCommitCombined()) {
+                std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                auto& setRef = entity->keyToSenderIds[aggKey];
+                for (const auto& am : p->commitCombined()) {
+                    setRef.insert(am.message_sender_id());
+                }
+            }
+
+            // If ProtoMessage content also has combinedMessages JSON (from getContent()), parse once
+            // (Only if we need to merge any extra senders not in protobuf combined sections)
+            if ((phase == "Prepare" || phase == "Commit")) {
+                const std::string payload = message->getContent();
+                if (payload.size() > 2 && payload.front() == '{') {
+                    auto j = nlohmann::json::parse(payload, nullptr, false);
+                    if (!j.is_discarded() && j.contains("combinedMessages") && j["combinedMessages"].is_array()) {
+                        std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                        auto& setRef = entity->keyToSenderIds[aggKey];
+                        for (const auto& m : j["combinedMessages"]) {
+                            int sid = extractSenderId(m);
+                            if (sid != -1) setRef.insert(sid);
+                        }
+                    }
+                }
+            }
+
             return true;
         }
-        
+
+        // -------- JSON path (participants / legacy senders) --------
+        try {
+            auto j = nlohmann::json::parse(message->getContent());
+            const std::string phase = j.value("type", "");
+            const int seq = j.value("sequence", -1);
+            if (phase.empty() || seq < 0) return true;
+
+            const std::string aggKey = phase + "_" + std::to_string(seq);
+
+            // Lock once for all insertions
+            {
+                std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                auto& setRef = entity->keyToSenderIds[aggKey];
+
+                int primary = extractSenderId(j);
+                if (primary != -1) setRef.insert(primary);
+
+                const auto& cm = j.find("combinedMessages");
+                if (cm != j.end() && cm->is_array()) {
+                    for (const auto& m : *cm) {
+                        int sid = extractSenderId(m);
+                        if (sid != -1) setRef.insert(sid);
+                    }
+                }
+            }
+
+            // Lightweight PrePrepare indexing for JSON-origin PrePrepare
+            if (phase == "PrePrepare") {
+                Entity::PrePrepareInfo info;
+                info.timestamp   = j.value("timestamp", std::string());
+                info.operation   = j.value("operation", std::string());
+                info.client_port = j.value("client_listen_port", -1);
+                if (j.contains("transaction") && j["transaction"].is_object()) {
+                    const auto& tx = j["transaction"];
+                    info.from   = tx.value("from", std::string());
+                    info.to     = tx.value("to", std::string());
+                    info.amount = tx.value("amount", 0);
+                }
+                {
+                    std::lock_guard<std::mutex> lk(entity->prePrepareMtx);
+                    entity->prePrepareIndex[seq] = std::move(info);
+                }
+            }
+        } catch (...) {
+            // Ignore malformed JSON
+        }
+
         return true;
     }
 };
@@ -133,7 +226,7 @@ public:
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
             std::lock_guard<std::mutex> lk(entity->timerMtx);
-            if (p->phase() == "PrePrepare") {
+            if (p->explicit_type() == "PrePrepare") {
                 if (entity->timeKeeper) entity->timeKeeper->start();
             } else {
                 if (entity->timeKeeper) entity->timeKeeper->reset();
@@ -207,7 +300,7 @@ public:
         std::string currentPhase;
         if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
             seq = p->sequence();
-            currentPhase = p->phase();
+            currentPhase = p->explicit_type();
         } else {
             auto j = nlohmann::json::parse(message->getContent());
             seq = j.value("sequence", -1);
@@ -218,13 +311,25 @@ public:
         YAML::Node phaseConfig = entity->getPhaseConfigInsensitive(currentPhase);
         if (!phaseConfig || !phaseConfig["quorum"]) return false;
         int quorum = computeQuorumEventFactory(phaseConfig["quorum"].as<std::string>(), entity->getF());
-
+        //std::cout << "[Node " << entity->getNodeId() << "] Checking quorum for  seq " << seq << " with quorum requirement: " << quorum << std::endl;
         const std::string aggKey = currentPhase + "_" + std::to_string(seq);
         size_t votes = 0;
-        auto it = entity->keyToSenderIds.find(aggKey);
-        if (it != entity->keyToSenderIds.end()) votes = it->second.size();
+        {
+            std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+            auto it = entity->keyToSenderIds.find(aggKey);
+            if (it != entity->keyToSenderIds.end()) votes = it->second.size();
+        }
 
-        return static_cast<int>(votes) >= quorum;
+        if (static_cast<int>(votes) >= quorum) {
+            // Atomically check-and-set: only the first thread to reach quorum proceeds
+            std::lock_guard<std::mutex> lk(entity->quorumTriggeredMtx);
+            if (entity->quorumTriggered.count(aggKey)) {
+                return false; // Already triggered for this phase+seq
+            }
+            entity->quorumTriggered.insert(aggKey);
+            return true;
+        }
+        return false;
     }
 };
 
@@ -232,6 +337,154 @@ class CheckQuorumEventForSBFT : public BaseEvent {
 public:
     CheckQuorumEventForSBFT(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        
+        // -------- Proto fast-path --------
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            const int seq = p->sequence();
+            const std::string phase = p->explicit_type(); // "Prepare" / "Commit" / etc.
+            
+            if (seq < 0 || phase.empty()) return false;
+            
+
+            YAML::Node phaseConfig = entity->getPhaseConfigInsensitive(phase);
+            if (!phaseConfig || !phaseConfig["quorum"]) return false;
+
+            int quorum = computeQuorumEventFactory(phaseConfig["quorum"].as<std::string>(), entity->getF());
+            
+            const std::string key = phase + "_" + std::to_string(seq);
+            size_t uniqueSendersSize = 0;
+            {
+                std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                auto it = entity->keyToSenderIds.find(key);
+                if (it != entity->keyToSenderIds.end()) uniqueSendersSize = it->second.size();
+            }
+
+            
+            bool quorumMet = uniqueSendersSize-1 >= static_cast<size_t>(quorum);
+            
+            if (!quorumMet) return false;
+            // std::cout << "[Node " << entity->getNodeId() << "] CheckQuorumEventForSBFT received for phase " << phase << " seq " << seq << std::endl;
+            // Timer logic for prepare phase (case-insensitive match to original "prepare")
+            std::string phaseLower = phase;
+            for (auto& c : phaseLower) c = (char)std::tolower(c);
+            //std::cout << "[Node " << entity->getNodeId() << "] Quorum met for " << key << " with " << uniqueSendersSize << " unique senders. Timer logic check for phase: " << phaseLower << std::endl;
+            
+            if (phaseLower == "prepare") {
+               // std::cout << "[Node " << entity->getNodeId() << "] Quorum met for Prepare phase of seq " << seq << " with " << uniqueSendersSize << " unique senders. Checking timer logic..." << std::endl;
+                if (!entity->preparePhaseTimerRunning[seq].exchange(true) && uniqueSendersSize < (entity->getF() * 3)) {
+                    std::thread([entity, seq, phaseConfig, phase, state]() {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                        entity->preparePhaseTimerRunning[seq] = false;
+
+                        // Decide next state (same logic: only advance if exactly 7 senders; keep parity)
+                        std::string aggKey = phase + "_" + std::to_string(seq);
+                        size_t currentCount = 0;
+                        {
+                            std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                            auto it = entity->keyToSenderIds.find(aggKey);
+                            if (it != entity->keyToSenderIds.end()) currentCount = it->second.size();
+                        }
+
+                        YAML::Node nextPhaseConfig = entity->getPhaseConfigInsensitive(phase);
+                        std::string nextState;
+                        if (currentCount == (entity->getF() * 3) && nextPhaseConfig && nextPhaseConfig["next_state"]) {
+                            nextState = nextPhaseConfig["next_state"].as<std::string>();
+                            entity->sequenceStates[seq].setState(nextState);
+                        } else {
+                            nextState = phase; // stay
+                        }
+
+                        // Build combinedMessages from in-memory sender IDs (fast path)
+                        nlohmann::json combinedMessages = nlohmann::json::array();
+                        std::unordered_set<int> uniqueSendersSnapshot;
+                        {
+                            std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                            auto it = entity->keyToSenderIds.find(aggKey);
+                            if (it != entity->keyToSenderIds.end()) {
+                                for (int sid : it->second) uniqueSendersSnapshot.insert(sid);
+                            }
+                        }
+
+                        // Try to enrich using stored PrePrepare info (if still present)
+                        Entity::PrePrepareInfo storedInfo;
+                        {
+                            std::lock_guard<std::mutex> lk(entity->prePrepareMtx);
+                            auto it = entity->prePrepareIndex.find(seq);
+                            if (it != entity->prePrepareIndex.end()) storedInfo = it->second;
+                        }
+
+                        for (int sid : uniqueSendersSnapshot) {
+                            nlohmann::json filtered;
+                            filtered["view"] = entity->getState().getViewNumber();
+                            filtered["sequence"] = seq;
+                            filtered["digest"] = "";
+                            filtered["message_sender_id"] = sid;
+                            filtered["signature"] = "";
+                            filtered["client_listen_port"] = storedInfo.client_port >= 0 ? storedInfo.client_port : -1;
+                            filtered["clientid"] = "";
+                            filtered["timestamp"] = storedInfo.timestamp;
+                            if (!storedInfo.from.empty() && !storedInfo.to.empty() && storedInfo.amount > 0) {
+                                filtered["transaction"] = {
+                                    {"from", storedInfo.from},
+                                    {"to", storedInfo.to},
+                                    {"amount", storedInfo.amount}
+                                };
+                            } else {
+                                filtered["transaction"] = nlohmann::json{};
+                            }
+                            combinedMessages.push_back(std::move(filtered));
+                            
+                        }
+
+                        // Execute configured actions, mirroring original JSON path
+                        if (nextPhaseConfig && nextPhaseConfig["actions"] && nextPhaseConfig["actions"].IsSequence()) {
+                            for (const auto& actionNode : nextPhaseConfig["actions"]) {
+                                std::string actionName = actionNode.as<std::string>();
+                                auto itAct = entity->actions.find(actionName);
+                                if (itAct != entity->actions.end()) {
+                                    nlohmann::json outMsg;
+                                    outMsg["type"] = nextState;
+                                    outMsg["view"] = entity->getState().getViewNumber();
+                                    outMsg["sequence"] = seq;
+                                    // Operation fallback order as per original comments
+                                    if (entity->prepareOperations.count(seq))
+                                        outMsg["operation"] = entity->prepareOperations[seq];
+                                    else if (entity->prePrepareOperations.count(seq))
+                                        outMsg["operation"] = entity->prePrepareOperations[seq];
+                                    else
+                                        outMsg["operation"] = "";
+
+                                    outMsg["message_sender_id"] = entity->getNodeId();
+                                    outMsg["combinedMessages"] = combinedMessages;
+                                    outMsg["qc"] = state ? state->getLockedQC() : "";
+                                    // Transaction reconstruction
+                                    if (!storedInfo.from.empty() && !storedInfo.to.empty() && storedInfo.amount > 0) {
+                                        outMsg["transaction"] = {
+                                            {"from", storedInfo.from},
+                                            {"to", storedInfo.to},
+                                            {"amount", storedInfo.amount}
+                                        };
+                                    } else {
+                                        outMsg["transaction"] = nlohmann::json{};
+                                    }
+                                    outMsg["client_listen_port"] = storedInfo.client_port >= 0 ? storedInfo.client_port : -1;
+                                    outMsg["clientid"] = "";
+                                    outMsg["timestamp"] = storedInfo.timestamp;
+
+                                    Message protocolMsg(outMsg.dump());
+                                    
+                                    itAct->second->execute(entity, &protocolMsg, &entity->sequenceStates[seq]);
+                                }
+                            }
+                        }
+                    }).detach();
+                }
+            }
+
+            return uniqueSendersSize >= static_cast<size_t>(quorum);
+        }
+
+        // -------- Existing JSON path (unchanged fallback) --------
         if (!validateMessage(message, entity)) return false;
         auto j = nlohmann::json::parse(message->getContent());
         int seq = j["sequence"].get<int>();
@@ -242,138 +495,72 @@ public:
         int quorum = computeQuorumEventFactory(quorumStr, entity->getF());
         bool quorumMet = true;
 
-        // Use DataSet for quorum check (messages JSON file)
-        std::string fileName = "messages_" + std::to_string(entity->getNodeId()) + ".json";
-        // entity->dataset.loadFromFile(fileName);
-        auto records = entity->dataset.getRecords();
         std::string key2 = currentPhase + "_" + std::to_string(seq);
-        //std::cout << key2 << std::endl;
         int uniqueSendersSize = entity->keyToSenderIds[key2].size();
-
-        std::unordered_set<int> uniqueSenders;
-        
         quorumMet = uniqueSendersSize >= quorum;
-        // std::cout << "[Node " << entity->getNodeId() << "] Quorum check for phase " << currentPhase 
-        //           << " and sequence " << seq << ": " << uniqueSendersSize 
-        //           << " unique senders found, required: " << quorum 
-        //           << (quorumMet ? " - Quorum met" : " - Quorum NOT met") << std::endl;
         if (!quorumMet) return false;
 
-        // Optionally, you can keep the timer logic for prepare phase if needed
         if (currentPhase == "prepare") {
             if (!entity->preparePhaseTimerRunning[seq].exchange(true) && uniqueSendersSize <= quorum) {
-                std::thread([entity, seq, phaseConfig, currentPhase, uniqueSendersSize, state, j, records]() {
-                    std::unordered_set<int> uniqueSenders;
+                std::thread([entity, seq, phaseConfig, currentPhase, uniqueSendersSize, state, j]() {
                     std::this_thread::sleep_for(std::chrono::milliseconds(25));
                     entity->preparePhaseTimerRunning[seq] = false;
-                    // std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer expired for seq " << uniqueSendersSize << "\n";    
+
                     YAML::Node nextPhaseConfig = entity->getPhaseConfig(currentPhase);
                     std::string nextState;
-                    //print unique senders
-                    
                     std::string key = currentPhase + "_" + std::to_string(seq);
-                    // std::cout << "[Node " << entity->getNodeId() << "] Unique senders in prepare phase: " << entity->keyToSenderIds[key].size() << std::endl;
                     if (entity->keyToSenderIds[key].size() == 7) {
-                        // Go to commit phase
                         nextState = nextPhaseConfig["next_state"].as<std::string>();
                         entity->sequenceStates[seq].setState(nextState);
-                        // std::cout << "[Node " << entity->getNodeId() << "] Prepare phase complete for seq " << seq << ", transitioning to " << nextState << std::endl;
-                        
                     } else {
                         nextState = currentPhase;
-                        // std::cout << "[Node " << entity->getNodeId() << "] Prepare phase NOT complete for seq " << seq << ", staying in " << nextState << std::endl;
                     }
-                    // if (nextPhaseConfig && nextPhaseConfig["actions"] && nextPhaseConfig["actions"].IsSequence()) {
-                    //     for (const auto& actionNode : nextPhaseConfig["actions"]) {
-                    //         std::string actionName = actionNode.as<std::string>();
-                    //         std::cout << "[Node " << entity->getNodeId() << "] going directly Executing action: " << actionName << " for seq " << seq << "\n";
-                    //         auto it = entity->actions.find(actionName);
-                    //         if (it != entity->actions.end()) {
-                    //             nlohmann::json outMsg;
-                    //             // outMsg["type"] = nextState;
-                    //             // outMsg["view"] = entity->sequenceStates[seq].getViewNumber();
-                    //             // outMsg["sequence"] = seq;
-                    //             // outMsg["message_sender_id"] = entity->getNodeId();
-                    //             // outMsg["qc"] = state->getLockedQC();
-                    //             // outMsg["transaction"] = j.value("transaction", nlohmann::json{});
-                    //             // outMsg["client_listen_port"] = j.value("client_listen_port", -1);
-                    //             // outMsg["clientid"] = j.value("clientid", "");
-                    //             // outMsg["timestamp"] = j.value("timestamp", "");
-                    //             // if (entity->prepareOperations.count(seq))
-                    //             //     outMsg["operation"] = entity->prepareOperations[seq];
-                    //             // else if (entity->prePrepareOperations.count(seq))
-                    //             //     outMsg["operation"] = entity->prePrepareOperations[seq];
-                    //             // else
-                    //             //     outMsg["operation"] = "";
-                    //             // outMsg["sender"] = entity->getNodeId();
-                                
-                    //             // Message protocolMsg(outMsg.dump());
-                    //             // it->second->execute(entity, &protocolMsg, &entity->sequenceStates[seq]);
-                    //             Message protocolMsg(outMsg.dump());
-                    //             entity->sendToAll(protocolMsg);
-                    //         }
-                    //     }
-                    // }
-                    nlohmann::json combinedMessages = nlohmann::json::array();
-                    for (const auto& [key, record] : records) {
-                        if (record.contains("sequence") && record["sequence"] == seq &&
-                            record.contains("message_sender_id")) {
-                            int senderId = -1;
-                            if (record["message_sender_id"].is_number_integer()) {
-                                senderId = record["message_sender_id"].get<int>();
-                            } else if (record["message_sender_id"].is_string()) {
-                                try { senderId = std::stoi(record["message_sender_id"].get<std::string>()); } catch (...) {}
-                            }
-                            if (senderId != -1 && uniqueSenders.insert(senderId).second) {
-                                nlohmann::json filtered;
-                                filtered["view"] = record.value("view", -1);
-                                filtered["sequence"] = record.value("sequence", -1);
-                                filtered["digest"] = record.value("digest", "");
-                                filtered["message_sender_id"] = record.value("message_sender_id", -1);
-                                filtered["signature"] = "";
-                                filtered["client_listen_port"] = record.value("client_listen_port", -1);
-                                filtered["clientid"] = record.value("clientid", "");
-                                filtered["timestamp"] = record.value("timestamp", "");
-                                filtered["transaction"] = record.value("transaction", nlohmann::json{});
-                                combinedMessages.push_back(filtered);
 
-                            }
-                        }
+                    // Build combinedMessages (legacy path)
+                    nlohmann::json combinedMessages = nlohmann::json::array();
+                    for (int sid : entity->keyToSenderIds[key]) {
+                        nlohmann::json filtered;
+                        filtered["view"] = entity->getState().getViewNumber();
+                        filtered["sequence"] = seq;
+                        filtered["digest"] = "";
+                        filtered["message_sender_id"] = sid;
+                        filtered["signature"] = "";
+                        filtered["client_listen_port"] = j.value("client_listen_port",-1);
+                        filtered["clientid"] = j.value("clientid","");
+                        filtered["timestamp"] = j.value("timestamp","");
+                        filtered["transaction"] = j.value("transaction", nlohmann::json{});
+                        combinedMessages.push_back(std::move(filtered));
                     }
-                    // std::cout << "[Node " << entity->getNodeId() << "] urike bro for this state ra unga " << nextState  << std::endl;
-                    
+
                     if (nextPhaseConfig && nextPhaseConfig["actions"] && nextPhaseConfig["actions"].IsSequence()) {
                         for (const auto& actionNode : nextPhaseConfig["actions"]) {
                             std::string actionName = actionNode.as<std::string>();
-                            // std::cout << "[Node " << entity->getNodeId() << "] Executing action: " << actionName << " for seq " << seq << "\n";
                             auto it = entity->actions.find(actionName);
                             if (it != entity->actions.end()) {
                                 nlohmann::json outMsg;
                                 outMsg["type"] = nextState;
                                 outMsg["view"] = entity->getState().getViewNumber();
                                 outMsg["sequence"] = seq;
-                                outMsg["operation"] = j["operation"];
+                                outMsg["operation"] = j.value("operation","");
                                 outMsg["message_sender_id"] = entity->getNodeId();
                                 outMsg["combinedMessages"] = combinedMessages;
-                                outMsg["qc"] = state->getLockedQC(); // Include QC if available
-                                outMsg["transaction"] = j["transaction"];
-                                outMsg["client_listen_port"] = j["client_listen_port"];
-                                outMsg["clientid"] = j["clientid"];
-                                outMsg["timestamp"] = j["timestamp"];
-
+                                outMsg["qc"] = state ? state->getLockedQC() : "";
+                                outMsg["transaction"] = j.value("transaction", nlohmann::json{});
+                                outMsg["client_listen_port"] = j.value("client_listen_port",-1);
+                                outMsg["clientid"] = j.value("clientid","");
+                                outMsg["timestamp"] = j.value("timestamp","");
                                 Message protocolMsg(outMsg.dump());
                                 it->second->execute(entity, &protocolMsg, &entity->sequenceStates[seq]);
                             }
                         }
                     }
-
                 }).detach();
             }
         }
-        
-        
+
         if (quorumMet && phaseConfig["next_state"]) {
             std::string nextState = phaseConfig["next_state"].as<std::string>();
+            (void)nextState; // original code ignored it here
         }
         return quorumMet;
     }
@@ -383,21 +570,39 @@ class CheckQCEvent : public BaseEvent {
 public:
     CheckQCEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
+        // Proto fast-path
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            const std::string qcStr = p->qc(); // QC stored as string (view number)
+            if (qcStr.empty()) return true;    // No QC -> initial message
+            try {
+                int qcView = std::stoi(qcStr);
+                int curView = entity->entityInfo["view"].get<int>();
+                if (qcView <= curView) return true; // QC not advancing
+                return false; // QC indicates higher view
+            } catch (...) {
+                return true; // Malformed QC -> treat as absent
+            }
+        }
+
+        // JSON fallback
         auto j = nlohmann::json::parse(message->getContent());
-        // Check if QC is present in the message, if not it is initial message
-        if(!j.contains("qc") || j["qc"].is_null() || j["qc"].empty() || j["qc"]=="") {
-            //std::cout << "[Node " << entity->getNodeId() << "] No QC found in message for seq " << j["sequence"] << "\n";
+        if (!j.contains("qc") || j["qc"].is_null() || j["qc"].empty() || j["qc"] == "") {
             return true;
         }
-        auto qc = j["qc"];
-        // Example: Check QC fields (type, viewNumber, node, sig)
-        //std::cout << "current view is ::: " << entity->getState().getViewNumber() << "  " << qc << "\n";
-        std::string curview = qc.get<std::string>();
-        if (std::stoi(curview)<= (entity->entityInfo["view"]) ){
-            //std::cout << "[Node " << entity->getNodeId() << "] QC is missing required fields for seq " << j["sequence"] << "\n";
+        std::string curviewStr;
+        try {
+            curviewStr = j["qc"].get<std::string>();
+        } catch (...) {
             return true;
         }
-        return false;
+        try {
+            int qcView = std::stoi(curviewStr);
+            int curView = entity->entityInfo["view"].get<int>();
+            if (qcView <= curView) return true;
+            return false;
+        } catch (...) {
+            return true;
+        }
     }
 };
 
@@ -406,7 +611,7 @@ public:
     BroadcastEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
-            const std::string phase = p->phase();
+            const std::string phase = p->explicit_type();
             YAML::Node phaseCfg = entity->getPhaseConfigInsensitive(phase);
             if (!phaseCfg || !phaseCfg["next_state"]) return true;
             std::string nextPhase = phaseCfg["next_state"].as<std::string>();
@@ -416,12 +621,14 @@ public:
             if (phase == "PrePrepare") {
                 auto* m = env.mutable_prepare();
                 m->set_view(p->view());
+                m->set_type(nextPhase);
                 m->set_sequence(p->sequence());
                 m->set_operation(p->operation());
                 m->set_message_sender_id(entity->getNodeId());
             } else if (phase == "Prepare" || phase == "prepare") {
                 auto* m = env.mutable_commit();
                 m->set_view(p->view());
+                m->set_type(nextPhase);
                 m->set_sequence(p->sequence());
                 m->set_operation(p->operation());
                 m->set_message_sender_id(entity->getNodeId());
@@ -429,6 +636,7 @@ public:
                 return true; // not a basic phase
             }
             entity->sendProtocolToAll(env);
+            
             return true;
         }
 
@@ -469,12 +677,29 @@ public:
     CompleteEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+
+            // print proto message details
+            // std::cout << "[Node " << entity->getNodeId() << "] Completing operation for sequence " << p->sequence() << std::endl;
+            // std::cout << "ProtoMessage Details - Phase: " << p->explicit_type()
+            //           << ", View: " << p->view()
+            //           << ", Sequence: " << p->sequence()
+            //           << ", Timestamp: " << p->timestamp()
+            //           << ", Operation: " << p->operation()
+            //           << ", Client Port: " << p->client_listen_port()
+            //           << ", From: " << p->tx_from()
+            //           << ", To: " << p->tx_to()
+            //           << ", Amount: " << p->tx_amount()
+            //           << std::endl;
+            
+            
+
             const int seq = p->sequence();
             {
                 std::lock_guard<std::mutex> pg(entity->processedMtx);
                 if (entity->processedOperations.count(seq)) return true;
             }
 
+            // std::cout << "[Node " << entity->getNodeId() << "] Retrieving PrePrepare Info for sequence " << seq << std::endl;
             // O(1) lookup from prePrepareIndex (set by StoreMessageEvent on PrePrepare)
             Entity::PrePrepareInfo info;
             {
@@ -484,7 +709,14 @@ public:
                 info = it->second;                 // copy out
                 entity->prePrepareIndex.erase(it); // erase while locked
             }
-
+            // print info
+            // std::cout << "Retrieved PrePrepare Info - Timestamp: " << info.timestamp
+            //           << ", Operation: " << info.operation
+            //           << ", Client Port: " << info.client_port
+            //           << ", From: " << info.from
+            //           << ", To: " << info.to
+            //           << ", Amount: " << info.amount
+            //           << std::endl;
             const std::string& txnId = info.timestamp;
 
             if (!txnId.empty() && entity->executedTransactions.count(txnId) == 0) {
@@ -517,9 +749,73 @@ public:
 
         // Fallback JSON path unchanged
         auto j = nlohmann::json::parse(message->getContent());
+        // std::cout << "[Node " << entity->getNodeId() << "] Completing operation for sequence " << j["sequence"] << std::endl;
+        // std::cout << "JSON Message Details - Type: " << j["type"]
+        //           << ", View: " << j["view"]
+        //           << ", Sequence: " << j["sequence"]
+        //           << ", Timestamp: " << j["timestamp"]
+        //           << ", Operation: " << j["operation"]
+        //           << ", Client Port: " << j["client_listen_port"]
+        //           << ", From: " << j["transaction"]["from"]
+        //           << ", To: " << j["transaction"]["to"]
+        //           << ", Amount: " << j["transaction"]["amount"]
+        //           << std::endl;
         int seq = j["sequence"].get<int>();
         if (entity->processedOperations.count(seq)) return true;
-        // ...existing JSON completion logic...
+
+        // JSON completion logic (parity with proto path)
+        Entity::PrePrepareInfo info;
+        info.timestamp   = j.value("timestamp", std::string());
+        info.operation   = j.value("operation", std::string());
+        info.client_port = j.value("client_listen_port", -1);
+        if (j.contains("transaction") && j["transaction"].is_object()) {
+            const auto& tx = j["transaction"];
+            info.from   = tx.value("from", std::string());
+            info.to     = tx.value("to", std::string());
+            info.amount = tx.value("amount", 0);
+        }
+
+        // Fill missing fields from stored PrePrepare (if available)
+        {
+            std::lock_guard<std::mutex> lk(entity->prePrepareMtx);
+            auto it = entity->prePrepareIndex.find(seq);
+            if (it != entity->prePrepareIndex.end()) {
+                const auto& stored = it->second;
+                if (info.timestamp.empty())    info.timestamp = stored.timestamp;
+                if (info.operation.empty())    info.operation = stored.operation;
+                if (info.client_port < 0)      info.client_port = stored.client_port;
+                if (info.from.empty())         info.from = stored.from;
+                if (info.to.empty())           info.to = stored.to;
+                if (info.amount <= 0)          info.amount = stored.amount;
+                entity->prePrepareIndex.erase(it);
+            }
+        }
+
+        const std::string& txnId = info.timestamp;
+        if (!txnId.empty() && entity->executedTransactions.count(txnId) == 0) {
+            if (!info.from.empty() && !info.to.empty() && info.amount > 0) {
+                entity->updateBalances(info.from, info.to, info.amount);
+                entity->executedTransactions.insert(txnId);
+                std::cout << "[Node " << entity->getNodeId() << "] Transaction executed: "
+                          << info.from << " -> " << info.to << " : " << info.amount
+                          << " Sequence: " << seq << std::endl << std::endl;
+            }
+        }
+
+        entity->markOperationProcessed(seq);
+
+        // Reply once to client
+        // if (info.client_port > 0) {
+        //     nlohmann::json response{
+        //         {"type","Response"},
+        //         {"view", entity->getState().getViewNumber()},
+        //         {"timestamp", info.timestamp},
+        //         {"message_sender_id", entity->getNodeId()},
+        //         {"result","success"}
+        //     };
+        //     Message reply(response.dump());
+        //     entity->sendTo(info.client_port - 5000, reply);
+        // }
         return true;
     }
 };
@@ -528,13 +824,26 @@ class UpdateLockedQCEvent : public BaseEvent {
 public:
     UpdateLockedQCEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
-        auto j = nlohmann::json::parse(message->getContent());
-        if (!j.contains("qc")) {
-            // std::cout << "[Node " << entity->getNodeId() << "] No QC found in message for seq " << j["sequence"] << "\n";
+        // Proto fast-path
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            const std::string qcStr = p->qc(); // QC carried as string (e.g., view number)
+            if (qcStr.empty()) return true;   // No QC present
+            state->setLockedQC(qcStr);
+            return true;
+        }
+
+        // JSON fallback (original behavior)
+        auto j = nlohmann::json::parse(message->getContent(), nullptr, false);
+        if (j.is_discarded() || !j.contains("qc")) {
             return false;
         }
         // Store or update the lockedQC in the state or entity
-        state->setLockedQC(j["qc"]);
+        try {
+            state->setLockedQC(j["qc"].get<std::string>());
+        } catch (...) {
+            // If qc isn’t a string, store serialized form
+            state->setLockedQC(j["qc"].dump());
+        }
         return true;
     }
 };
@@ -543,94 +852,175 @@ class BroadcastIfLeaderEvent : public BaseEvent {
 public:
     BroadcastIfLeaderEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
-        
-        
-        if ((entity->entityInfo["view"].get<int>() + 1) % (entity->peerPorts.size()) == entity->getNodeId()) {
+        const int curView = entity->entityInfo["view"].get<int>();
+        const int leaderId = (curView + 1) % entity->peerPorts.size();
+        if (entity->getNodeId() != leaderId) {
+            // Not leader: do nothing
+            return true;
+        }
+
+        // Proto fast-path
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            std::string phase = p->explicit_type();
+            int seq = p->sequence();
             
-            auto j = nlohmann::json::parse(message->getContent());
-            
-            if(entity->isByzantine && j["type"] == "prepare") {
-                // std::cout << "[Node " << entity->getNodeId() << "] Skipping broadcast for prepare phase as faulty leader\n";
-                return false; // Skip if not leader
-            }
 
-            int seq = j["sequence"].get<int>();
-            std::string phase = j["type"];
+            // Faulty leader skips prepare broadcast
+            std::string phaseLower = phase;
+            for (auto& c : phaseLower) c = (char)std::tolower(c);
+            if (entity->isByzantine && phaseLower == "prepare") return true;
 
-            // --- Load messages from file ---
-            std::string fileName = "messages_" + std::to_string(entity->getNodeId()) + ".json";
-            //entity->dataset.loadFromFile(fileName);
-            auto records = entity->dataset.getRecords();
-
-            // --- Find unique senders for this phase and sequence ---
-            nlohmann::json combinedMessages = nlohmann::json::array();
-            std::unordered_set<int> uniqueSenders;
-            for (const auto& [key, record] : records) {
-                if (record.contains("type") && record["type"] == phase &&
-                    record.contains("sequence") && record["sequence"] == seq &&
-                    record.contains("message_sender_id")) {
-                    int senderId = -1;
-                    if (record["message_sender_id"].is_number_integer()) {
-                        senderId = record["message_sender_id"].get<int>();
-                    } else if (record["message_sender_id"].is_string()) {
-                        try { senderId = std::stoi(record["message_sender_id"].get<std::string>()); } catch (...) {}
-                    }
-                    if (senderId != -1 && uniqueSenders.insert(senderId).second) {
-                        nlohmann::json filtered;
-                        filtered["view"] = record.value("view", -1);
-                        filtered["sequence"] = record.value("sequence", -1);
-                        filtered["digest"] = record.value("digest", "");
-                        filtered["message_sender_id"] = record.value("message_sender_id", -1);
-                        filtered["signature"] = "";
-                        filtered["client_listen_port"] = record.value("client_listen_port", -1);
-                        filtered["clientid"] = record.value("clientid", "");
-                        filtered["timestamp"] = record.value("timestamp", "");
-                        filtered["transaction"] = record.value("transaction", nlohmann::json{});
-                        combinedMessages.push_back(filtered);
-
-                    }
+            // SBFT prepare timer gating based on unique senders (no dataset scan)
+            if (phaseLower == "prepare" &&
+                entity->protocolConfig["protocol"].as<std::string>() == "SBFT") {
+                size_t uniqueCount = 0;
+                {
+                    std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                    const std::string aggKey = phase + "_" + std::to_string(seq);
+                    auto it = entity->keyToSenderIds.find(aggKey);
+                    if (it != entity->keyToSenderIds.end()) uniqueCount = it->second.size();
                 }
-            }
-            if (phase == "prepare" && entity->protocolConfig["protocol"].as<std::string>() == "SBFT") {
-                std::unordered_set<int> uniqueSenders;
-                for (const auto& [key, record] : records) {
-                    if (record.contains("type") && record["type"] == phase) {
-                        uniqueSenders.insert(record["message_sender_id"].get<int>());
-                    }
-                }
-                
-                if(entity->preparePhaseTimerRunning[seq] && uniqueSenders.size() <= 7) {
-                    // std::cout << "[Node " << entity->getNodeId() << "] Prepare phase timer is still running for seq " << uniqueSenders.size() << ", skipping broadcast.\n";
+                if (entity->preparePhaseTimerRunning[seq] && uniqueCount <= (entity->getF() * 3)+1) {
                     return false;
                 }
             }
 
-            // std::cout << "[Node " << entity->getNodeId() << "] Combined messages for " << phase << " for seq " << seq << ": " << combinedMessages.dump() << "\n";
-            // std::cout << "[Node " << entity->getNodeId() << "] Broadcasting combined messages for " << phase << " for seq " << seq  << " phase: " << phase << "\n";
-            // std::cout << "[Node " << entity->getNodeId() << "] Broadcasting message if leader" << j["type"] << "\n";
-            // Prepare the broadcast message
-            YAML::Node phaseConfig = entity->getPhaseConfig(j["type"]);
-            if (phaseConfig["next_state"]) {
-                nlohmann::json outMsg;
-                outMsg["type"] = j["type"];
-                outMsg["view"] = entity->getState().getViewNumber();
-                outMsg["sequence"] = seq;
-                outMsg["operation"] = j["operation"];
-                outMsg["message_sender_id"] = entity->getNodeId();
-                outMsg["combinedMessages"] = combinedMessages;
-                outMsg["qc"] = state->getLockedQC(); // Include QC if available
-                outMsg["transaction"] = j["transaction"];
-                outMsg["client_listen_port"] = j["client_listen_port"];
-                outMsg["clientid"] = j["clientid"];
-                outMsg["timestamp"] = j["timestamp"];
-                Message protocolMsg(outMsg.dump());
-                
-                entity->sendToAll(protocolMsg);
+            // Prepare the broadcast message for next_state using protobuf
+            YAML::Node phaseConfig = entity->getPhaseConfigInsensitive(phase);
+            if (phaseConfig && phaseConfig["next_state"]) {
+                bedrock::ProtocolEnvelope env;
+                const std::string next = phaseConfig["next_state"].as<std::string>();
+                const std::string qcStr = (state && !state->getLockedQC().empty())
+                                              ? state->getLockedQC()
+                                              : std::string();
+
+                auto fillCombined = [&](auto* msg) {
+                    std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                    const std::string aggKey = phase + "_" + std::to_string(seq);
+                    auto it = entity->keyToSenderIds.find(aggKey);
+                    if (it == entity->keyToSenderIds.end()) return;
+                    for (int sid : it->second) {
+                        auto* am = msg->add_combined_messages();
+                        am->set_view(p->view());
+                        am->set_sequence(seq);
+                        am->set_message_sender_id(sid);
+                        // Optional richer fields for leader's own PrePrepare
+                        if (phase == "PrePrepare" && sid == entity->getNodeId()) {
+                            am->set_client_listen_port(p->client_listen_port());
+                            am->set_timestamp(p->timestamp());
+                            if (p->has_tx()) {
+                                auto* t = am->mutable_transaction();
+                                t->set_from(p->tx_from());
+                                t->set_to(p->tx_to());
+                                t->set_amount(p->tx_amount());
+                            }
+                        }
+                    }
+                };
+                if(next=="Request"){
+                    return true;
+                }
+                else if (next == "Prepare") {
+                    auto* m = env.mutable_prepare();
+                    m->set_view(p->view());
+                    m->set_type(next);
+                    m->set_sequence(seq);
+                    m->set_operation(p->operation());
+                    m->set_message_sender_id(entity->getNodeId());
+                    m->set_qc(qcStr);
+                    fillCombined(m);
+                } else if (next == "Commit") {
+                    auto* m = env.mutable_commit();
+                    m->set_view(p->view());
+                    m->set_type(next);
+                    m->set_sequence(seq);
+                    m->set_operation(p->operation());
+                    m->set_message_sender_id(entity->getNodeId());
+                    m->set_qc(qcStr);
+                    fillCombined(m);
+                } else {
+                    auto* m = env.mutable_prepare();
+                    m->set_type(next);
+                    m->set_view(p->view());
+                    m->set_sequence(seq);
+                    m->set_operation(p->operation());
+                    m->set_message_sender_id(entity->getNodeId());
+                    m->set_qc(qcStr);
+                    fillCombined(m);
+                }
+                // std::cout << "[Node " << entity->getNodeId() << "] Leader broadcasting " << next << " for sequence " << seq << "\n";
+                entity->sendProtocolToAll(env);
             }
-        } else {
-            // std::cout << "[Node " << entity->getNodeId() << "] Not the leader, skipping broadcast.\n";
+            return true;
         }
-        // std::cout << "[Node " << entity->getNodeId() << "] BroadcastIfLeaderEvent executed successfully.\n";
+
+        // JSON fallback (kept functional but lighter; no dataset scan)
+        auto j = nlohmann::json::parse(message->getContent());
+        std::string phase = j.value("type", "");
+        int seq = j.value("sequence", -1);
+        if (phase.empty() || seq < 0) return true;
+
+        std::string phaseLower = phase;
+        for (auto& c : phaseLower) c = (char)std::tolower(c);
+        if (entity->isByzantine && phaseLower == "prepare") return true;
+
+        // SBFT prepare timer gating
+        if (phaseLower == "prepare" &&
+            entity->protocolConfig["protocol"].as<std::string>() == "SBFT") {
+            size_t uniqueCount = 0;
+            {
+                std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+                const std::string aggKey = phase + "_" + std::to_string(seq);
+                auto it = entity->keyToSenderIds.find(aggKey);
+                if (it != entity->keyToSenderIds.end()) uniqueCount = it->second.size();
+            }
+            if (entity->preparePhaseTimerRunning[seq] && uniqueCount <= 7) {
+                return false;
+            }
+        }
+
+        // Combined messages built from unique sender ids
+        nlohmann::json combinedMessages = nlohmann::json::array();
+        {
+            std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
+            const std::string aggKey = phase + "_" + std::to_string(seq);
+            auto it = entity->keyToSenderIds.find(aggKey);
+            if (it != entity->keyToSenderIds.end()) {
+                for (int sid : it->second) {
+                    nlohmann::json filtered;
+                    filtered["view"] = entity->getState().getViewNumber();
+                    filtered["sequence"] = seq;
+                    filtered["digest"] = "";
+                    filtered["message_sender_id"] = sid;
+                    filtered["signature"] = "";
+                    filtered["client_listen_port"] = j.value("client_listen_port",-1);
+                    filtered["clientid"] = j.value("clientid","");
+                    filtered["timestamp"] = j.value("timestamp","");
+                    filtered["transaction"] = j.value("transaction", nlohmann::json{});
+                    combinedMessages.push_back(std::move(filtered));
+                }
+            }
+        }
+
+        YAML::Node phaseConfig = entity->getPhaseConfigInsensitive(phase);
+        if (phaseConfig && phaseConfig["next_state"]) {
+            nlohmann::json outMsg;
+            outMsg["type"] = phase;
+            outMsg["view"] = entity->getState().getViewNumber();
+            outMsg["sequence"] = seq;
+            outMsg["operation"] = j.value("operation", "");
+            outMsg["message_sender_id"] = entity->getNodeId();
+            outMsg["combinedMessages"] = std::move(combinedMessages);
+            outMsg["qc"] = (state && !state->getLockedQC().empty())
+                               ? nlohmann::json(state->getLockedQC())
+                               : nlohmann::json("");
+            outMsg["transaction"] = j.value("transaction", nlohmann::json{});
+            outMsg["client_listen_port"] = j.value("client_listen_port", -1);
+            outMsg["clientid"] = j.value("clientid", "");
+            outMsg["timestamp"] = j.value("timestamp", "");
+            Message protocolMsg(outMsg.dump());
+            entity->sendToAll(protocolMsg);
+        }
         return true;
     }
 };
@@ -640,8 +1030,77 @@ public:
     UnicastIfParticipantEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         bool condition = (entity->entityInfo["view"].get<int>() + 1) % (entity->peerPorts.size()) != entity->getNodeId();
-        condition = true;
+        
         if (condition) {
+            // Fast-path: if incoming is ProtoMessage, build next-phase ProtocolEnvelope and unicast
+            if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+                // Reproduce original JSON-dependent logic via YAML phase config
+                YAML::Node phaseConfig = entity->getPhaseConfig(p->explicit_type());
+                if (phaseConfig && phaseConfig["next_state"]) {
+                    const std::string nextPhase = phaseConfig["next_state"].as<std::string>();
+                    // std::cout << "[Node " << entity->getNodeId() << "] Unicasting " << nextPhase << " for sequence " << p->sequence() << " to leader\n";
+                    const int seq = p->sequence();
+                    {
+                        std::lock_guard<std::mutex> pg(entity->processedMtx);
+                        if (entity->processedOperations.count(seq)) return false;
+                    }
+                    const int leaderId = (entity->entityInfo["view"].get<int>() + 1) % entity->peerPorts.size();
+
+                    // Build typed envelope (Prepare or Commit) mirroring original field set
+                    bedrock::ProtocolEnvelope env;
+                    const std::string qcStr = (state && !state->getLockedQC().empty())
+                                              ? state->getLockedQC()
+                                              : std::string();
+
+                    if (nextPhase == "Prepare") {
+                        auto* m = env.mutable_prepare();
+                        m->set_view(entity->entityInfo["view"].get<int>());
+                        m->set_type(nextPhase);
+                        m->set_sequence(seq);
+                        m->set_operation(p->operation());
+                        m->set_message_sender_id(entity->getNodeId());
+                        m->set_qc(qcStr);
+                        // Preserve transaction/timestamp if they were in PrePrepare
+                        if (p->has_tx()) {
+                            auto* tx = m->add_combined_messages()->mutable_transaction();
+                            tx->set_from(p->tx_from());
+                            tx->set_to(p->tx_to());
+                            tx->set_amount(p->tx_amount());
+                        }
+                    } else if (nextPhase == "Commit") {
+                        auto* m = env.mutable_commit();
+                        m->set_type(nextPhase);
+                        m->set_view(entity->entityInfo["view"].get<int>());
+                        m->set_sequence(seq);
+                        m->set_operation(p->operation());
+                        m->set_message_sender_id(entity->getNodeId());
+                        m->set_qc(qcStr);
+                        // (No extra fields added; matches original JSON resend semantics)
+                    } else {
+                        // If nextPhase not one of expected, fall back to original JSON path
+                        // (Do not alter logic)
+                        auto* m = env.mutable_prepare();
+                        m->set_type(nextPhase);
+                        m->set_view(entity->entityInfo["view"].get<int>());
+                        m->set_sequence(seq);
+                        m->set_operation(p->operation());
+                        m->set_message_sender_id(entity->getNodeId());
+                        m->set_qc(qcStr);
+                    }
+                    
+                    // Attempt proto unicast (assumes Entity has sendProtocolTo)
+                    // If your Entity lacks this method, implement it; otherwise keep JSON path.
+                    entity->sendProtocolTo(leaderId, env);
+                    // std::cout << "[Node " << entity->getNodeId() << "] Unicasted " << p->explicit_type() << " for sequence " << seq << " to leader\n";
+                    return true;
+                } else {
+                    // No next_state -> keep original behavior (do nothing)
+                    return true;
+                }
+            }
+
+json_fallback:
+            // Original JSON logic preserved exactly
             auto j = nlohmann::json::parse(message->getContent());
             int seq = j["sequence"].get<int>();
             YAML::Node phaseConfig = entity->getPhaseConfig(j["type"]);
@@ -651,10 +1110,7 @@ public:
                 j["message_sender_id"] = entity->getNodeId();
                 j["qc"] = state->getLockedQC(); // Include QC if available
                 Message protocolMsg(j.dump());
-                //current view is 
-                //std::cout << entity->getState().getViewNumber() << " and next phase is " << nextPhase << "\n";
-                int leaderId = (entity->entityInfo["view"].get<int>()+1) % (entity->peerPorts.size());
-                // std::cout << "[Node " << entity->getNodeId() << "] Unicasting to leader: " << leaderId << " phase:" << nextPhase << "\n";
+                int leaderId = (entity->entityInfo["view"].get<int>() + 1) % (entity->peerPorts.size());
                 entity->sendTo(leaderId, protocolMsg);
             }
         }
@@ -915,6 +1371,16 @@ public:
     HandleClientRequestAsLeaderEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
         std::cout << "[Node " << entity->getNodeId() << "] Handling client request as leader\n";
+        auto now = std::chrono::system_clock::now();
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % std::chrono::seconds(1);
+        std::time_t tt = std::chrono::system_clock::to_time_t(now);
+        std::tm tm{};
+        localtime_r(&tt, &tm); // thread-safe on macOS
+
+        std::cout << "[Node " << entity->getNodeId() << "] Handling client request " 
+                  << " at " << std::put_time(&tm, "%F %T") << '.'
+                  << std::setw(3) << std::setfill('0') << ms.count()
+                  << "\n";
         int n = entity->peerPorts.size();
         int currentView = entity->entityInfo["view"].get<int>();
         int leaderId = (currentView + 1) % n;
@@ -926,7 +1392,7 @@ public:
                 TcpConnection leaderConn(leaderPort, false);
                 leaderConn.closeConnection();
                 if (!entity->timeKeeper) {
-                    entity->timeKeeper = std::make_unique<TimeKeeper>(1500, [entity] {
+                    entity->timeKeeper = std::make_unique<TimeKeeper>(10000, [entity] {
                         entity->onTimeout();
                     });
                 }
@@ -991,6 +1457,8 @@ public:
             m->set_signature(entity->cryptoProvider->sign(j["transaction"].dump() + j["timestamp"].get<std::string>()));
             m->set_message_sender_id(entity->getNodeId());
             m->set_client_id(j.value("message_sender_id", std::string("client")));
+            // NEW: include type like JSON path (next_state)
+            m->set_type(entity->getPhaseConfig(currentPhase)["next_state"].as<std::string>());
 
             // Persist locally via StoreMessageEvent (typed path will store from ProtoMessage)
             ProtoMessage pmsg(env);
@@ -1000,7 +1468,7 @@ public:
             // Broadcast typed
             // std::cout << "[Node " << entity->getNodeId() << "] Broadcasting PrePrepare for seq " << seq << " operation " << operation << "\n";
             entity->sendProtocolToAll(env);
-            std::cout << "[Node " << entity->getNodeId() << "] Leader broadcasted PrePrepare for seq " << seq << " operation " << operation << "\n\n";
+            // std::cout << "[Node " << entity->getNodeId() << "] Leader broadcasted " << preprepareMsg["type"] << " for seq " << seq << " operation " << operation << "\n\n";
             return true;
         }
         else{
