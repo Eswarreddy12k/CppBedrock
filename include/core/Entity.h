@@ -131,7 +131,7 @@ public:
         if (balances.find(to) == balances.end()) balances[to] = 100;
         balances[from] -= amount;
         balances[to] += amount;
-        std::cout << "[Node " << getNodeId() << "] Updated balances: " << from << "=" << balances[from] << ", " << to << "=" << balances[to] << std::endl;
+        // std::cout << "[Node " << getNodeId() << "] Updated balances: " << from << "=" << balances[from] << ", " << to << "=" << balances[to] << std::endl;
     }
 
     // Update speculative balances (thread-safe)
@@ -220,6 +220,8 @@ public:
     std::unordered_map<int, std::string> prepareOperations;
     std::unordered_map<int, std::string> commitOperations;
     std::unordered_map<int, std::vector<nlohmann::json>> viewChangeMessages;
+    std::unordered_map<int, nlohmann::json> latestPreparePerSeq;
+    std::mutex latestPrepareMtx;
     std::unordered_map<std::pair<int, int>, int, PairHash> nodeDelays;
     bool inViewChange = false;
     std::unique_ptr<TimeKeeper> timeKeeper;

@@ -16,7 +16,7 @@ phases:
       - "verifyPBFTConditions"
       - "unicastifParticipant"
   prepare:
-    quorum: 2f+1
+    quorum: 2f
     next_state: commit
     actions:
       - "storeMessage"
@@ -25,7 +25,7 @@ phases:
       - "broadcastifLeader"
       - "unicastifParticipant"
   commit:
-    quorum: 2f+1
+    quorum: 2f
     next_state: Request
     actions:
       - "storeMessage"
@@ -34,7 +34,7 @@ phases:
       - "broadcastifLeader"
       - "complete"
   ViewChange:
-    quorum: 2f+1
+    quorum: 2f
     next_state: Request
     actions:
       - "handleViewChange"

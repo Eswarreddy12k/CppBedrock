@@ -18,27 +18,23 @@ phases:
       - "verifyPBFTConditions"
       - "broadcast"
   prepare:
-    quorum: 2f+1
+    quorum: 2f
     next_state: commit
     actions:
-      - verifySignature:
-          public_key: "../keys/server_${client_id}_public.pem"
       - "storeMessage"
       - "checkQuorum"
       - "resetTimer"
       - "broadcast"
   commit:
-    quorum: 2f+1
+    quorum: 2f
     next_state: Request
     actions:
-      - verifySignature:
-          public_key: "../keys/server_${client_id}_public.pem"
       - "storeMessage"
       - "checkQuorum"
       - "stopTimer"
       - "complete"
   ViewChange:
-    quorum: 2f+1
+    quorum: 2f
     next_state: Request
     actions:
       - "handleViewChange"

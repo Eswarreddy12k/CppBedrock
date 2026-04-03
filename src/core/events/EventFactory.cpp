@@ -87,7 +87,7 @@ public:
                 std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
                 entity->keyToSenderIds[aggKey].insert(senderId);
             }
-            // std::cout << "[Node " << entity->getNodeId() << "] Stored sender " << senderId << " for key " << aggKey << std::endl;
+            //std::cout << "[Node " << entity->getNodeId() << "] Stored sender " << senderId << " for key " << aggKey << std::endl;
 
             // Ignore commits after completion
             YAML::Node phaseConfig = entity->getPhaseConfigInsensitive(phase);
@@ -135,13 +135,13 @@ public:
             }
 
             // Combined senders directly from protobuf (no JSON parse needed)
-            if (phase == "Prepare" && p->hasPrepareCombined()) {
+            if (phase == "prepare" && p->hasPrepareCombined()) {
                 std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
                 auto& setRef = entity->keyToSenderIds[aggKey];
                 for (const auto& am : p->prepareCombined()) {
                     setRef.insert(am.message_sender_id());
                 }
-            } else if (phase == "Commit" && p->hasCommitCombined()) {
+            } else if (phase == "commit" && p->hasCommitCombined()) {
                 std::lock_guard<std::mutex> lk(entity->senderIdsMtx);
                 auto& setRef = entity->keyToSenderIds[aggKey];
                 for (const auto& am : p->commitCombined()) {
@@ -151,7 +151,7 @@ public:
 
             // If ProtoMessage content also has combinedMessages JSON (from getContent()), parse once
             // (Only if we need to merge any extra senders not in protobuf combined sections)
-            if ((phase == "Prepare" || phase == "Commit")) {
+            if ((phase == "prepare" || phase == "commit")) {
                 const std::string payload = message->getContent();
                 if (payload.size() > 2 && payload.front() == '{') {
                     auto j = nlohmann::json::parse(payload, nullptr, false);
@@ -311,7 +311,8 @@ public:
         YAML::Node phaseConfig = entity->getPhaseConfigInsensitive(currentPhase);
         if (!phaseConfig || !phaseConfig["quorum"]) return false;
         int quorum = computeQuorumEventFactory(phaseConfig["quorum"].as<std::string>(), entity->getF());
-        //std::cout << "[Node " << entity->getNodeId() << "] Checking quorum for  seq " << seq << " with quorum requirement: " << quorum << std::endl;
+
+        
         const std::string aggKey = currentPhase + "_" + std::to_string(seq);
         size_t votes = 0;
         {
@@ -319,6 +320,7 @@ public:
             auto it = entity->keyToSenderIds.find(aggKey);
             if (it != entity->keyToSenderIds.end()) votes = it->second.size();
         }
+        //std::cout << "[Node " << entity->getNodeId() << "] Quorum check for " << aggKey << ": " << votes << " votes, quorum is " << quorum << std::endl;
 
         if (static_cast<int>(votes) >= quorum) {
             // Atomically check-and-set: only the first thread to reach quorum proceeds
@@ -360,23 +362,25 @@ public:
             }
 
             
-            bool quorumMet = uniqueSendersSize-1 >= static_cast<size_t>(quorum);
-            
+            bool quorumMet = uniqueSendersSize >= static_cast<size_t>(quorum);
+            std::cout << "[Node " << entity->getNodeId() << "] CheckQuorumEventForSBFT for phase " << phase << " seq " << seq
+                      << ": " << uniqueSendersSize-1 << " unique senders (excluding self), quorum is " << quorum
+                      << ". Quorum met: " << (quorumMet ? "YES" : "NO") << std::endl;
             if (!quorumMet) return false;
             // std::cout << "[Node " << entity->getNodeId() << "] CheckQuorumEventForSBFT received for phase " << phase << " seq " << seq << std::endl;
             // Timer logic for prepare phase (case-insensitive match to original "prepare")
             std::string phaseLower = phase;
             for (auto& c : phaseLower) c = (char)std::tolower(c);
-            //std::cout << "[Node " << entity->getNodeId() << "] Quorum met for " << key << " with " << uniqueSendersSize << " unique senders. Timer logic check for phase: " << phaseLower << std::endl;
+            std::cout << "[Node " << entity->getNodeId() << "] Quorum met for " << key << " with " << uniqueSendersSize << " unique senders. Timer logic check for phase: " << phaseLower << " " << (entity->entityInfo["view"].get<int>() + 1) % ((entity->getF()*3)+1) << std::endl;
             
-            if (phaseLower == "prepare") {
+            if (phaseLower == "prepare" && (entity->entityInfo["view"].get<int>() + 1) % ((entity->getF()*3)+1) == entity->getNodeId()) {
                // std::cout << "[Node " << entity->getNodeId() << "] Quorum met for Prepare phase of seq " << seq << " with " << uniqueSendersSize << " unique senders. Checking timer logic..." << std::endl;
                 if (!entity->preparePhaseTimerRunning[seq].exchange(true) && uniqueSendersSize < (entity->getF() * 3)) {
                     std::thread([entity, seq, phaseConfig, phase, state]() {
                         std::this_thread::sleep_for(std::chrono::milliseconds(20));
                         entity->preparePhaseTimerRunning[seq] = false;
 
-                        // Decide next state (same logic: only advance if exactly 7 senders; keep parity)
+                        // Decide next state (same logic: only advance if exactly 3f+1 senders; keep parity)
                         std::string aggKey = phase + "_" + std::to_string(seq);
                         size_t currentCount = 0;
                         {
@@ -392,6 +396,9 @@ public:
                             entity->sequenceStates[seq].setState(nextState);
                         } else {
                             nextState = phase; // stay
+                            // std::cout << "[Node " << entity->getNodeId() << "] Timer expired for seq " << seq << " but sender count is " << currentCount << ". Staying in phase " << phase << ".\n";
+                            //destroy thread here
+                            return;
                         }
 
                         // Build combinedMessages from in-memory sender IDs (fast path)
@@ -472,7 +479,7 @@ public:
                                     outMsg["timestamp"] = storedInfo.timestamp;
 
                                     Message protocolMsg(outMsg.dump());
-                                    
+                                    //std::cout << "execting puk quick message " << actionName << "\n";
                                     itAct->second->execute(entity, &protocolMsg, &entity->sequenceStates[seq]);
                                 }
                             }
@@ -615,7 +622,9 @@ public:
             YAML::Node phaseCfg = entity->getPhaseConfigInsensitive(phase);
             if (!phaseCfg || !phaseCfg["next_state"]) return true;
             std::string nextPhase = phaseCfg["next_state"].as<std::string>();
-
+            if(entity->isByzantine && (phase == "Prepare" || phase == "prepare")) {
+                return false;
+            }
             // Build next-phase envelope
             bedrock::ProtocolEnvelope env;
             if (phase == "PrePrepare") {
@@ -635,6 +644,7 @@ public:
             } else {
                 return true; // not a basic phase
             }
+            //std::cout << "[Node " << entity->getNodeId() << "] Broadcasting " << nextPhase << " for sequence " << p->sequence() << " (ProtoMessage path)\n";
             entity->sendProtocolToAll(env);
             
             return true;
@@ -723,9 +733,9 @@ public:
                 if (!info.from.empty() && !info.to.empty() && info.amount > 0) {
                     entity->updateBalances(info.from, info.to, info.amount);
                     entity->executedTransactions.insert(txnId);
-                    std::cout << "[Node " << entity->getNodeId() << "] Transaction executed: "
-                              << info.from << " -> " << info.to << " : " << info.amount
-                              << " Sequence: " << seq << std::endl << std::endl;
+                    // std::cout << "[Node " << entity->getNodeId() << "] Transaction executed: "
+                    //           << info.from << " -> " << info.to << " : " << info.amount
+                    //           << " Sequence: " << seq << std::endl << std::endl;
                 }
             }
 
@@ -733,6 +743,7 @@ public:
 
             // Reply once to client
             if (info.client_port > 0) {
+                // std::cout << "[Node " << entity->getNodeId() << "] Sending response to client on port " << info.client_port << " for sequence " << seq << std::endl;
                 nlohmann::json response{
                     {"type","Response"},
                     {"view", entity->getState().getViewNumber()},
@@ -741,7 +752,7 @@ public:
                     {"result","success"}
                 };
                 Message reply(response.dump());
-                entity->sendTo(info.client_port - 5000, reply);
+                entity->sendTo(info.client_port, reply);
             }
 
             return true;
@@ -880,9 +891,9 @@ public:
                     auto it = entity->keyToSenderIds.find(aggKey);
                     if (it != entity->keyToSenderIds.end()) uniqueCount = it->second.size();
                 }
-                if (entity->preparePhaseTimerRunning[seq] && uniqueCount <= (entity->getF() * 3)+1) {
-                    return false;
-                }
+                // if (entity->preparePhaseTimerRunning[seq] && uniqueCount == (entity->getF() * 3)+1) {
+                //     return false;
+                // }
             }
 
             // Prepare the broadcast message for next_state using protobuf
@@ -916,11 +927,13 @@ public:
                             }
                         }
                     }
+                    std::cout << "[Node " << entity->getNodeId() << "] Prepared combined messages for " << next << " of seq " << seq
+                              << " with " << it->second.size() << " unique senders.\n";
                 };
                 if(next=="Request"){
                     return true;
                 }
-                else if (next == "Prepare") {
+                else if (next == "prepare") {
                     auto* m = env.mutable_prepare();
                     m->set_view(p->view());
                     m->set_type(next);
@@ -929,7 +942,7 @@ public:
                     m->set_message_sender_id(entity->getNodeId());
                     m->set_qc(qcStr);
                     fillCombined(m);
-                } else if (next == "Commit") {
+                } else if (next == "commit") {
                     auto* m = env.mutable_commit();
                     m->set_view(p->view());
                     m->set_type(next);
@@ -1021,6 +1034,7 @@ public:
             Message protocolMsg(outMsg.dump());
             entity->sendToAll(protocolMsg);
         }
+
         return true;
     }
 };
@@ -1118,74 +1132,92 @@ json_fallback:
     }
 };
 
-// ViewChange Event
+
+// filepath: /Users/eswar/Downloads/CppBedrock/src/core/events/EventFactory.cpp
 class HandleViewChangeEvent : public BaseEvent {
 public:
     HandleViewChangeEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState*) override {
-        auto j = nlohmann::json::parse(message->getContent());
-        // print receive message
-        // std::cout << "[Node " << entity->getNodeId() << "] Received ViewChange message: " << j.dump() << "\n";
-        int newView = j["new_view"].get<int>();
-        int senderId = j["message_sender_id"].get<int>();
-        entity->viewChangeMessages[newView].push_back(j);
+        std::cout << "[Node " << entity->getNodeId() << "] Handling ViewChange event\n";
+        int newView = -1;
+        int senderId = -1;
+        nlohmann::json j;  // only filled for JSON path
 
-        int quorum = computeQuorumEventFactory("2f+1", entity->getF());
+        // ── Proto fast-path ─────────────────────────────────────
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            // assuming your proto has fields: type/view/new_view/message_sender_id/etc.
+            // If it only carries a generic envelope, adapt accordingly.
+            if (p->explicit_type() != "ViewChange") {
+                // Not a ViewChange; ignore
+                return true;
+            }
+            try {
+                newView  = p->view();           // or a dedicated new_view field if you have one
+                senderId = p->sender_id();
+            } catch (...) {
+                return true;
+            }
+        } else {
+            // ── Existing JSON path ──────────────────────────────
+            j = nlohmann::json::parse(message->getContent());
+            newView  = j["new_view"].get<int>();
+            senderId = j["message_sender_id"].get<int>();
+        }
+
+        if (newView < 0) return true;
+        //std::cout << "[Node " << entity->getNodeId() << "] Received ViewChange for view " << newView << " from Node " << senderId << "\n";
+        entity->viewChangeMessages[newView].push_back(
+            j.is_null() ? nlohmann::json{
+                              {"new_view", newView},
+                              {"message_sender_id", senderId}}
+                        : j);
+        std::cout << "[Node " << entity->getNodeId() << "] Handling ViewChange event plus" << entity->viewChangeMessages[newView].size() << "\n";
+        int quorum = computeQuorumEventFactory("2f", entity->getF());
         if ((int)entity->viewChangeMessages[newView].size() >= quorum && entity->inViewChange) {
-            // std::cout << "[Node " << entity->getNodeId() << "] View change quorum reached for view " << newView << "\n";
-            
-
-            int leaderId = (newView+1) % (entity->peerPorts.size());
+            int leaderId = (newView + 1) % (entity->peerPorts.size());
             if (entity->getNodeId() == leaderId && !entity->isByzantine) {
-                // std::cout << "[Node " << entity->getNodeId() << "] I am the new leader for view " << newView << "\n";
+                std::cout << "[Node " << entity->getNodeId() << "] Achieved quorum for view " << newView << ". Broadcasting NewView and PrePrepares.\n";
+                // Broadcast NewView
                 nlohmann::json newViewMsg;
                 newViewMsg["type"] = "NewView";
                 newViewMsg["new_view"] = newView;
                 newViewMsg["message_sender_id"] = entity->getNodeId();
                 Message msg(newViewMsg.dump());
                 entity->sendToAll(msg);
-                
 
-                
-                
-                // --- Aggregate prepare messages from all view change messages ---
+                // --- Aggregate prepare messages (JSON as before) ---
                 std::map<int, nlohmann::json> bestPreparePerSeq; // seq -> prepare message
-
                 for (const auto& viewChangeMsg : entity->viewChangeMessages[newView]) {
                     if (viewChangeMsg.contains("prepare_messages") && viewChangeMsg["prepare_messages"].is_array()) {
                         for (const auto& prepareMsg : viewChangeMsg["prepare_messages"]) {
                             if (prepareMsg.contains("sequence")) {
                                 int seq = prepareMsg["sequence"].get<int>();
-                                // Always assign: last message wins (or add logic to pick best)
                                 bestPreparePerSeq[seq] = prepareMsg;
                             }
                         }
                     }
                 }
-                // std::cout << "[Node " << entity->getNodeId() << "] Best prepare messages aggregated for view change:\n";
-                // for (const auto& [seq, prepareMsg] : bestPreparePerSeq) {
-                //     std::cout << "[Node " << entity->getNodeId() << "] Seq " << seq << ": " << prepareMsg.dump() << "\n";
-                // }
+
                 for (const auto& item : bestPreparePerSeq) {
                     int seq = item.first;
                     const auto& prepareMsg = item.second;
-                    // Extract fields from prepareMsg 
+
                     std::string stringforDigest;
                     if (prepareMsg.contains("transaction") && prepareMsg.contains("timestamp")) {
                         stringforDigest = prepareMsg["transaction"].dump() + prepareMsg["timestamp"].get<std::string>();
                     } else {
                         stringforDigest = "";
                     }
-                    std::string digest = stringforDigest.empty() ? "" : computeSHA256(stringforDigest);
+                    std::string digest    = stringforDigest.empty() ? "" : computeSHA256(stringforDigest);
                     std::string signature = stringforDigest.empty() ? "" : entity->cryptoProvider->sign(stringforDigest);
 
                     nlohmann::json preprepareMsg;
-                    preprepareMsg["type"] = "PrePrepare";
-                    preprepareMsg["toturnoffflag"] = "true"; // Indicate this is a re-proposal
-                    preprepareMsg["view"] = entity->entityInfo["view"];
-                    preprepareMsg["sequence"] = seq;
-                    preprepareMsg["digest"] = digest;
-                    preprepareMsg["signature"] = signature;
+                    preprepareMsg["type"]          = "PrePrepare";
+                    preprepareMsg["toturnoffflag"] = "true";
+                    preprepareMsg["view"]          = entity->entityInfo["view"];
+                    preprepareMsg["sequence"]      = seq;
+                    preprepareMsg["digest"]        = digest;
+                    preprepareMsg["signature"]     = signature;
 
                     std::string clientid;
                     if (prepareMsg.contains("clientid") && prepareMsg["clientid"].is_string()) {
@@ -1199,29 +1231,18 @@ public:
                     } else {
                         clientid = "";
                     }
-                    preprepareMsg["clientid"] = clientid;
-
+                    preprepareMsg["clientid"]   = clientid;
                     preprepareMsg["transaction"] = prepareMsg.value("transaction", nlohmann::json{});
-                    preprepareMsg["timestamp"] = prepareMsg.value("timestamp", "");
-                    preprepareMsg["operation"] = prepareMsg.value("operation", "");
+                    preprepareMsg["timestamp"]   = prepareMsg.value("timestamp", "");
+                    preprepareMsg["operation"]   = prepareMsg.value("operation", "");
                     preprepareMsg["message_sender_id"] = entity->getNodeId();
 
                     Message protocolMsg(preprepareMsg.dump());
                     entity->sendToAll(protocolMsg);
-                    // std::cout << "[Node " << entity->getNodeId() << "] Re-proposed PrePrepare for seq " << seq << "\n";
-                    
-                    
                 }
-                // std::cout << "[Node " << entity->getNodeId() << "] View change complete \n";
             }
-            else{
-                // entity->getNodeId() == leaderId && !entity->isByzantine print which condition failed
-                
-                // std::cout << "[Node " << entity->getNodeId() << "] I am not the leader for view " << newView << leaderId << entity->isByzantine << ", waiting for new view message.\n";
-            }
-            
         }
-        
+
         return true;
     }
 };
@@ -1231,37 +1252,38 @@ class HandleNewViewEvent : public BaseEvent {
 public:
     HandleNewViewEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState*) override {
-        auto j = nlohmann::json::parse(message->getContent());
-        int newView = j["new_view"].get<int>();
+        int newView = -1;
+
+        // ── Proto fast-path ─────────────────────────────────────
+        if (auto p = dynamic_cast<const ProtoMessage*>(message)) {
+            if (p->explicit_type() != "NewView") {
+                // not a NewView; ignore
+                return true;
+            }
+            try {
+                newView = p->view();   // or p->new_view() if your proto defines it
+            } catch (...) {
+                return true;
+            }
+        } else {
+            // ── JSON fallback ───────────────────────────────────
+            auto j = nlohmann::json::parse(message->getContent());
+            newView = j["new_view"].get<int>();
+        }
+
+        if (newView < 0) return true;
+
         std::cout << "[Node " << entity->getNodeId() << "] Received NewView for view " << newView << "\n";
         entity->entityInfo["view"] = newView;
-        //entity->saveEntityInfo();  
         entity->inViewChange = false;
 
-        // {
-            
-        //     std::lock_guard<std::mutex> lock(entity->timerMtx);
-            
-        //     if (entity->timeKeeper) {
-                
-        //         entity->timeKeeper->stop();
-                
-        //         entity->timeKeeper.reset();
-                
-        //     }
-        // }
-        // std::cout << "[Node " << entity->getNodeId() << "] Stopping timekeeper and resetting view change messages for view " << newView << "\n";
         entity->viewChangeMessages.erase(newView);
-        //std::cout << "[Node " << entity->getNodeId() << "] 1.Stopping timekeeper and resetting view change messages for view " << newView << "\n";
         {
-            //std::cout << "[Node " << entity->getNodeId() << "] 2.Stopping timekeeper and resetting view change messages for view " << newView << "\n";
-            //std::lock_guard<std::mutex> lock(entity->timerMtx);
             if (entity->timeKeeper) {
                 entity->timeKeeper->stop();
                 entity->timeKeeper.reset();
             }
         }
-        //std::cout << "[Node " << entity->getNodeId() << "] Updated to new view: " << newView << "\n";
         return true;
     }
 };
@@ -1370,7 +1392,7 @@ class HandleClientRequestAsLeaderEvent : public BaseEvent {
 public:
     HandleClientRequestAsLeaderEvent(const nlohmann::json& params = {}) : BaseEvent(params) {}
     bool execute(Entity* entity, const Message* message, EntityState* state) override {
-        std::cout << "[Node " << entity->getNodeId() << "] Handling client request as leader\n";
+        //std::cout << "[Node " << entity->getNodeId() << "] Handling client request as leader\n";
         auto now = std::chrono::system_clock::now();
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % std::chrono::seconds(1);
         std::time_t tt = std::chrono::system_clock::to_time_t(now);
@@ -1386,31 +1408,54 @@ public:
         int leaderId = (currentView + 1) % n;
         nlohmann::json j = nlohmann::json::parse(message->getContent());
         if (leaderId != entity->getNodeId()) {
-            std::cout << "[Node " << entity->getNodeId() << "] Not the leader, trying to reach leader " << leaderId << "\n";
-            int leaderPort = 5000 + leaderId; // Assuming leader ports are 5000 + node ID
+            std::cout << "[Node " << entity->getNodeId()
+            << "] Not the leader, trying to reach leader " << leaderId << "\n";
+
+            // Use leader's gRPC port instead of raw TCP PBFT port
+            const int grpcLeaderPort = 15000 + leaderId; // e.g. 15001 if node ports start at 5001
+
             try {
-                TcpConnection leaderConn(leaderPort, false);
-                leaderConn.closeConnection();
+                // Simple TCP connect to gRPC port as a reachability check
+                int sock = ::socket(AF_INET, SOCK_STREAM, 0);
+                if (sock < 0) {
+                    throw std::runtime_error("socket() failed");
+                }
+
+                sockaddr_in addr{};
+                addr.sin_family = AF_INET;
+                addr.sin_port = htons(grpcLeaderPort);
+                addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK); // 127.0.0.1
+
+                if (::connect(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0) {
+                    ::close(sock);
+                    throw std::runtime_error("connect() failed");
+                }
+                ::close(sock);
+
+                // Leader gRPC port is reachable: start / arm timeout watchdog
                 if (!entity->timeKeeper) {
-                    entity->timeKeeper = std::make_unique<TimeKeeper>(10000, [entity] {
+                    entity->timeKeeper = std::make_unique<TimeKeeper>(5000, [entity] {
                         entity->onTimeout();
                     });
                 }
                 entity->timeKeeper->start();
-                //std::cout << "[Node " << entity->getNodeId() << "] Successfully reached leader " << leaderId << "\n";
             } catch (...) {
-                //std::cout << "[Node " << entity->getNodeId() << "] Could not connect to leader " << leaderId << ", triggering view change\n";
-                entity->onTimeout(); // or your view change trigger logic
+                // Could not reach leader's gRPC port: trigger view change immediately
+                entity->onTimeout();
             }
-            return false; // Skip if not leader
+            return false;
         }
-        //std::cout << "[Node " << entity->getNodeId() << "] Handling Request as leader\n";
+        std::cout << "[Node " << entity->getNodeId() << "] Handling Request as leader\n";
         
         std::string operation = j["operation"].get<std::string>();
         std::string currentPhase = j["type"];
         // print entity->entityInfo json
         // std::cout << "[Node " << entity->getNodeId() << "] Entity Info: " << entity->entityInfo.dump(4) << "\n";
 
+        if(entity->isByzantine){
+            //std::cout << "[Node " << entity->getNodeId() << "] I am Byzantine, skipping broadcast.\n";
+            return false;
+        }
         if (!operation.empty() && !entity->hasProcessedOperation(std::stoi(operation.substr(9)))) {
 
             int seq = entity->allocateNextSequence(); // NEW
@@ -1466,7 +1511,7 @@ public:
             if (storeEv) storeEv->execute(entity, &pmsg, state);
 
             // Broadcast typed
-            // std::cout << "[Node " << entity->getNodeId() << "] Broadcasting PrePrepare for seq " << seq << " operation " << operation << "\n";
+            std::cout << "[Node " << entity->getNodeId() << "] Broadcasting PrePrepare for seq " << seq << " operation " << operation << "\n";
             entity->sendProtocolToAll(env);
             // std::cout << "[Node " << entity->getNodeId() << "] Leader broadcasted " << preprepareMsg["type"] << " for seq " << seq << " operation " << operation << "\n\n";
             return true;

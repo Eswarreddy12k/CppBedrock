@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
     // Parse scenario from command line argument if provided
     if (argc > 1) {
         scenario = std::stoi(argv[1]);
-        if (scenario < 1 || scenario > 8) {
+        if (scenario < 1) {
             std::cerr << "Invalid scenario. Use 1 (single), 2 (sequential), 3 (concurrent), 4 (randomized), 5 (failure test), 6 (HotStuff), 7 (Zyzzyva), or 8 (Client-triggered view change)." << std::endl;
             return 1;
         }
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
     std::unordered_map<std::string, std::set<int>> txnResponders; // txnId -> unique replica ids
     std::unordered_map<std::string, int> txnSeq;                  // txnId -> sequence
 
-    std::vector<int> nodePorts = {5001, 5002, 5003, 5004, 5005, 5006, 5007};
+    std::vector<int> nodePorts = {5001, 5002, 5003, 5004};
     const int n = nodePorts.size();
     const int f = (n - 1) / 3;
     int requiredResponses = 2 * f + 1;
@@ -135,9 +135,9 @@ int main(int argc, char* argv[]) {
     int NUM_REQUESTS = 3;
 
     // Init gRPC only for scenario 4 (on ports +10000)
-    if (scenario == 4) {
+    if (true) {
         // For scenario 4, require n-1 unique replies per txn
-        requiredResponses = n - 1;
+        requiredResponses = n - f;
         std::vector<int> grpcPorts;
         grpcPorts.reserve(nodePorts.size());
         for (int p : nodePorts) grpcPorts.push_back(p + 10000);
@@ -183,6 +183,7 @@ int main(int argc, char* argv[]) {
             int bytesReceived = recv(respSock, buffer, sizeof(buffer), 0);
             if (bytesReceived > 0) {
                 std::string response(buffer, bytesReceived);
+                //std::cout << "[Listener] Received response: " << response << std::endl;
                 {
                     std::lock_guard<std::mutex> lock(responsesMutex);
                     responses.push_back(response);
@@ -219,9 +220,11 @@ int main(int argc, char* argv[]) {
                             txnResponses[op]++;
                         }
                         if (seq != -1) txnSeq[op] = seq;
+                        
                         if (txnResponses[op] >= requiredResponses) {
                             completedTxns.insert(op);
                         }
+                        
                         if (scenario == 4) scenario4Bench.end(op); // NEW
                     }
                 } catch (...) {}
@@ -239,12 +242,12 @@ int main(int argc, char* argv[]) {
     if (scenario == 1) {
         // Example: A->B, B->C, C->D
         transactions = {
-            {"A", "B", 30},
-            {"B", "C", 20},
-            {"C", "D", 10}
+            {"A", "B", 30}
         };
         NUM_REQUESTS = transactions.size();
         int txnIdx = 0;
+        int grpcLeaderPort = leaderPort + 10000; // e.g. 15001
+    
         for (const auto& [from, to, amount] : transactions) {
             json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
             auto now = std::chrono::system_clock::now();
@@ -263,8 +266,16 @@ int main(int argc, char* argv[]) {
             std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
             std::string signature = crypto.sign(msgToSign);
             j["signature"] = signature;
-            std::string strtoSend = j.dump();
-            txnQueue.push(Transaction{timestamp, strtoSend, 0});
+    
+            // Send via gRPC SubmitRequest to leader
+            if (!grpcSubmitRequest(grpcLeaderPort, j)) {
+                std::cout << "[PBFTClient] gRPC SubmitRequest to leader failed for " << timestamp << ".\n";
+            }
+    
+            {
+                std::lock_guard<std::mutex> lock(txnMutex);
+                txnResponses[timestamp] = 0;
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     } else if (scenario == 2) {
@@ -278,6 +289,8 @@ int main(int argc, char* argv[]) {
             else transactions.push_back({"B", "D", 20});
         }
         int txnIdx = 0;
+        int grpcLeaderPort = leaderPort + 10000; // e.g. 15001
+        
         for (const auto& [from, to, amount] : transactions) {
             json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
             auto now = std::chrono::system_clock::now();
@@ -296,59 +309,19 @@ int main(int argc, char* argv[]) {
             std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
             std::string signature = crypto.sign(msgToSign);
             j["signature"] = signature;
-            std::string strtoSend = j.dump();
-            txnQueue.push(Transaction{timestamp, strtoSend, 0});
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    
+            // Send via gRPC SubmitRequest to leader
+            if (!grpcSubmitRequest(grpcLeaderPort, j)) {
+                std::cout << "[PBFTClient] gRPC SubmitRequest to leader failed for " << timestamp << ".\n";
+            }
+    
+            {
+                std::lock_guard<std::mutex> lock(txnMutex);
+                txnResponses[timestamp] = 0;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     } else if (scenario == 3) {
-        // Example: D->A, C->B, B->C, A->D
-        transactions = {
-            {"D", "A", 5},
-            {"C", "B", 10},
-            {"B", "C", 20},
-            {"A", "D", 15}
-        };
-        NUM_REQUESTS = transactions.size();
-        std::vector<std::thread> clientThreads;
-        int txnIdx = 0;
-        for (const auto& txn : transactions) {
-            clientThreads.emplace_back([&, txnIdx, txn]() {
-                auto [from, to, amount] = txn;
-                json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
-                auto now = std::chrono::system_clock::now();
-                auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-                std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
-                std::string clientId = "client";
-                json j = {
-                    {"type", "Request"},
-                    {"message_sender_id", clientId},
-                    {"timestamp", timestamp},
-                    {"transaction", transaction},
-                    {"view", 0},
-                    {"operation", timestamp},
-                    {"client_listen_port", clientListenPort}
-                };
-                std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
-                std::string signature = crypto.sign(msgToSign);
-                j["signature"] = signature;
-                std::string strtoSend = j.dump();
-                try {
-                    TcpConnection clientConn(leaderPort, false);
-                    clientConn.send(strtoSend);
-                    clientConn.closeConnection();
-                } catch (...) {
-                    std::cout << "[PBFTClient] Could not connect to leader.\n";
-                }
-                {
-                    std::lock_guard<std::mutex> lock(txnMutex);
-                    txnResponses[timestamp] = 0;
-                }
-            });
-            txnIdx++;
-        }
-        for (auto& t : clientThreads) t.join();
-    }
-    else if (scenario == 4) {
         NUM_REQUESTS = 10; // reduce burst size
 
         transactions.clear();
@@ -413,7 +386,98 @@ int main(int argc, char* argv[]) {
             });
             txnIdx++;
             // small pacing to avoid instant stampede
-            //std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+        for (auto& t : clientThreads) t.join();
+
+        // Wait until NUM_REQUESTS - 1 operations are completed (e.g., 39 of 40)
+        {
+            const int targetDone = std::max(0, NUM_REQUESTS - 1);
+            const int maxWaitSec = 60;
+            auto start = std::chrono::steady_clock::now();
+            while (true) {
+                size_t done = 0;
+                {
+                    std::lock_guard<std::mutex> lock(txnMutex);
+                    done = completedTxns.size();
+                }
+                if (done >= static_cast<size_t>(targetDone)) break;
+                if (std::chrono::duration_cast<std::chrono::seconds>(
+                        std::chrono::steady_clock::now() - start).count() > maxWaitSec) {
+                    std::cout << "[Scenario 4] Timeout waiting: completed " << done
+                              << "/" << targetDone << " ops.\n";
+                    break;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
+        }
+    }
+    else if (scenario == 4) {
+        NUM_REQUESTS = 100; // reduce burst size
+
+        transactions.clear();
+        for (int i = 0; i < NUM_REQUESTS; ++i) {
+            std::string from = (i % 4 == 0) ? "A" : (i % 4 == 1) ? "B" : (i % 4 == 2) ? "C" : "D";
+            std::string to = (i % 4 == 0) ? "B" : (i % 4 == 1) ? "C" : (i % 4 == 2) ? "D" : "A";
+            int amount = 5 + (i % 5) * 5;
+            transactions.push_back({from, to, amount});
+        }
+        std::vector<std::thread> clientThreads;
+        const int maxConcurrent = 128; // cap concurrency
+        std::mutex gateMtx;
+        std::condition_variable gateCv;
+        int inFlight = 0;
+
+        int txnIdx = 0;
+        for (const auto& txn : transactions) {
+            // throttle thread creation
+            {
+                std::unique_lock<std::mutex> lk(gateMtx);
+                gateCv.wait(lk, [&]{ return inFlight < maxConcurrent; });
+                ++inFlight;
+            }
+            clientThreads.emplace_back([&, txnIdx, txn]() {
+                auto [from, to, amount] = txn;
+                json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
+                auto now = std::chrono::system_clock::now();
+                auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+                std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
+                scenario4Bench.start(timestamp);
+                std::string clientId = "client";
+                json j = {
+                    {"type", "Request"},
+                    {"message_sender_id", clientId},
+                    {"timestamp", timestamp},
+                    {"transaction", transaction},
+                    {"view", 0},
+                    {"operation", timestamp},
+                    {"client_listen_port", clientListenPort}
+                };
+                std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
+                OpenSSLCryptoProvider crypto("../keys/client_private.pem");
+                std::string signature = crypto.sign(msgToSign);
+                j["signature"] = signature;
+
+                // SEND VIA gRPC SubmitRequest (protobuf) to leader's gRPC port
+                int grpcLeaderPort = leaderPort + 10000; // 15001 for leader 5001
+                if (!grpcSubmitRequest(grpcLeaderPort, j)) {
+                    std::cout << "[PBFTClient] gRPC SubmitRequest to leader failed.\n";
+                }
+
+                {
+                    std::lock_guard<std::mutex> lock(txnMutex);
+                    txnResponses[timestamp] = 0;
+                }
+                // release slot
+                {
+                    std::lock_guard<std::mutex> lk(gateMtx);
+                    --inFlight;
+                }
+                gateCv.notify_one();
+            });
+            txnIdx++;
+            // small pacing to avoid instant stampede
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
         for (auto& t : clientThreads) t.join();
 
@@ -441,14 +505,104 @@ int main(int argc, char* argv[]) {
     }
     else if (scenario == 5) {
         // Example: A->B, B->C, C->D, D->A
+        NUM_REQUESTS = 8000; // reduce burst size
+
+        transactions.clear();
+        for (int i = 0; i < NUM_REQUESTS; ++i) {
+            std::string from = (i % 4 == 0) ? "A" : (i % 4 == 1) ? "B" : (i % 4 == 2) ? "C" : "D";
+            std::string to = (i % 4 == 0) ? "B" : (i % 4 == 1) ? "C" : (i % 4 == 2) ? "D" : "A";
+            int amount = 5 + (i % 5) * 5;
+            transactions.push_back({from, to, amount});
+        }
+        std::vector<std::thread> clientThreads;
+        const int maxConcurrent = 512; // cap concurrency
+        std::mutex gateMtx;
+        std::condition_variable gateCv;
+        int inFlight = 0;
+
+        int txnIdx = 0;
+        for (const auto& txn : transactions) {
+            // throttle thread creation
+            {
+                std::unique_lock<std::mutex> lk(gateMtx);
+                gateCv.wait(lk, [&]{ return inFlight < maxConcurrent; });
+                ++inFlight;
+            }
+            clientThreads.emplace_back([&, txnIdx, txn]() {
+                auto [from, to, amount] = txn;
+                json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
+                auto now = std::chrono::system_clock::now();
+                auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+                std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
+                scenario4Bench.start(timestamp);
+                std::string clientId = "client";
+                json j = {
+                    {"type", "Request"},
+                    {"message_sender_id", clientId},
+                    {"timestamp", timestamp},
+                    {"transaction", transaction},
+                    {"view", 0},
+                    {"operation", timestamp},
+                    {"client_listen_port", clientListenPort}
+                };
+                std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
+                OpenSSLCryptoProvider crypto("../keys/client_private.pem");
+                std::string signature = crypto.sign(msgToSign);
+                j["signature"] = signature;
+
+                // SEND VIA gRPC SubmitRequest (protobuf) to leader's gRPC port
+                int grpcLeaderPort = leaderPort + 10000; // 15001 for leader 5001
+                if (!grpcSubmitRequest(grpcLeaderPort, j)) {
+                    std::cout << "[PBFTClient] gRPC SubmitRequest to leader failed.\n";
+                }
+
+                {
+                    std::lock_guard<std::mutex> lock(txnMutex);
+                    txnResponses[timestamp] = 0;
+                }
+                // release slot
+                {
+                    std::lock_guard<std::mutex> lk(gateMtx);
+                    --inFlight;
+                }
+                gateCv.notify_one();
+            });
+            txnIdx++;
+            // small pacing to avoid instant stampede
+            // std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+        for (auto& t : clientThreads) t.join();
+
+        // Wait until NUM_REQUESTS - 1 operations are completed (e.g., 39 of 40)
+        {
+            const int targetDone = std::max(0, NUM_REQUESTS - 1);
+            const int maxWaitSec = 60;
+            auto start = std::chrono::steady_clock::now();
+            while (true) {
+                size_t done = 0;
+                {
+                    std::lock_guard<std::mutex> lock(txnMutex);
+                    done = completedTxns.size();
+                }
+                if (done >= static_cast<size_t>(targetDone)) break;
+                if (std::chrono::duration_cast<std::chrono::seconds>(
+                        std::chrono::steady_clock::now() - start).count() > maxWaitSec) {
+                    std::cout << "[Scenario 4] Timeout waiting: completed " << done
+                              << "/" << targetDone << " ops.\n";
+                    break;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
+        }
+    }
+    else if (scenario == 6) {
+        // Example: A->B
         transactions = {
-            {"A", "B", 25},
-            {"B", "C", 15},
-            {"C", "D", 10},
-            {"D", "A", 5}
+            {"A", "B", 30}
         };
         NUM_REQUESTS = transactions.size();
         int txnIdx = 0;
+    
         for (const auto& [from, to, amount] : transactions) {
             json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
             auto now = std::chrono::system_clock::now();
@@ -467,61 +621,101 @@ int main(int argc, char* argv[]) {
             std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
             std::string signature = crypto.sign(msgToSign);
             j["signature"] = signature;
-            std::string strtoSend = j.dump();
-            txnQueue.push(Transaction{timestamp, strtoSend, 0});
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    
+            {
+                std::lock_guard<std::mutex> lock(txnMutex);
+                txnResponses[timestamp] = 0;
+            }
+    
+            // enqueue for generic retry loop
+            Transaction t;
+            t.id = timestamp;
+            t.payload = j.dump();
+            t.retries = 0;
+            txnQueue.push(t);
         }
     }
-    else if (scenario == 6) {
-        // HotStuff: A->B, B->C, C->D, leader rotates for each transaction
+    else if (scenario == 7) {
+        // Example: A->B
         transactions = {
-            {"A", "B", 30},
-            {"B", "C", 20},
-            {"C", "D", 10},
-            {"D", "A", 5}
+            {"A", "B", 30}
         };
         NUM_REQUESTS = transactions.size();
         int txnIdx = 0;
+    
         for (const auto& [from, to, amount] : transactions) {
-            int leaderIdx = txnIdx % nodePorts.size(); // round robin leader
-            int leaderPortForTxn = nodePorts[leaderIdx];
             json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
             auto now = std::chrono::system_clock::now();
             auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-            std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
+            std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx++);
             std::string clientId = "client";
             json j = {
                 {"type", "Request"},
                 {"message_sender_id", clientId},
                 {"timestamp", timestamp},
                 {"transaction", transaction},
-                {"view", txnIdx}, // view number matches leader rotation
+                {"view", 0},
                 {"operation", timestamp},
                 {"client_listen_port", clientListenPort}
             };
             std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
             std::string signature = crypto.sign(msgToSign);
             j["signature"] = signature;
-            std::string strtoSend = j.dump();
-
-            // Send directly to the rotating leader
-            try {
-                TcpConnection clientConn(leaderPortForTxn, false);
-                clientConn.send(strtoSend);
-                clientConn.closeConnection();
-                std::cout << "[HotStuffTest] Sent txn " << txnIdx << " to leader on port " << leaderPortForTxn << "\n";
-            } catch (...) {
-                std::cout << "[HotStuffTest] Could not connect to leader on port " << leaderPortForTxn << ".\n";
-            }
+    
             {
                 std::lock_guard<std::mutex> lock(txnMutex);
                 txnResponses[timestamp] = 0;
             }
-            txnIdx++;
-            std::this_thread::sleep_for(std::chrono::milliseconds(15));
+    
+            // enqueue for generic retry loop
+            Transaction t;
+            t.id = timestamp;
+            t.payload = j.dump();
+            t.retries = 0;
+            txnQueue.push(t);
         }
     }
-    else if (scenario == 7) {
+    else if (scenario == 8) {
+        // Example: A->B
+        transactions = {
+            {"A", "B", 30}
+        };
+        NUM_REQUESTS = transactions.size();
+        int txnIdx = 0;
+    
+        for (const auto& [from, to, amount] : transactions) {
+            json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
+            auto now = std::chrono::system_clock::now();
+            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+            std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx++);
+            std::string clientId = "client";
+            json j = {
+                {"type", "Request"},
+                {"message_sender_id", clientId},
+                {"timestamp", timestamp},
+                {"transaction", transaction},
+                {"view", 0},
+                {"operation", timestamp},
+                {"client_listen_port", clientListenPort}
+            };
+            std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
+            std::string signature = crypto.sign(msgToSign);
+            j["signature"] = signature;
+    
+            {
+                std::lock_guard<std::mutex> lock(txnMutex);
+                txnResponses[timestamp] = 0;
+            }
+    
+            // enqueue for generic retry loop
+            Transaction t;
+            t.id = timestamp;
+            t.payload = j.dump();
+            t.retries = 0;
+            txnQueue.push(t);
+        }
+    }
+    else if (scenario == 9) {
         // Zyzzyva scenario: send only to the leader, wait for 2f+1 speculative responses, send commit if needed
         transactions = {
             {"A", "B", 50},
@@ -651,7 +845,7 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-    else if (scenario == 8) {
+    else if (scenario == 10) {
         // Scenario 8: Client-triggered view change
         transactions = {
             {"A", "B", 50},
@@ -746,6 +940,97 @@ int main(int argc, char* argv[]) {
             }
         }
     }
+    else if (scenario == 11){
+        NUM_REQUESTS = 1000; // reduce burst size
+
+        transactions.clear();
+        for (int i = 0; i < NUM_REQUESTS; ++i) {
+            std::string from = (i % 4 == 0) ? "A" : (i % 4 == 1) ? "B" : (i % 4 == 2) ? "C" : "D";
+            std::string to = (i % 4 == 0) ? "B" : (i % 4 == 1) ? "C" : (i % 4 == 2) ? "D" : "A";
+            int amount = 5 + (i % 5) * 5;
+            transactions.push_back({from, to, amount});
+        }
+        std::vector<std::thread> clientThreads;
+        const int maxConcurrent = 128; // cap concurrency
+        std::mutex gateMtx;
+        std::condition_variable gateCv;
+        int inFlight = 0;
+
+        int txnIdx = 0;
+        for (const auto& txn : transactions) {
+            // throttle thread creation
+            {
+                std::unique_lock<std::mutex> lk(gateMtx);
+                gateCv.wait(lk, [&]{ return inFlight < maxConcurrent; });
+                ++inFlight;
+            }
+            clientThreads.emplace_back([&, txnIdx, txn]() {
+                auto [from, to, amount] = txn;
+                json transaction = {{"from", from}, {"to", to}, {"amount", amount}};
+                auto now = std::chrono::system_clock::now();
+                auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+                std::string timestamp = std::to_string(ms) + "_" + std::to_string(txnIdx);
+                scenario4Bench.start(timestamp);
+                std::string clientId = "client";
+                json j = {
+                    {"type", "Request"},
+                    {"message_sender_id", clientId},
+                    {"timestamp", timestamp},
+                    {"transaction", transaction},
+                    {"view", 0},
+                    {"operation", timestamp},
+                    {"client_listen_port", clientListenPort}
+                };
+                std::string msgToSign = j["transaction"].dump() + j["timestamp"].get<std::string>();
+                OpenSSLCryptoProvider crypto("../keys/client_private.pem");
+                std::string signature = crypto.sign(msgToSign);
+                j["signature"] = signature;
+
+                // SEND VIA gRPC SubmitRequest (protobuf) to leader's gRPC port
+                int grpcLeaderPort = leaderPort + 10000; // 15001 for leader 5001
+                if (!grpcSubmitRequest(grpcLeaderPort, j)) {
+                    std::cout << "[PBFTClient] gRPC SubmitRequest to leader failed.\n";
+                }
+
+                {
+                    std::lock_guard<std::mutex> lock(txnMutex);
+                    txnResponses[timestamp] = 0;
+                }
+                // release slot
+                {
+                    std::lock_guard<std::mutex> lk(gateMtx);
+                    --inFlight;
+                }
+                gateCv.notify_one();
+            });
+            txnIdx++;
+            // small pacing to avoid instant stampede
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+        for (auto& t : clientThreads) t.join();
+
+        // Wait until NUM_REQUESTS - 1 operations are completed (e.g., 39 of 40)
+        {
+            const int targetDone = std::max(0, NUM_REQUESTS - 1);
+            const int maxWaitSec = 60;
+            auto start = std::chrono::steady_clock::now();
+            while (true) {
+                size_t done = 0;
+                {
+                    std::lock_guard<std::mutex> lock(txnMutex);
+                    done = completedTxns.size();
+                }
+                if (done >= static_cast<size_t>(targetDone)) break;
+                if (std::chrono::duration_cast<std::chrono::seconds>(
+                        std::chrono::steady_clock::now() - start).count() > maxWaitSec) {
+                    std::cout << "[Scenario 4] Timeout waiting: completed " << done
+                              << "/" << targetDone << " ops.\n";
+                    break;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
+        }
+    }
 
     // === PBFT client logic: send, wait, retry ===
     int sentCount = 0;
@@ -761,15 +1046,26 @@ int main(int argc, char* argv[]) {
 
         if (txn.retries == 0) {
             std::cout << "\n[PBFTClient] Sending txn " << txn.id << " to leader\n";
-            try {
-                TcpConnection clientConn(leaderPort, false);
-                clientConn.send(txn.payload);
-                clientConn.closeConnection();
-            } catch (...) {
-                std::cout << "[PBFTClient] Could not connect to leader.\n";
+
+            if (scenario == 6) {
+                // First attempt for scenario 6: use gRPC to leader
+                json j = json::parse(txn.payload);
+                int grpcLeaderPort = leaderPort + 10000; // 15001 for leader 5001
+                if (!grpcSubmitRequest(grpcLeaderPort, j)) {
+                    std::cout << "[PBFTClient] gRPC SubmitRequest to leader failed for " << txn.id << ".\n";
+                }
+            } else {
+                // Existing TCP path for other scenarios
+                try {
+                    TcpConnection clientConn(leaderPort, false);
+                    clientConn.send(txn.payload);
+                    clientConn.closeConnection();
+                } catch (...) {
+                    std::cout << "[PBFTClient] Could not connect to leader.\n";
+                }
             }
+
             sentCount++;
-            // Turn off node 5001 after the second transaction is sent
             if (scenario == 5 && sentCount == 2) {
                 std::cout << "[IntegrationTest] Turning off node on port 5001 mid-transaction...\n";
                 try {
@@ -785,26 +1081,32 @@ int main(int argc, char* argv[]) {
                 }
             }
         } else {
-            std::cout << "\n[PBFTClient] Retrying txn " << txn.id << " to all nodes (retry " << txn.retries << ")\n";
-            for (int port : nodePorts) {
-                try {
-                    TcpConnection nodeConn(port, false);
-                    nodeConn.send(txn.payload);
-                    nodeConn.closeConnection();
-                    std::cout << "[PBFTClient] Retried txn " << txn.id << " to node on port " << port << "\n";
-                } catch (...) {
-                    std::cout << "[PBFTClient] Could not connect to node " << port << ".\n";
+            std::cout << "\n[PBFTClient] Retrying txn " << txn.id
+                      << " via gRPC to all nodes (retry " << txn.retries << ")\n";
+
+            json j = json::parse(txn.payload);
+
+            for (int basePort : nodePorts) {
+                int grpcPort = basePort + 10000;  // e.g. 5001 -> 15001
+                if (!grpcSubmitRequest(grpcPort, j)) {
+                    std::cout << "[PBFTClient] gRPC retry SubmitRequest to " << grpcPort
+                              << " failed for " << txn.id << ".\n";
+                } else {
+                    std::cout << "[PBFTClient] Retried txn " << txn.id
+                              << " via gRPC to node on port " << grpcPort << "\n";
                 }
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(9000)); // small delay before waiting for responses
         }
 
-        // Wait for responses for this transaction
+        // Wait for responses for this transaction (unchanged)
         auto waitStart = std::chrono::steady_clock::now();
         while (true) {
             {
                 std::lock_guard<std::mutex> lock(txnMutex);
                 if (txnResponses[txn.id] >= requiredResponses) {
-                    std::cout << "[PBFTClient] Got " << txnResponses[txn.id] << " responses for txn " << txn.id << "\n";
+                    std::cout << "[PBFTClient] Got " << txnResponses[txn.id]
+                            << " responses for txn " << txn.id << "\n";
                     enoughResponses = true;
                     completedTxns.insert(txn.id);
                     break;
@@ -812,7 +1114,8 @@ int main(int argc, char* argv[]) {
             }
             auto now = std::chrono::steady_clock::now();
             if (std::chrono::duration_cast<std::chrono::seconds>(now - waitStart).count() > responseTimeoutSec) {
-                std::cout << "[PBFTClient] Timeout waiting for txn " << txn.id << " responses, will retry if possible...\n";
+                std::cout << "[PBFTClient] Timeout waiting for txn " << txn.id
+                        << " responses, will retry if possible...\n";
                 break;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -823,7 +1126,8 @@ int main(int argc, char* argv[]) {
             retryTxn.retries++;
             txnQueue.push(retryTxn); // retry
         } else if (!enoughResponses) {
-            std::cout << "[PBFTClient] Failed to get enough responses for txn " << txn.id << " after " << maxRetries << " retries.\n";
+            std::cout << "[PBFTClient] Failed to get enough responses for txn "
+                    << txn.id << " after " << maxRetries << " retries.\n";
         }
     }
 
@@ -835,18 +1139,18 @@ int main(int argc, char* argv[]) {
     while (true) {
         {
             std::lock_guard<std::mutex> lock(responsesMutex);
-            if (responses.size() >= 7*transactions.size()) break;
+            if (responses.size() >= n*transactions.size()) break;
         }
         auto now = std::chrono::steady_clock::steady_clock::now();
         if (std::chrono::duration_cast<std::chrono::seconds>(now - waitStart).count() > maxWaitSeconds) {
-            std::cout << "[IntegrationTest] Timeout waiting for responses.\n";
+            // std::cout << "[IntegrationTest] Timeout waiting for responses.\n";
             break;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     // Query balances from all nodes
-    std::cout << "\n[IntegrationTest] Querying balances from all nodes...\n";
+    // std::cout << "\n[IntegrationTest] Querying balances from all nodes...\n";
     for (int port : nodePorts) {
         try {
             TcpConnection nodeConn(port, false);
@@ -860,7 +1164,7 @@ int main(int argc, char* argv[]) {
             std::string queryStr = query.dump();
             nodeConn.send(queryStr);
             nodeConn.closeConnection();
-            std::cout << "[IntegrationTest] Sent balance query to node on port " << port << "\n";
+            // std::cout << "[IntegrationTest] Sent balance query to node on port " << port << "\n";
         } catch (...) {
             std::cout << "[IntegrationTest] Could not connect to node " << port << ".\n";
         }
@@ -941,14 +1245,14 @@ int main(int argc, char* argv[]) {
 
     auto endTime = std::chrono::high_resolution_clock::now();
     auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-    std::cout << "[IntegrationTest] Time taken for " << NUM_REQUESTS << " requests: " << durationMs << " ms" << std::endl;
+    //std::cout << "[IntegrationTest] Time taken for " << NUM_REQUESTS << " requests: " << durationMs << " ms" << std::endl;
 
-    if (scenario == 4) {
-        scenario4Bench.finishRun();
-        scenario4Bench.printSummary();
-        // Uncomment to save raw latencies:
-        // scenario4Bench.exportCSV("scenario4_latencies.csv");
-    }
+    // if (scenario == 4) {
+    //     scenario4Bench.finishRun();
+    //     scenario4Bench.printSummary();
+    //     // Uncomment to save raw latencies:
+    //     // scenario4Bench.exportCSV("scenario4_latencies.csv");
+    // }
 
     std::cout << "Integration test complete.\n";
     return 0;

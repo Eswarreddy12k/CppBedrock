@@ -113,6 +113,7 @@ app.post('/api/start-server', (req, res) => {
   }
 
   try {
+    clearLogsDir();
     serverOutput = [];
     serverProcess = spawn('./CppBedrock', [], {
       cwd: BUILD_DIR,
@@ -245,7 +246,7 @@ app.get('/api/server-status', (req, res) => {
 // GET /api/node-ops — read per-node operation logs
 // ──────────────────────────────────────────────────────────────
 app.get('/api/node-ops', (req, res) => {
-  const max = Number(req.query.max) || 500;
+  const max = Number(req.query.max) || 50000;
   const logsDir = path.join(BUILD_DIR, 'logs');
 
   try {
@@ -375,6 +376,41 @@ app.post('/api/cluster/set-property', (req, res) => {
   }
 });
 
+
+
+// ──────────────────────────────────────────────────────────────
+// POST /api/cluster-config/switch
+// body: { mode: "normal" | "minicluster" }
+// copies config.entities.normal.yaml or config.entities.minicluster.yaml
+// to config.entities.yaml
+// ──────────────────────────────────────────────────────────────
+app.post('/api/cluster-config/switch', express.json(), (req, res) => {
+  const mode = req.body && req.body.mode;
+  let srcFile;
+
+  if (mode === 'normal') {
+    srcFile = 'config.entities.normal.yaml';
+  } else if (mode === 'minicluster') {
+    srcFile = 'config.entities.minicluster.yaml';
+  } else {
+    return res.status(400).json({ error: 'Invalid mode' });
+  }
+
+  const srcPath = path.join(CONFIG_DIR, srcFile);
+  const dstPath = path.join(CONFIG_DIR, 'config.entities.yaml');
+
+  try {
+    if (!fs.existsSync(srcPath)) {
+      return res.status(404).json({ error: `Source config not found: ${srcFile}` });
+    }
+    fs.copyFileSync(srcPath, dstPath);
+    console.log(`[server] Switched cluster config -> ${srcFile}`);
+    res.json({ ok: true, mode });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/cluster/move-node — move a node to a different cluster
 app.post('/api/cluster/move-node', (req, res) => {
   try {
@@ -495,4 +531,30 @@ function getClusterSummary() {
   }
 
   return { clusters, n, f, quorum: 2 * f + 1, entities };
+}
+
+function clearLogsDir() {
+  const logsDir = path.join(BUILD_DIR, 'logs');
+  try {
+    if (!fs.existsSync(logsDir)) {
+      return;
+    }
+    const files = fs.readdirSync(logsDir);
+    for (const file of files) {
+      const fullPath = path.join(logsDir, file);
+      try {
+        const stat = fs.statSync(fullPath);
+        if (stat.isFile()) {
+          fs.unlinkSync(fullPath);
+        } else if (stat.isDirectory()) {
+          fs.rmSync(fullPath, { recursive: true, force: true });
+        }
+      } catch (e) {
+        console.error('[server] Failed to remove log entry:', fullPath, e.message);
+      }
+    }
+    console.log('[server] Cleared logs directory');
+  } catch (e) {
+    console.error('[server] Failed to clear logs directory:', e.message);
+  }
 }

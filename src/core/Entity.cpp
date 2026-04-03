@@ -77,6 +77,7 @@ static bool sendToClientViaTcp(const std::string& jsonPayload) {
         
         TcpConnection clientConn(clientPort, /*isServer*/ false);
         clientConn.send(jsonPayload);
+        std::cout << "[Entity] Sent response to client on port " << clientPort << "\n";
         clientConn.closeConnection();
         return true;
     } catch (const std::exception& e) {
@@ -138,7 +139,7 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
       isByzantine(byzantine),
       connection(5000 + id, true),
       processingThread(),
-      f(10),
+      f(peers.size()/3),
       prePrepareBroadcasted()
 {
     EventFactory::getInstance().initialize();
@@ -157,10 +158,10 @@ Entity::Entity(const std::string& role, int id, const std::vector<int>& peers, b
             else if (proto == "ChainedHotstuff") selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.chained_hotstuff.yaml";
         }
     } catch (...) {}
-    selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.sbft.yaml";
+    //selectedConfig = "/Users/eswar/Downloads/CppBedrock/config/config.sbft.yaml";
     loadProtocolConfig(selectedConfig);
     std::cout << "[Node " << nodeId << "] Loaded protocol config: " << selectedConfig << "\n";
-    timeKeeper = std::make_unique<TimeKeeper>(15000, [this] {
+    timeKeeper = std::make_unique<TimeKeeper>(8000, [this] {
         this->onTimeout();
     });
     entityInfo["server_name"] = getNodeId();
@@ -266,37 +267,16 @@ void Entity::onTimeout() {
     viewChangeMsg["view"] = newView; // for Zyzzyva handlers
     viewChangeMsg["message_sender_id"] = getNodeId();
 
-    // Collect one prepare/status per sequence (status report)
-    std::unordered_map<int, nlohmann::json> preparePerSeq;
-    std::string fileName = "messages_" + std::to_string(getNodeId()) + ".json";
-    dataset.loadFromFile(fileName);
-    auto records = dataset.getRecords();
-
-    for (const auto& [key, record] : records) {
-        try {
-            if (!record.is_object()) continue;
-            std::string t = record.value("type", "");
-            if ((t == "prepare" || t == "Prepare") && record.contains("sequence") && record["sequence"].is_number_integer()) {
-                int seq = record["sequence"].get<int>();
-                if (!preparePerSeq.count(seq)) {
-                    preparePerSeq[seq] = record;
-                }
-            }
-        } catch (const nlohmann::json::exception&) {
-            continue;
+    {
+        std::lock_guard<std::mutex> lk(latestPrepareMtx);
+        nlohmann::json prepareArray = nlohmann::json::array();
+        for (const auto& [seq, record] : latestPreparePerSeq) {
+            // optional: only send prepares for uncommitted sequences
+            // if (seq <= committedSeq) continue;
+            prepareArray.push_back(record);
         }
+        viewChangeMsg["prepare_messages"] = std::move(prepareArray);
     }
-    nlohmann::json prepareArray = nlohmann::json::array();
-    for (const auto& [seq, record] : preparePerSeq) {
-        nlohmann::json filtered;
-        if (record.contains("message_sender_id")) filtered["message_sender_id"] = record["message_sender_id"];
-        if (record.contains("timestamp"))         filtered["timestamp"]         = record["timestamp"];
-        if (record.contains("transaction"))       filtered["transaction"]       = record["transaction"];
-        if (record.contains("operation"))         filtered["operation"]         = record["operation"];
-        if (record.contains("sequence"))          filtered["sequence"]          = record["sequence"];
-        prepareArray.push_back(filtered);
-    }
-    viewChangeMsg["prepare_messages"] = prepareArray;
 
     if (protocol == "Zyzzyva") {
         viewChangeMsg["committed_seq"] = committedSeq;
@@ -486,13 +466,29 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
         try {
             std::string messageType = p->phase();
             messageType = p->explicit_type();
-            if(getNodeId()==2){
-                std::cout << "[Node " << getNodeId() << "] Handling ProtoMessage of type: " << messageType << "\n";
-            }
-            //std::cout << "[Node " << getNodeId() << "] Handling ProtoMessage of type: " << messageType << "\n";
+            // if(getNodeId()==2){
+            //     std::cout << "[Node " << getNodeId() << "] Handling ProtoMessage of type: " << messageType << "\n";
+            // }
+            std::cout << "[Node " << getNodeId() << "] Handling ProtoMessage of type: " << messageType << "\n";
             if (messageType.empty()) return;
 
             int seq = p->sequence();
+            
+            // === FAST-PATH: cache Prepare for view-change ===
+            if (messageType == "Prepare" || messageType == "prepare") {
+                nlohmann::json filtered;
+                filtered["sequence"] = seq;
+                filtered["message_sender_id"] = p->sender_id();
+                // If you carry operation/timestamp in proto, capture them:
+                filtered["operation"] = p->operation();  // if available
+                filtered["timestamp"] = p->timestamp();  // if available
+
+                {
+                    std::lock_guard<std::mutex> lk(latestPrepareMtx);
+                    latestPreparePerSeq[seq] = std::move(filtered);
+                }
+            }
+            // === END FAST-PATH ===
 
             // Ensure per-sequence state exists
             if (sequenceStates.find(seq) == sequenceStates.end()) {
@@ -525,9 +521,9 @@ void Entity::handleEvent(const Event* event, EntityState* context) {
                     auto evt = EventFactory::getInstance().createEvent(actionName, params);
                     if (evt) {
                         const Message* msgPtr = dynamic_cast<const Message*>(event);
-                        if(getNodeId()==2){
+                        // if(getNodeId()==2){
                         std::cout << "[Node " << getNodeId() << "] Preparing to execute " << actionName << " for ProtoMessage: " << messageType << std::endl;
-                        }
+                        // }
                         if (!evt->execute(this, msgPtr, &sequenceStates[seq])) {
                             actionsSucceeded = false;
                             break;
@@ -707,6 +703,10 @@ void Entity::sendToAll(const Message& message) {
 }
 void Entity::sendTo(int peer, const Message& message) {
     if (peer == 1000) return;
+    if(peer==6000){
+        sendToClientViaTcp(message.getContent());
+        return;
+    }
     if (peer == nodeId || peer == (5000 + nodeId)) return;
     if (grpcPortForPeer(peer) < 0) return;
 
